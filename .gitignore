@@ -46,3 +46,20 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Node / Cloud Functions
+node_modules/
+functions/lib/
+functions/.env
+functions/.env.*
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Nested Flutter packages' own build artifacts
+packages/**/build/
+packages/**/.dart_tool/
+packages/**/.flutter-plugins-dependencies
+packages/**/.flutter-plugins
