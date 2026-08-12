@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
+import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
 import 'add_food_entry_sheet.dart';
 import 'food_log_providers.dart';
@@ -20,14 +21,24 @@ class FoodLogScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text('Calorii Fit — ${_formatDateRo(today)}'),
         actions: [
-          IconButton(
-            tooltip: 'Capabilitate captură',
-            icon: const Icon(Icons.camera_alt_outlined),
-            onPressed: () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const DeviceCapabilityScreen())),
+          PopupMenuButton<VoidCallback>(
+            onSelected: (action) => action(),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: () => Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const DeviceCapabilityScreen())),
+                child: const Text('Verifică capabilitate device'),
+              ),
+            ],
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () =>
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CameraCaptureScreen())),
+        icon: const Icon(Icons.camera_alt),
+        label: const Text('Fotografiază'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
