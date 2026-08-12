@@ -50,6 +50,15 @@ dependencies:
   depth_capture:
     path: packages/depth_capture
 
+  # Networking (calling the analyzePhoto Cloud Function directly; the full
+  # Firebase SDK — auth, firestore — is wired in starting Phase 2)
+  http: ^1.6.0
+
+  # Local persistence for the manual food log / remembered products, ahead
+  # of the Firestore sync that lands in Phase 2
+  shared_preferences: ^2.3.4
+  uuid: ^4.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
