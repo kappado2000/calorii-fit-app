@@ -6,4 +6,7 @@ class AppConfig {
 
   static const String analyzePhotoUrl =
       'https://europe-west1-calorii-fit-app.cloudfunctions.net/analyzePhoto';
+
+  static const String searchFoodsUrl =
+      'https://europe-west1-calorii-fit-app.cloudfunctions.net/searchFoods';
 }

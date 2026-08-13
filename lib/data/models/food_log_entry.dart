@@ -1,7 +1,10 @@
 import 'meal_type.dart';
 
 /// One logged food entry within a day's diary — always tied to a meal
-/// (breakfast/lunch/dinner) per the app's menu structure.
+/// (breakfast/lunch/dinner) per the app's menu structure. Macro fields are
+/// nullable: entries logged before macro tracking was added, or fully
+/// manual entries where the user only knows the calorie index, simply omit
+/// them rather than showing a fabricated zero.
 class FoodLogEntry {
   const FoodLogEntry({
     required this.id,
@@ -9,6 +12,9 @@ class FoodLogEntry {
     required this.foodName,
     required this.grams,
     required this.kcalPer100g,
+    this.proteinPer100g,
+    this.carbsPer100g,
+    this.fatPer100g,
   });
 
   final String id;
@@ -16,8 +22,14 @@ class FoodLogEntry {
   final String foodName;
   final double grams;
   final double kcalPer100g;
+  final double? proteinPer100g;
+  final double? carbsPer100g;
+  final double? fatPer100g;
 
   double get calories => grams / 100 * kcalPer100g;
+  double? get protein => proteinPer100g == null ? null : grams / 100 * proteinPer100g!;
+  double? get carbs => carbsPer100g == null ? null : grams / 100 * carbsPer100g!;
+  double? get fat => fatPer100g == null ? null : grams / 100 * fatPer100g!;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -25,6 +37,9 @@ class FoodLogEntry {
     'foodName': foodName,
     'grams': grams,
     'kcalPer100g': kcalPer100g,
+    'proteinPer100g': proteinPer100g,
+    'carbsPer100g': carbsPer100g,
+    'fatPer100g': fatPer100g,
   };
 
   factory FoodLogEntry.fromJson(Map<String, dynamic> json) {
@@ -37,6 +52,9 @@ class FoodLogEntry {
       foodName: json['foodName'] as String,
       grams: (json['grams'] as num).toDouble(),
       kcalPer100g: (json['kcalPer100g'] as num).toDouble(),
+      proteinPer100g: (json['proteinPer100g'] as num?)?.toDouble(),
+      carbsPer100g: (json['carbsPer100g'] as num?)?.toDouble(),
+      fatPer100g: (json['fatPer100g'] as num?)?.toDouble(),
     );
   }
 }

@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
+import 'package:calorie_app/data/datasources/remote/cloud_functions/search_foods_api_client.dart';
+import 'package:calorie_app/data/models/custom_food.dart';
 import 'package:calorie_app/data/models/meal_type.dart';
 import 'package:calorie_app/features/auth/auth_providers.dart';
 import 'package:calorie_app/features/food_log/food_log_providers.dart';
@@ -112,5 +118,99 @@ void main() {
   test('normalizeDate strips the time-of-day component', () {
     final withTime = DateTime(2026, 3, 4, 18, 30);
     expect(normalizeDate(withTime), DateTime(2026, 3, 4));
+  });
+
+  test('addEntry persists macro fields and DailyLogNotifier round-trips them', () async {
+    final container = _buildContainer();
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final date = DateTime(2026, 4, 1);
+    final notifier = container.read(dailyLogProvider(date).notifier);
+
+    await notifier.addEntry(
+      mealType: MealType.dinner,
+      foodName: 'Piept de pui',
+      grams: 150,
+      kcalPer100g: 165,
+      proteinPer100g: 31,
+      carbsPer100g: 0,
+      fatPer100g: 3.6,
+    );
+    await pumpEventQueue();
+
+    final entry = container.read(dailyLogProvider(date)).single;
+    expect(entry.protein, closeTo(46.5, 0.001));
+    expect(entry.carbs, 0);
+    expect(entry.fat, closeTo(5.4, 0.001));
+  });
+
+  group('FoodSearchNotifier', () {
+    test('shows remembered-product matches immediately, then merges remote results', () async {
+      final mockClient = MockClient((request) async {
+        return http.Response(
+          jsonEncode({
+            'result': {
+              'products': [
+                {
+                  'barcode': '123',
+                  'name': 'Iaurt grecesc Zuzu',
+                  'brand': null,
+                  'kcalPer100g': 97,
+                  'proteinPer100g': 9.0,
+                  'carbsPer100g': 4.0,
+                  'fatPer100g': 5.0,
+                  'imageUrl': null,
+                },
+              ],
+            },
+          }),
+          200,
+        );
+      });
+      final apiClient = SearchFoodsApiClient(httpClient: mockClient);
+      addTearDown(apiClient.dispose);
+      const remembered = CustomFood(id: '1', name: 'Iaurt grecesc', kcalPer100g: 120);
+      final notifier = FoodSearchNotifier(apiClient, [remembered]);
+      addTearDown(notifier.dispose);
+
+      notifier.search('iaurt');
+      expect(notifier.state.results, hasLength(1));
+      expect(notifier.state.results.first.name, 'Iaurt grecesc');
+      expect(notifier.state.isSearchingRemote, isTrue);
+
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      expect(notifier.state.results, hasLength(2));
+      expect(notifier.state.results.last.name, 'Iaurt grecesc Zuzu');
+      expect(notifier.state.isSearchingRemote, isFalse);
+    });
+
+    test('a query under 2 characters clears results without calling the API', () {
+      final apiClient = SearchFoodsApiClient(
+        httpClient: MockClient((request) async => fail('should not be called')),
+      );
+      addTearDown(apiClient.dispose);
+      final notifier = FoodSearchNotifier(apiClient, const []);
+      addTearDown(notifier.dispose);
+
+      notifier.search('a');
+      expect(notifier.state.results, isEmpty);
+    });
+
+    test('keeps remembered matches visible and flags the error on a failed remote search', () async {
+      final apiClient = SearchFoodsApiClient(
+        httpClient: MockClient((request) async => http.Response('boom', 500)),
+      );
+      addTearDown(apiClient.dispose);
+      const remembered = CustomFood(id: '1', name: 'Orez brun', kcalPer100g: 111);
+      final notifier = FoodSearchNotifier(apiClient, [remembered]);
+      addTearDown(notifier.dispose);
+
+      notifier.search('orez');
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+
+      expect(notifier.state.results, hasLength(1));
+      expect(notifier.state.results.first.name, 'Orez brun');
+      expect(notifier.state.hadRemoteError, isTrue);
+    });
   });
 }

@@ -27,6 +27,9 @@ class FoodLogScreen extends ConsumerWidget {
     final today = normalizeDate(DateTime.now());
     final entries = ref.watch(dailyLogProvider(today));
     final totalCalories = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
+    final totalProtein = _sumIfAnyKnown(entries.map((e) => e.protein));
+    final totalCarbs = _sumIfAnyKnown(entries.map((e) => e.carbs));
+    final totalFat = _sumIfAnyKnown(entries.map((e) => e.fat));
     final workouts = ref.watch(workoutLogProvider(today));
     final totalBurned = workouts.fold<double>(0, (sum, workout) => sum + workout.caloriesBurned);
     final tdee = ref.watch(tdeeResultProvider);
@@ -78,7 +81,14 @@ class FoodLogScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _DailyProgressCard(totalCalories: totalCalories, totalBurned: totalBurned, tdee: tdee),
+          _DailyProgressCard(
+            totalCalories: totalCalories,
+            totalBurned: totalBurned,
+            tdee: tdee,
+            totalProtein: totalProtein,
+            totalCarbs: totalCarbs,
+            totalFat: totalFat,
+          ),
           const SizedBox(height: 16),
           for (final mealType in MealType.values) ...[
             _MealSection(
@@ -113,12 +123,31 @@ const _romanianMonths = [
 
 String _formatDateRo(DateTime date) => '${date.day} ${_romanianMonths[date.month - 1]}';
 
+/// Sums the known (non-null) macro values across today's entries — entries
+/// without a known macro (fully-manual, calorie-only) simply don't
+/// contribute, rather than the whole day showing "—" because one entry
+/// lacks data. Returns null only when nothing at all is known yet.
+double? _sumIfAnyKnown(Iterable<double?> values) {
+  if (values.every((v) => v == null)) return null;
+  return values.fold<double>(0, (sum, v) => sum + (v ?? 0));
+}
+
 class _DailyProgressCard extends StatelessWidget {
-  const _DailyProgressCard({required this.totalCalories, required this.totalBurned, required this.tdee});
+  const _DailyProgressCard({
+    required this.totalCalories,
+    required this.totalBurned,
+    required this.tdee,
+    required this.totalProtein,
+    required this.totalCarbs,
+    required this.totalFat,
+  });
 
   final double totalCalories;
   final double totalBurned;
   final TdeeResult? tdee;
+  final double? totalProtein;
+  final double? totalCarbs;
+  final double? totalFat;
 
   @override
   Widget build(BuildContext context) {
@@ -201,6 +230,13 @@ class _DailyProgressCard extends StatelessWidget {
                       context,
                     ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
+                  if (totalProtein != null || totalCarbs != null || totalFat != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'P ${totalProtein?.round() ?? '—'}g · C ${totalCarbs?.round() ?? '—'}g · G ${totalFat?.round() ?? '—'}g',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -251,7 +287,10 @@ class _MealSection extends ConsumerWidget {
               ListTile(
                 dense: true,
                 title: Text(entry.foodName),
-                subtitle: Text('${_formatGrams(entry.grams)} g · ${entry.kcalPer100g.round()} kcal/100g'),
+                subtitle: Text(
+                  '${_formatGrams(entry.grams)} g · ${entry.kcalPer100g.round()} kcal/100g'
+                  '${_macroSuffix(entry)}',
+                ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -279,6 +318,12 @@ class _MealSection extends ConsumerWidget {
 
   String _formatGrams(double grams) {
     return grams == grams.roundToDouble() ? grams.toStringAsFixed(0) : grams.toString();
+  }
+
+  String _macroSuffix(FoodLogEntry entry) {
+    if (entry.protein == null && entry.carbs == null && entry.fat == null) return '';
+    String fmt(double? v) => v == null ? '—' : '${v.round()}g';
+    return ' · P ${fmt(entry.protein)} C ${fmt(entry.carbs)} G ${fmt(entry.fat)}';
   }
 }
 
