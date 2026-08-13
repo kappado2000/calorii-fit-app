@@ -35,10 +35,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return isOnLogin ? '/' : null;
       }
 
-      if (!refreshListenable.hasProfile) {
-        return isOnOnboarding ? null : '/onboarding';
-      }
-      return (isOnOnboarding || isOnLogin) ? '/' : null;
+      if (isOnLogin) return '/';
+      if (!refreshListenable.hasProfile && !isOnOnboarding) return '/onboarding';
+      // A profile existing doesn't make onboarding off-limits — the user
+      // must be able to navigate there deliberately (via "Editează profil/
+      // obiectiv") to change it, not just on first-time setup.
+      return null;
     },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const FoodLogScreen()),

@@ -28,6 +28,36 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   static const _totalPages = 4;
 
   @override
+  void initState() {
+    super.initState();
+    // Editing an existing profile ("Editează profil/obiectiv") must start
+    // from the saved values, not a blank form — the profile stream has
+    // already emitted by the time this screen is reachable at all (either
+    // fresh-signup onboarding never has a profile yet, or an edit always
+    // does), so the cached stream value is available synchronously here.
+    final existing = ref.read(userProfileProvider).valueOrNull;
+    if (existing != null) {
+      _ageController.text = existing.age.toString();
+      _heightController.text = _formatNumber(existing.heightCm);
+      _weightController.text = _formatNumber(existing.weightKg);
+      _targetRateController.text = _formatNumber(existing.targetRateKgPerWeek);
+      _sex = existing.sex;
+      _activityLevel = existing.activityLevel;
+      _goal = existing.goal;
+      _existingProgramStartDate = existing.programStartDate;
+    }
+  }
+
+  // Editing must keep the original program-start anchor — the "since
+  // program start" progress chart depends on it staying fixed, it isn't
+  // meant to reset every time the user tweaks their goal.
+  DateTime? _existingProgramStartDate;
+
+  String _formatNumber(double value) {
+    return value == value.roundToDouble() ? value.toStringAsFixed(0) : value.toString();
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     _heightController.dispose();
@@ -78,7 +108,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       targetRateKgPerWeek: _goal == Goal.maintain
           ? 0
           : double.parse(_targetRateController.text.replaceAll(',', '.')),
-      programStartDate: DateTime.now(),
+      programStartDate: _existingProgramStartDate ?? DateTime.now(),
     );
     await ref.read(profileControllerProvider).saveProfile(profile);
     // No navigation needed — app_router's redirect reacts to

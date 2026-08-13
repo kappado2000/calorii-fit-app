@@ -14,6 +14,10 @@ class AppTheme {
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    // A neutral grey rather than the seed-tinted surfaceContainerLow — the
+    // green tint on every card read as washed-out/off, a plain grey card
+    // reads as intentional "raised surface" instead.
+    final neutralCardColor = isDark ? const Color(0xFF25272B) : const Color(0xFFF1F2F4);
     final baseTextTheme = isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme;
     final textTheme = GoogleFonts.plusJakartaSansTextTheme(baseTextTheme).copyWith(
       headlineSmall: GoogleFonts.plusJakartaSans(
@@ -53,7 +57,7 @@ class AppTheme {
 
       cardTheme: CardThemeData(
         elevation: 0,
-        color: colorScheme.surfaceContainerLow,
+        color: neutralCardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
@@ -107,7 +111,16 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: colorScheme.surfaceContainerHigh,
         selectedColor: colorScheme.primaryContainer,
-        labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13),
+        labelStyle: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+          color: colorScheme.onSurface,
+        ),
+        secondaryLabelStyle: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+          color: colorScheme.onPrimaryContainer,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         side: BorderSide.none,
@@ -151,7 +164,15 @@ class AppTheme {
 
       listTileTheme: ListTileThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        titleTextStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 15),
+        titleTextStyle: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+          color: colorScheme.onSurface,
+        ),
+        subtitleTextStyle: GoogleFonts.plusJakartaSans(
+          fontSize: 13,
+          color: colorScheme.onSurfaceVariant,
+        ),
       ),
 
       snackBarTheme: SnackBarThemeData(

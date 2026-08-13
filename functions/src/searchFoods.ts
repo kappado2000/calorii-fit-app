@@ -39,11 +39,18 @@ interface OffSearchResponse {
 }
 
 /**
- * Open Food Facts is a free, open, no-API-key nutrition database with strong
- * European/Romanian product coverage — exactly the "produse aflate in comert"
- * lookup the user asked for. We only ever ask it for products that carry a
- * usable kcal/100g value; anything else is useless for calorie tracking and
- * is filtered out rather than shown with a blank calorie field.
+ * Open Food Facts is a free, open, no-API-key nutrition database covering
+ * both foods AND beverages worldwide — exactly the "toate alimentele si
+ * bauturile din comert" lookup the user asked for. We only ever ask it for
+ * products that carry a usable kcal/100g value; anything else is useless
+ * for calorie tracking and is filtered out rather than shown with a blank
+ * calorie field.
+ *
+ * Deliberately NOT filtering by cc=ro (country) — most products in OFF,
+ * including beverages sold in Romania, aren't consistently tagged with a
+ * country, so that filter cut the result pool down to a small fraction of
+ * what's actually available. lc=ro only affects which language the returned
+ * name is in when available, not which products match.
  */
 function buildSearchUrl(query: string): string {
   const params = new URLSearchParams({
@@ -51,9 +58,8 @@ function buildSearchUrl(query: string): string {
     search_simple: "1",
     action: "process",
     json: "1",
-    page_size: "25",
+    page_size: "50",
     lc: "ro",
-    cc: "ro",
     fields: "code,product_name,product_name_ro,brands,nutriments,image_small_url",
   });
   return `https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`;
@@ -121,7 +127,7 @@ export const searchFoods = onCall<SearchFoodsRequest>(
     const products = (data.products ?? [])
       .map(toResult)
       .filter((p): p is FoodProductResult => p !== null)
-      .slice(0, 20);
+      .slice(0, 40);
 
     await cacheProducts(products);
 
