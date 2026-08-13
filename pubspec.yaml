@@ -56,9 +56,10 @@ dependencies:
 
   # Local persistence for the manual food log / remembered products, ahead
   # of the Firestore sync that lands in Phase 2
-  shared_preferences: ^2.3.4
   uuid: ^4.5.1
-
+  firebase_core: ^4.13.0
+  firebase_auth: ^6.5.7
+  cloud_firestore: ^6.8.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,6 +81,8 @@ dev_dependencies:
 
   # App icon generation (Android + iOS) from a single source image
   flutter_launcher_icons: ^0.14.3
+  fake_cloud_firestore: ^4.2.0
+  firebase_auth_mocks: ^0.15.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
-import 'features/food_log/food_log_screen.dart';
+import 'routing/app_router.dart';
 
-class CalorieApp extends StatelessWidget {
+class CalorieApp extends ConsumerWidget {
   const CalorieApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(appRouterProvider);
+
+    return MaterialApp.router(
       title: 'Calorii Fit',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      // Faza 1: jurnalul alimentar (introducere manuală) e ecranul principal;
-      // ecranul de capabilități device rămâne accesibil din AppBar.
-      // Routing complet (go_router) vine odată cu Faza 2 (auth + onboarding).
-      home: const FoodLogScreen(),
+      routerConfig: router,
     );
   }
 }

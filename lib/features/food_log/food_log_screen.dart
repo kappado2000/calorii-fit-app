@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
+import '../auth/auth_providers.dart';
 import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
 import 'add_food_entry_sheet.dart';
@@ -29,6 +30,10 @@ class FoodLogScreen extends ConsumerWidget {
                   context,
                 ).push(MaterialPageRoute(builder: (_) => const DeviceCapabilityScreen())),
                 child: const Text('Verifică capabilitate device'),
+              ),
+              PopupMenuItem(
+                value: () => ref.read(authControllerProvider).signOut(),
+                child: const Text('Deconectare'),
               ),
             ],
           ),

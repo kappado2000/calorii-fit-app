@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each user's own subtree — profile, weightEntries, foodLogs,
+    // customFoods, recipes, favorites (see project plan's Firestore schema).
+    // Only the owning authenticated user may read or write any of it.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Shared nutrition lookup cache — read-only for signed-in users, only
+    // ever populated server-side by the lookupNutrition Cloud Function
+    // (Admin SDK bypasses these rules entirely).
+    match /foodsCache/{document} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Written only by analyzePhoto via the Admin SDK for accuracy
+    // monitoring — never read or written directly by clients.
+    match /analysisLogs/{document} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "665086885932",
+    "project_id": "calorii-fit-app",
+    "storage_bucket": "calorii-fit-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665086885932:android:c8a10f42861d1e9c499189",
+        "android_client_info": {
+          "package_name": "com.kappa.calorieapp.calorie_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB14_rp_F7P8xnwgH6RTcrWVaUIuPjSsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
