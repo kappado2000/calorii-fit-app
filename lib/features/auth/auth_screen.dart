@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_colors.dart';
 import 'auth_providers.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
@@ -94,6 +96,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final isSignIn = _mode == _AuthMode.signIn;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       body: SafeArea(
@@ -106,18 +109,45 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(Icons.restaurant, size: 64, color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(height: 8),
+                  Container(
+                    width: 88,
+                    height: 88,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      gradient: context.appColors.heroGradient,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.appColors.cardShadow,
+                          blurRadius: 24,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.restaurant_rounded, size: 40, color: Colors.white),
+                  ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
                   Text(
                     'Calorii Fit',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isSignIn ? 'Bine ai revenit' : 'Hai să începem',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'Email'),
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.mail_outline_rounded),
+                    ),
                     validator: (value) =>
                         (value == null || !value.contains('@')) ? 'Introdu un email valid' : null,
                   ),
@@ -125,16 +155,26 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Parolă'),
+                    decoration: const InputDecoration(
+                      labelText: 'Parolă',
+                      prefixIcon: Icon(Icons.lock_outline_rounded),
+                    ),
                     validator: (value) =>
                         (value == null || value.length < 6) ? 'Minim 6 caractere' : null,
                   ),
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 12),
-                    Text(
-                      _errorMessage!,
-                      style: TextStyle(color: Theme.of(context).colorScheme.error),
-                    ),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        _errorMessage!,
+                        style: TextStyle(color: colorScheme.onErrorContainer),
+                      ),
+                    ).animate().shake(duration: 400.ms),
                   ],
                   const SizedBox(height: 20),
                   FilledButton(
@@ -143,7 +183,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         : Text(isSignIn ? 'Autentificare' : 'Creează cont'),
                   ),

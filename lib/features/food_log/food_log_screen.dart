@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
 import '../../data/models/workout_entry.dart';
@@ -36,11 +38,11 @@ class FoodLogScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calorii Fit — ${_formatDateRo(today)}'),
+        title: Text('Calorii Fit'),
         actions: [
           IconButton(
             tooltip: 'Progres',
-            icon: const Icon(Icons.show_chart),
+            icon: const Icon(Icons.show_chart_rounded),
             onPressed: () =>
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProgressScreen())),
           ),
@@ -52,21 +54,34 @@ class FoodLogScreen extends ConsumerWidget {
             ).push(MaterialPageRoute(builder: (_) => const ActivitySyncScreen())),
           ),
           PopupMenuButton<VoidCallback>(
+            icon: const Icon(Icons.more_vert_rounded),
             onSelected: (action) => action(),
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: () => context.push('/onboarding'),
-                child: const Text('Editează profil/obiectiv'),
+                child: const ListTile(
+                  leading: Icon(Icons.tune_rounded),
+                  title: Text('Editează profil/obiectiv'),
+                  contentPadding: EdgeInsets.zero,
+                ),
               ),
               PopupMenuItem(
                 value: () => Navigator.of(
                   context,
                 ).push(MaterialPageRoute(builder: (_) => const DeviceCapabilityScreen())),
-                child: const Text('Verifică capabilitate device'),
+                child: const ListTile(
+                  leading: Icon(Icons.phone_iphone_rounded),
+                  title: Text('Verifică capabilitate device'),
+                  contentPadding: EdgeInsets.zero,
+                ),
               ),
               PopupMenuItem(
                 value: () => ref.read(authControllerProvider).signOut(),
-                child: const Text('Deconectare'),
+                child: const ListTile(
+                  leading: Icon(Icons.logout_rounded),
+                  title: Text('Deconectare'),
+                  contentPadding: EdgeInsets.zero,
+                ),
               ),
             ],
           ),
@@ -75,12 +90,19 @@ class FoodLogScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () =>
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CameraCaptureScreen())),
-        icon: const Icon(Icons.camera_alt),
+        icon: const Icon(Icons.camera_alt_rounded),
         label: const Text('Fotografiază'),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
         children: [
+          Text(
+            _formatDateRo(today),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 12),
           _DailyProgressCard(
             totalCalories: totalCalories,
             totalBurned: totalBurned,
@@ -88,18 +110,25 @@ class FoodLogScreen extends ConsumerWidget {
             totalProtein: totalProtein,
             totalCarbs: totalCarbs,
             totalFat: totalFat,
-          ),
-          const SizedBox(height: 16),
-          for (final mealType in MealType.values) ...[
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic),
+          const SizedBox(height: 20),
+          for (final (i, mealType) in MealType.values.indexed) ...[
             _MealSection(
-              mealType: mealType,
-              date: today,
-              entries: entries.where((entry) => entry.mealType == mealType).toList(),
-              dailyTarget: tdee?.calorieTarget,
-            ),
+                  mealType: mealType,
+                  date: today,
+                  entries: entries.where((entry) => entry.mealType == mealType).toList(),
+                  dailyTarget: tdee?.calorieTarget,
+                )
+                .animate(delay: (80 * i).ms)
+                .fadeIn(duration: 350.ms)
+                .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
             const SizedBox(height: 12),
           ],
-          _WorkoutSection(date: today, workouts: workouts, totalBurned: totalBurned),
+          _WorkoutSection(
+            date: today,
+            workouts: workouts,
+            totalBurned: totalBurned,
+          ).animate(delay: 320.ms).fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
         ],
       ),
     );
@@ -132,6 +161,19 @@ double? _sumIfAnyKnown(Iterable<double?> values) {
   return values.fold<double>(0, (sum, v) => sum + (v ?? 0));
 }
 
+IconData _iconForMeal(MealType mealType) {
+  switch (mealType) {
+    case MealType.breakfast:
+      return Icons.wb_twilight_rounded;
+    case MealType.lunch:
+      return Icons.lunch_dining_rounded;
+    case MealType.dinner:
+      return Icons.dinner_dining_rounded;
+    case MealType.snack:
+      return Icons.local_cafe_rounded;
+  }
+}
+
 class _DailyProgressCard extends StatelessWidget {
   const _DailyProgressCard({
     required this.totalCalories,
@@ -151,32 +193,42 @@ class _DailyProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = context.appColors;
+
     if (tdee == null) {
-      return Card(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: appColors.heroGradient,
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Total azi', style: Theme.of(context).textTheme.titleMedium),
                   Text(
-                    '${totalCalories.round()} kcal',
+                    'Configurează-ți obiectivul',
                     style: Theme.of(
                       context,
-                    ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                    ).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${totalCalories.round()} kcal azi',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70),
                   ),
                 ],
               ),
-              FilledButton(
-                onPressed: () => context.push('/onboarding'),
-                child: const Text('Setează obiectiv'),
-              ),
-            ],
-          ),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: Colors.white, foregroundColor: appColors.protein),
+              onPressed: () => context.push('/onboarding'),
+              child: const Text('Setează'),
+            ),
+          ],
         ),
       );
     }
@@ -191,53 +243,106 @@ class _DailyProgressCard extends StatelessWidget {
     final isOverTarget = remaining < 0;
     final trueDeficit = tdee!.tdee + totalBurned - totalCalories;
 
-    return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            AnimatedGauge(
-              value: progress,
-              size: 100,
-              centerText: '${totalCalories.round()}',
-              centerSubtext: 'kcal',
-              color: isOverTarget ? Theme.of(context).colorScheme.error : null,
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    totalBurned > 0
-                        ? 'Țintă: ${adjustedTarget.round()} kcal (+${totalBurned.round()} din sport)'
-                        : 'Țintă: ${adjustedTarget.round()} kcal',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isOverTarget
-                        ? 'Peste țintă cu ${(-remaining).round()} kcal'
-                        : '${remaining.round()} kcal rămase',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Deficit caloric azi: ${trueDeficit.round()} kcal',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  if (totalProtein != null || totalCarbs != null || totalFat != null) ...[
-                    const SizedBox(height: 4),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: isOverTarget ? appColors.warningGradient : appColors.heroGradient,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(color: appColors.cardShadow, blurRadius: 24, offset: const Offset(0, 10)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AnimatedGauge(
+                value: progress,
+                size: 104,
+                strokeWidth: 10,
+                centerText: '${totalCalories.round()}',
+                centerSubtext: 'kcal',
+                color: Colors.white,
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Text(
-                      'P ${totalProtein?.round() ?? '—'}g · C ${totalCarbs?.round() ?? '—'}g · G ${totalFat?.round() ?? '—'}g',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      totalBurned > 0
+                          ? 'Țintă: ${adjustedTarget.round()} kcal (+${totalBurned.round()} din sport)'
+                          : 'Țintă: ${adjustedTarget.round()} kcal',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      isOverTarget
+                          ? 'Peste țintă cu ${(-remaining).round()} kcal'
+                          : '${remaining.round()} kcal rămase',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Deficit caloric azi: ${trueDeficit.round()} kcal',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white70),
                     ),
                   ],
-                ],
+                ),
+              ),
+            ],
+          ),
+          if (totalProtein != null || totalCarbs != null || totalFat != null) ...[
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                _MacroPill(label: 'Proteine', value: totalProtein, color: appColors.protein),
+                const SizedBox(width: 8),
+                _MacroPill(label: 'Carbo', value: totalCarbs, color: appColors.carbs),
+                const SizedBox(width: 8),
+                _MacroPill(label: 'Grăsimi', value: totalFat, color: appColors.fat),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _MacroPill extends StatelessWidget {
+  const _MacroPill({required this.label, required this.value, required this.color});
+
+  final String label;
+  final double? value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.16),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                value == null ? '—' : '${value!.round()}g',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -264,24 +369,28 @@ class _MealSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final subtotal = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
     final mealTarget = dailyTarget != null ? dailyTarget! * mealType.dailyShare : null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ListTile(
-              leading: mealTarget != null
-                  ? AnimatedGauge(
-                      value: subtotal / mealTarget,
-                      size: 44,
-                      strokeWidth: 5,
-                      centerText: '',
-                    )
-                  : null,
+              leading: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (mealTarget != null)
+                    AnimatedGauge(value: subtotal / mealTarget, size: 44, strokeWidth: 5, centerText: ''),
+                  Icon(_iconForMeal(mealType), size: 18, color: colorScheme.primary),
+                ],
+              ),
               title: Text(mealType.label, style: Theme.of(context).textTheme.titleMedium),
-              trailing: Text('${subtotal.round()} kcal'),
+              trailing: Text(
+                '${subtotal.round()} kcal',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              ),
             ),
             for (final entry in entries)
               ListTile(
@@ -290,23 +399,24 @@ class _MealSection extends ConsumerWidget {
                 subtitle: Text(
                   '${_formatGrams(entry.grams)} g · ${entry.kcalPer100g.round()} kcal/100g'
                   '${_macroSuffix(entry)}',
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('${entry.calories.round()} kcal'),
+                    Text('${entry.calories.round()} kcal', style: Theme.of(context).textTheme.bodyMedium),
                     IconButton(
-                      icon: const Icon(Icons.close, size: 18),
+                      icon: const Icon(Icons.close_rounded, size: 18),
                       onPressed: () => ref.read(dailyLogProvider(date).notifier).removeEntry(entry.id),
                     ),
                   ],
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: TextButton.icon(
                 onPressed: () => AddFoodEntrySheet.show(context, mealType: mealType, date: date),
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.add_rounded),
                 label: const Text('Adaugă aliment'),
               ),
             ),
@@ -336,16 +446,20 @@ class _WorkoutSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ListTile(
-              leading: const Icon(Icons.fitness_center),
+              leading: Icon(Icons.fitness_center_rounded, color: colorScheme.primary),
               title: Text('Activitate sportivă', style: Theme.of(context).textTheme.titleMedium),
-              trailing: Text('${totalBurned.round()} kcal arse'),
+              trailing: Text(
+                '${totalBurned.round()} kcal arse',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              ),
             ),
             for (final workout in workouts)
               ListTile(
@@ -357,7 +471,7 @@ class _WorkoutSection extends ConsumerWidget {
                   children: [
                     Text('${workout.caloriesBurned.round()} kcal'),
                     IconButton(
-                      icon: const Icon(Icons.close, size: 18),
+                      icon: const Icon(Icons.close_rounded, size: 18),
                       onPressed: () =>
                           ref.read(workoutLogProvider(date).notifier).removeWorkout(workout.id),
                     ),
@@ -365,10 +479,10 @@ class _WorkoutSection extends ConsumerWidget {
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: TextButton.icon(
                 onPressed: () => AddWorkoutSheet.show(context, date: date),
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.add_rounded),
                 label: const Text('Adaugă activitate'),
               ),
             ),

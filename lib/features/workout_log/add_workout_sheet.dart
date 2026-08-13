@@ -89,9 +89,22 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 12),
-          Text(
-            'Estimare: ${estimatedCalories.round()} kcal arse',
-            style: Theme.of(context).textTheme.titleMedium,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.local_fire_department_rounded, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 10),
+                Text(
+                  'Estimare: ${estimatedCalories.round()} kcal arse',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 20),
           FilledButton(

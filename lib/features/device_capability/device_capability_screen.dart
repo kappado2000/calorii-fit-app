@@ -1,5 +1,6 @@
 import 'package:depth_capture/depth_capture.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../platform/depth_capture_channel.dart';
@@ -41,30 +42,44 @@ class _CapabilityResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(_iconFor(source), size: 64, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(height: 16),
-        Text(_labelFor(source), style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        Text(_descriptionFor(source), textAlign: TextAlign.center),
-      ],
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(color: colorScheme.primaryContainer, shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: Icon(_iconFor(source), size: 44, color: colorScheme.onPrimaryContainer),
+          ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
+          const SizedBox(height: 20),
+          Text(_labelFor(source), style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          Text(
+            _descriptionFor(source),
+            textAlign: TextAlign.center,
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+          ),
+        ],
+      ),
     );
   }
 
   IconData _iconFor(DepthSource source) {
     switch (source) {
       case DepthSource.lidar:
-        return Icons.threed_rotation;
+        return Icons.threed_rotation_rounded;
       case DepthSource.arcoreDepth:
-        return Icons.threed_rotation;
+        return Icons.threed_rotation_rounded;
       case DepthSource.portraitDualCamera:
-        return Icons.camera_alt;
+        return Icons.camera_alt_rounded;
       case DepthSource.referenceObjectOnly:
-        return Icons.crop_free;
+        return Icons.crop_free_rounded;
       case DepthSource.none:
-        return Icons.error_outline;
+        return Icons.error_outline_rounded;
     }
   }
 

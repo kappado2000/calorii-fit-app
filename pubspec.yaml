@@ -68,6 +68,10 @@ dependencies:
   # Live camera preview shown while framing the plate, ahead of handing the
   # camera hardware off to the native depth_capture plugin on shutter press
   camera: ^0.11.0+2
+
+  # Design system: typography and lightweight declarative animations
+  google_fonts: ^6.2.1
+  flutter_animate: ^4.5.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../profile/profile_providers.dart';
@@ -61,24 +62,22 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text('Aport caloric', style: Theme.of(context).textTheme.titleMedium),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          height: 220,
+                        _ChartCard(
+                          title: 'Aport caloric',
+                          icon: Icons.restaurant_rounded,
                           child: _IntakeChart(days: days, history: history, target: target),
-                        ),
-                        const SizedBox(height: 28),
-                        Text('Deficit caloric zilnic', style: Theme.of(context).textTheme.titleMedium),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          height: 220,
+                        ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
+                        const SizedBox(height: 16),
+                        _ChartCard(
+                          title: 'Deficit caloric zilnic',
+                          icon: Icons.trending_down_rounded,
                           child: _DeficitChart(
                             days: days,
                             history: history,
                             burnedHistory: burnedHistory,
                             tdee: tdeeValue,
                           ),
-                        ),
+                        ).animate(delay: 100.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
                       ],
                     ),
                   );
@@ -104,6 +103,37 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   }
 }
 
+class _ChartCard extends StatelessWidget {
+  const _ChartCard({required this.title, required this.icon, required this.child});
+
+  final String title;
+  final IconData icon;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 20, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(height: 200, child: child),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _IntakeChart extends StatelessWidget {
   const _IntakeChart({required this.days, required this.history, required this.target});
 
@@ -113,11 +143,13 @@ class _IntakeChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
     final maxIntake = days.map((d) => history[d] ?? 0).fold<double>(0, (a, b) => a > b ? a : b);
     final maxY = [maxIntake, target ?? 0, 100].reduce((a, b) => a > b ? a : b) * 1.2;
 
     return BarChart(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
       BarChartData(
         maxY: maxY,
         barTouchData: BarTouchData(enabled: true),
@@ -125,16 +157,28 @@ class _IntakeChart extends StatelessWidget {
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(sideTitles: _bottomTitles(days)),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) =>
+                  Text(value.round().toString(), style: Theme.of(context).textTheme.bodySmall),
+            ),
+          ),
         ),
-        gridData: const FlGridData(drawVerticalLine: false),
+        gridData: FlGridData(
+          drawVerticalLine: false,
+          horizontalInterval: maxY / 4,
+          getDrawingHorizontalLine: (value) =>
+              FlLine(color: colorScheme.outlineVariant.withValues(alpha: 0.3), strokeWidth: 1),
+        ),
         borderData: FlBorderData(show: false),
         extraLinesData: target != null
             ? ExtraLinesData(
                 horizontalLines: [
                   HorizontalLine(
                     y: target!,
-                    color: Theme.of(context).colorScheme.tertiary,
+                    color: colorScheme.tertiary,
                     strokeWidth: 2,
                     dashArray: [6, 4],
                   ),
@@ -146,7 +190,16 @@ class _IntakeChart extends StatelessWidget {
             BarChartGroupData(
               x: i,
               barRods: [
-                BarChartRodData(toY: history[days[i]] ?? 0, color: color, width: _barWidth(days.length)),
+                BarChartRodData(
+                  toY: history[days[i]] ?? 0,
+                  width: _barWidth(days.length),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.6)],
+                  ),
+                ),
               ],
             ),
         ],
@@ -170,8 +223,9 @@ class _DeficitChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final positiveColor = Colors.green;
-    final negativeColor = Theme.of(context).colorScheme.error;
+    final colorScheme = Theme.of(context).colorScheme;
+    final positiveColor = const Color(0xFF1FAE7E);
+    final negativeColor = colorScheme.error;
 
     // Same "eat back exercise calories" model as the food log screen:
     // deficit = TDEE + exercise burned - intake.
@@ -181,6 +235,8 @@ class _DeficitChart extends StatelessWidget {
     final maxAbs = deficits.map((v) => v.abs()).fold<double>(100, (a, b) => a > b ? a : b);
 
     return BarChart(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
       BarChartData(
         maxY: maxAbs * 1.2,
         minY: -maxAbs * 1.2,
@@ -189,9 +245,20 @@ class _DeficitChart extends StatelessWidget {
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(sideTitles: _bottomTitles(days)),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) =>
+                  Text(value.round().toString(), style: Theme.of(context).textTheme.bodySmall),
+            ),
+          ),
         ),
-        gridData: const FlGridData(drawVerticalLine: false),
+        gridData: FlGridData(
+          drawVerticalLine: false,
+          getDrawingHorizontalLine: (value) =>
+              FlLine(color: colorScheme.outlineVariant.withValues(alpha: 0.3), strokeWidth: 1),
+        ),
         borderData: FlBorderData(show: false),
         barGroups: [
           for (var i = 0; i < days.length; i++)
@@ -200,8 +267,12 @@ class _DeficitChart extends StatelessWidget {
               barRods: [
                 BarChartRodData(
                   toY: deficits[i],
-                  color: deficits[i] >= 0 ? positiveColor : negativeColor,
                   width: _barWidth(days.length),
+                  borderRadius: BorderRadius.vertical(
+                    top: deficits[i] >= 0 ? const Radius.circular(6) : Radius.zero,
+                    bottom: deficits[i] < 0 ? const Radius.circular(6) : Radius.zero,
+                  ),
+                  color: deficits[i] >= 0 ? positiveColor : negativeColor,
                 ),
               ],
             ),

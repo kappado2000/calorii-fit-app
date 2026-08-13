@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/user_profile.dart';
@@ -53,7 +54,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   void _next() {
     if (_page < _totalPages - 1) {
-      _pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+      _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
     } else {
       _finish();
     }
@@ -61,7 +62,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   void _back() {
     if (_page > 0) {
-      _pageController.previousPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+      _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
     }
   }
 
@@ -86,16 +87,36 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         leading: _page > 0
-            ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: _back)
+            ? IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: _back)
             : null,
-        title: Text('Pasul ${_page + 1} din $_totalPages'),
       ),
       body: Column(
         children: [
-          LinearProgressIndicator(value: (_page + 1) / _totalPages),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              children: [
+                for (var i = 0; i < _totalPages; i++) ...[
+                  if (i > 0) const SizedBox(width: 6),
+                  Expanded(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: i <= _page ? colorScheme.primary : colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
           Expanded(
             child: PageView(
               controller: _pageController,
@@ -135,7 +156,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : Text(_page == _totalPages - 1 ? 'Finalizează' : 'Continuă'),
               ),
@@ -148,23 +169,32 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 }
 
 class _StepScaffold extends StatelessWidget {
-  const _StepScaffold({required this.title, required this.children});
+  const _StepScaffold({required this.title, required this.icon, required this.children});
 
   final String title;
+  final IconData icon;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(color: colorScheme.primaryContainer, shape: BoxShape.circle),
+            child: Icon(icon, color: colorScheme.onPrimaryContainer, size: 30),
+          ).animate().scale(duration: 350.ms, curve: Curves.easeOutBack),
+          const SizedBox(height: 20),
           Text(title, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           ...children,
         ],
-      ),
+      ).animate().fadeIn(duration: 300.ms).slideX(begin: 0.03, end: 0),
     );
   }
 }
@@ -186,6 +216,7 @@ class _AgeSexStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return _StepScaffold(
       title: 'Câțiva ani și sexul biologic',
+      icon: Icons.cake_rounded,
       children: [
         TextField(
           controller: ageController,
@@ -227,6 +258,7 @@ class _HeightWeightStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return _StepScaffold(
       title: 'Înălțime și greutate actuală',
+      icon: Icons.straighten_rounded,
       children: [
         TextField(
           controller: heightController,
@@ -254,8 +286,10 @@ class _ActivityStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return _StepScaffold(
       title: 'Nivel de activitate fizică',
+      icon: Icons.directions_run_rounded,
       children: [
         RadioGroup<ActivityLevel>(
           groupValue: activityLevel,
@@ -263,7 +297,20 @@ class _ActivityStep extends StatelessWidget {
           child: Column(
             children: [
               for (final level in ActivityLevel.values)
-                RadioListTile<ActivityLevel>(value: level, title: Text(level.label)),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: activityLevel == level
+                        ? colorScheme.primaryContainer
+                        : colorScheme.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: RadioListTile<ActivityLevel>(
+                    value: level,
+                    title: Text(level.label),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                ),
             ],
           ),
         ),
@@ -289,6 +336,7 @@ class _GoalStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return _StepScaffold(
       title: 'Care e obiectivul tău?',
+      icon: Icons.flag_rounded,
       children: [
         SegmentedButton<Goal>(
           segments: Goal.values.map((g) => ButtonSegment(value: g, label: Text(g.label))).toList(),

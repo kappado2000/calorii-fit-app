@@ -1,5 +1,6 @@
 import 'package:depth_capture/depth_capture.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/meal_type.dart';
@@ -107,13 +108,16 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
             child: _items.isEmpty
                 ? const _NoItemsLeftMessage()
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     itemCount: _items.length,
                     itemBuilder: (context, index) => _FoodItemCard(
-                      item: _items[index],
-                      onPortionFactorChanged: (factor) => _updatePortionFactor(index, factor),
-                      onRemove: () => _removeItem(index),
-                    ),
+                          item: _items[index],
+                          onPortionFactorChanged: (factor) => _updatePortionFactor(index, factor),
+                          onRemove: () => _removeItem(index),
+                        )
+                        .animate(delay: (60 * index).ms)
+                        .fadeIn(duration: 300.ms)
+                        .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic),
                   ),
           ),
           _SaveBar(
@@ -132,13 +136,27 @@ class _MixedPlateBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      color: Theme.of(context).colorScheme.tertiaryContainer,
-      padding: const EdgeInsets.all(12),
-      child: Text(
-        'Farfurie cu alimente amestecate — verifică fiecare element, identificarea poate fi mai puțin precisă.',
-        style: TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.auto_awesome_rounded, size: 18, color: colorScheme.onTertiaryContainer),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Farfurie cu alimente amestecate — verifică fiecare element, identificarea poate fi mai puțin precisă.',
+              style: TextStyle(color: colorScheme.onTertiaryContainer),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -190,7 +208,7 @@ class _FoodItemCard extends StatelessWidget {
                 _ConfidenceBadge(confidence: item.analyzed.confidence),
                 IconButton(
                   tooltip: 'Nu e pe farfurie — elimină',
-                  icon: const Icon(Icons.delete_outline),
+                  icon: const Icon(Icons.delete_outline_rounded),
                   onPressed: onRemove,
                 ),
               ],
@@ -210,9 +228,19 @@ class _FoodItemCard extends StatelessWidget {
                 ],
               ),
             ],
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${estimate.grams.round()} g · ${estimate.calories.round()} kcal',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ),
             const SizedBox(height: 8),
-            Text('${estimate.grams.round()} g · ${estimate.calories.round()} kcal'),
-            const SizedBox(height: 4),
             Wrap(
               spacing: 8,
               children: _portionPresets.entries
@@ -287,28 +315,35 @@ class _SaveBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                'Total: ${totalCalories.round()} kcal',
-                style: Theme.of(context).textTheme.titleMedium,
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4))],
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Total: ${totalCalories.round()} kcal',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
-            ),
-            FilledButton(
-              onPressed: (saving || onSave == null) ? null : onSave,
-              child: saving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Salvează'),
-            ),
-          ],
+              FilledButton(
+                onPressed: (saving || onSave == null) ? null : onSave,
+                child: saving
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text('Salvează'),
+              ),
+            ],
+          ),
         ),
       ),
     );

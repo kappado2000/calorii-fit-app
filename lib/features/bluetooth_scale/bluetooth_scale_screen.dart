@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'bluetooth_scale_providers.dart';
@@ -20,16 +21,33 @@ class BluetoothScaleScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton.extended(
               onPressed: () => ref.read(bluetoothScaleControllerProvider.notifier).startScan(),
-              icon: const Icon(Icons.bluetooth_searching),
+              icon: const Icon(Icons.bluetooth_searching_rounded),
               label: const Text('Caută cântare'),
             ),
     );
   }
 
   Widget _buildBody(BuildContext context, WidgetRef ref, BluetoothScaleState state) {
+    final colorScheme = Theme.of(context).colorScheme;
     return switch (state) {
-      ScaleScanIdle() => const Center(
-        child: Text('Apasă "Caută cântare" și pornește-ți cântarul lângă telefon.'),
+      ScaleScanIdle() => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(color: colorScheme.primaryContainer, shape: BoxShape.circle),
+              alignment: Alignment.center,
+              child: Icon(Icons.bluetooth_rounded, size: 40, color: colorScheme.onPrimaryContainer),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Apasă "Caută cântare" și pornește-ți cântarul lângă telefon.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
       ScaleScanning(:final devices) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,14 +66,17 @@ class BluetoothScaleScreen extends ConsumerWidget {
                       final name = result.device.platformName.isNotEmpty
                           ? result.device.platformName
                           : result.device.remoteId.str;
-                      return ListTile(
-                        leading: const Icon(Icons.monitor_weight_outlined),
-                        title: Text(name),
-                        subtitle: Text('RSSI ${result.rssi}'),
-                        onTap: () => ref
-                            .read(bluetoothScaleControllerProvider.notifier)
-                            .connectAndlisten(result.device),
-                      );
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: ListTile(
+                          leading: Icon(Icons.monitor_weight_outlined, color: colorScheme.primary),
+                          title: Text(name),
+                          subtitle: Text('RSSI ${result.rssi}'),
+                          onTap: () => ref
+                              .read(bluetoothScaleControllerProvider.notifier)
+                              .connectAndlisten(result.device),
+                        ),
+                      ).animate().fadeIn(duration: 250.ms);
                     },
                   ),
           ),
@@ -71,18 +92,23 @@ class BluetoothScaleScreen extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 56),
+            Icon(Icons.check_circle_rounded, color: colorScheme.primary, size: 64)
+                .animate()
+                .scale(duration: 400.ms, curve: Curves.easeOutBack),
             const SizedBox(height: 12),
-            Text('${weightKg.toStringAsFixed(1)} kg', style: Theme.of(context).textTheme.headlineMedium),
+            Text(
+              '${weightKg.toStringAsFixed(1)} kg',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+            ),
             const SizedBox(height: 4),
-            const Text('Greutate salvată.'),
+            Text('Greutate salvată.', style: TextStyle(color: colorScheme.onSurfaceVariant)),
           ],
         ),
       ),
       ScaleError(:final message) => Center(
         child: Text(
           'Eroare: $message',
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
+          style: TextStyle(color: colorScheme.error),
           textAlign: TextAlign.center,
         ),
       ),
