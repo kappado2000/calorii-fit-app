@@ -45,6 +45,15 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
     });
   }
 
+  /// The model sometimes reports an item that isn't actually on the plate
+  /// (a hallucinated identification, usually at lower confidence) — this is
+  /// exactly the kind of mistake the mandatory confirmation step exists to
+  /// catch, so the user must be able to reject an item outright, not just
+  /// resize one that was correctly identified.
+  void _removeItem(int index) {
+    setState(() => _items.removeAt(index));
+  }
+
   double get _totalCalories => _items.fold(0, (sum, item) => sum + item.estimate.calories);
 
   Future<void> _save() async {
@@ -95,16 +104,23 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _items.length,
-              itemBuilder: (context, index) => _FoodItemCard(
-                item: _items[index],
-                onPortionFactorChanged: (factor) => _updatePortionFactor(index, factor),
-              ),
-            ),
+            child: _items.isEmpty
+                ? const _NoItemsLeftMessage()
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _items.length,
+                    itemBuilder: (context, index) => _FoodItemCard(
+                      item: _items[index],
+                      onPortionFactorChanged: (factor) => _updatePortionFactor(index, factor),
+                      onRemove: () => _removeItem(index),
+                    ),
+                  ),
           ),
-          _SaveBar(totalCalories: _totalCalories, saving: _saving, onSave: _save),
+          _SaveBar(
+            totalCalories: _totalCalories,
+            saving: _saving,
+            onSave: _items.isEmpty ? null : _save,
+          ),
         ],
       ),
     );
@@ -128,11 +144,30 @@ class _MixedPlateBanner extends StatelessWidget {
   }
 }
 
+class _NoItemsLeftMessage extends StatelessWidget {
+  const _NoItemsLeftMessage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          'Ai eliminat toate elementele identificate. Fotografiază din nou dacă vrei să reîncerci.',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ),
+    );
+  }
+}
+
 class _FoodItemCard extends StatelessWidget {
-  const _FoodItemCard({required this.item, required this.onPortionFactorChanged});
+  const _FoodItemCard({required this.item, required this.onPortionFactorChanged, required this.onRemove});
 
   final ConfirmationItem item;
   final ValueChanged<double> onPortionFactorChanged;
+  final VoidCallback onRemove;
 
   static const _portionPresets = {'Mic': 0.7, 'Mediu': 1.0, 'Mare': 1.4};
 
@@ -153,6 +188,11 @@ class _FoodItemCard extends StatelessWidget {
                   child: Text(item.analyzed.label, style: Theme.of(context).textTheme.titleMedium),
                 ),
                 _ConfidenceBadge(confidence: item.analyzed.confidence),
+                IconButton(
+                  tooltip: 'Nu e pe farfurie — elimină',
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: onRemove,
+                ),
               ],
             ),
             if (estimate.isRoughEstimate) ...[
@@ -243,7 +283,7 @@ class _SaveBar extends StatelessWidget {
 
   final double totalCalories;
   final bool saving;
-  final VoidCallback onSave;
+  final VoidCallback? onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +299,7 @@ class _SaveBar extends StatelessWidget {
               ),
             ),
             FilledButton(
-              onPressed: saving ? null : onSave,
+              onPressed: (saving || onSave == null) ? null : onSave,
               child: saving
                   ? const SizedBox(
                       width: 20,
