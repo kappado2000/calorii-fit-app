@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/models/user_profile.dart';
 import '../profile/profile_providers.dart';
@@ -111,8 +112,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       programStartDate: _existingProgramStartDate ?? DateTime.now(),
     );
     await ref.read(profileControllerProvider).saveProfile(profile);
-    // No navigation needed — app_router's redirect reacts to
-    // userProfileProvider automatically once the write lands.
+    // The router no longer auto-redirects away from /onboarding once a
+    // profile exists (that's what makes deliberate editing reachable at
+    // all — see app_router.dart) — so returning to the food log after a
+    // save, whether this was first-time setup or an edit, is now this
+    // screen's job. go() rather than pop(): first-time onboarding has no
+    // back-stack entry to pop (it's the router's forced redirect target).
+    if (mounted) context.go('/');
   }
 
   @override
