@@ -18,6 +18,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(dailyCalorieHistoryProvider(_period));
+    final burnedHistory = ref.watch(dailyBurnedHistoryProvider(_period)).valueOrNull ?? {};
     final tdee = ref.watch(tdeeResultProvider);
     final profile = ref.watch(userProfileProvider).valueOrNull;
 
@@ -71,7 +72,12 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                         const SizedBox(height: 8),
                         SizedBox(
                           height: 220,
-                          child: _DeficitChart(days: days, history: history, tdee: tdeeValue),
+                          child: _DeficitChart(
+                            days: days,
+                            history: history,
+                            burnedHistory: burnedHistory,
+                            tdee: tdeeValue,
+                          ),
                         ),
                       ],
                     ),
@@ -150,10 +156,16 @@ class _IntakeChart extends StatelessWidget {
 }
 
 class _DeficitChart extends StatelessWidget {
-  const _DeficitChart({required this.days, required this.history, required this.tdee});
+  const _DeficitChart({
+    required this.days,
+    required this.history,
+    required this.burnedHistory,
+    required this.tdee,
+  });
 
   final List<DateTime> days;
   final Map<DateTime, double> history;
+  final Map<DateTime, double> burnedHistory;
   final double? tdee;
 
   @override
@@ -161,7 +173,11 @@ class _DeficitChart extends StatelessWidget {
     final positiveColor = Colors.green;
     final negativeColor = Theme.of(context).colorScheme.error;
 
-    final deficits = days.map((d) => (tdee ?? 0) - (history[d] ?? 0)).toList();
+    // Same "eat back exercise calories" model as the food log screen:
+    // deficit = TDEE + exercise burned - intake.
+    final deficits = days
+        .map((d) => (tdee ?? 0) + (burnedHistory[d] ?? 0) - (history[d] ?? 0))
+        .toList();
     final maxAbs = deficits.map((v) => v.abs()).fold<double>(100, (a, b) => a > b ? a : b);
 
     return BarChart(

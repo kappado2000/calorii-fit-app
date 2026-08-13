@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
+import '../../data/models/workout_entry.dart';
+import '../../domain/usecases/met_calorie_estimator.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../../shared_widgets/animated_gauge.dart';
 import '../activity_sync/activity_sync_screen.dart';
@@ -12,6 +14,8 @@ import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
 import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
+import '../workout_log/add_workout_sheet.dart';
+import '../workout_log/workout_log_providers.dart';
 import 'add_food_entry_sheet.dart';
 import 'food_log_providers.dart';
 
@@ -23,6 +27,8 @@ class FoodLogScreen extends ConsumerWidget {
     final today = normalizeDate(DateTime.now());
     final entries = ref.watch(dailyLogProvider(today));
     final totalCalories = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
+    final workouts = ref.watch(workoutLogProvider(today));
+    final totalBurned = workouts.fold<double>(0, (sum, workout) => sum + workout.caloriesBurned);
     final tdee = ref.watch(tdeeResultProvider);
 
     return Scaffold(
@@ -72,7 +78,7 @@ class FoodLogScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _DailyProgressCard(totalCalories: totalCalories, tdee: tdee),
+          _DailyProgressCard(totalCalories: totalCalories, totalBurned: totalBurned, tdee: tdee),
           const SizedBox(height: 16),
           for (final mealType in MealType.values) ...[
             _MealSection(
@@ -83,6 +89,7 @@ class FoodLogScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
           ],
+          _WorkoutSection(date: today, workouts: workouts, totalBurned: totalBurned),
         ],
       ),
     );
@@ -107,9 +114,10 @@ const _romanianMonths = [
 String _formatDateRo(DateTime date) => '${date.day} ${_romanianMonths[date.month - 1]}';
 
 class _DailyProgressCard extends StatelessWidget {
-  const _DailyProgressCard({required this.totalCalories, required this.tdee});
+  const _DailyProgressCard({required this.totalCalories, required this.totalBurned, required this.tdee});
 
   final double totalCalories;
+  final double totalBurned;
   final TdeeResult? tdee;
 
   @override
@@ -144,10 +152,15 @@ class _DailyProgressCard extends StatelessWidget {
       );
     }
 
-    final target = tdee!.calorieTarget;
-    final progress = target > 0 ? totalCalories / target : 0.0;
-    final remaining = target - totalCalories;
+    // Exercise beyond the baseline activity level "earns back" extra
+    // calories for the day — the same "eat back exercise calories" model
+    // used by mainstream trackers, layered on top of the activity-level
+    // multiplier already baked into TDEE.
+    final adjustedTarget = tdee!.calorieTarget + totalBurned;
+    final progress = adjustedTarget > 0 ? totalCalories / adjustedTarget : 0.0;
+    final remaining = adjustedTarget - totalCalories;
     final isOverTarget = remaining < 0;
+    final trueDeficit = tdee!.tdee + totalBurned - totalCalories;
 
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
@@ -168,7 +181,12 @@ class _DailyProgressCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Țintă: ${target.round()} kcal', style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    totalBurned > 0
+                        ? 'Țintă: ${adjustedTarget.round()} kcal (+${totalBurned.round()} din sport)'
+                        : 'Țintă: ${adjustedTarget.round()} kcal',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     isOverTarget
@@ -178,7 +196,7 @@ class _DailyProgressCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Deficit caloric azi: ${(tdee!.tdee - totalCalories).round()} kcal',
+                    'Deficit caloric azi: ${trueDeficit.round()} kcal',
                     style: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -261,5 +279,57 @@ class _MealSection extends ConsumerWidget {
 
   String _formatGrams(double grams) {
     return grams == grams.roundToDouble() ? grams.toStringAsFixed(0) : grams.toString();
+  }
+}
+
+class _WorkoutSection extends ConsumerWidget {
+  const _WorkoutSection({required this.date, required this.workouts, required this.totalBurned});
+
+  final DateTime date;
+  final List<WorkoutEntry> workouts;
+  final double totalBurned;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.fitness_center),
+              title: Text('Activitate sportivă', style: Theme.of(context).textTheme.titleMedium),
+              trailing: Text('${totalBurned.round()} kcal arse'),
+            ),
+            for (final workout in workouts)
+              ListTile(
+                dense: true,
+                title: Text(workout.activityType.label),
+                subtitle: Text('${workout.duration.inMinutes} min'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('${workout.caloriesBurned.round()} kcal'),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 18),
+                      onPressed: () =>
+                          ref.read(workoutLogProvider(date).notifier).removeWorkout(workout.id),
+                    ),
+                  ],
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: TextButton.icon(
+                onPressed: () => AddWorkoutSheet.show(context, date: date),
+                icon: const Icon(Icons.add),
+                label: const Text('Adaugă activitate'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
