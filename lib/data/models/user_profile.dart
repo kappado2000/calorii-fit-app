@@ -1,0 +1,105 @@
+enum Sex { male, female }
+
+enum ActivityLevel { sedentary, light, moderate, active, veryActive }
+
+extension ActivityLevelLabel on ActivityLevel {
+  String get label {
+    switch (this) {
+      case ActivityLevel.sedentary:
+        return 'Sedentar (muncă de birou, fără sport)';
+      case ActivityLevel.light:
+        return 'Activitate ușoară (sport 1-3 zile/săpt.)';
+      case ActivityLevel.moderate:
+        return 'Activitate moderată (sport 3-5 zile/săpt.)';
+      case ActivityLevel.active:
+        return 'Activ (sport 6-7 zile/săpt.)';
+      case ActivityLevel.veryActive:
+        return 'Foarte activ (sport intens zilnic / muncă fizică)';
+    }
+  }
+
+  /// Standard Mifflin-St Jeor activity multipliers.
+  double get factor {
+    switch (this) {
+      case ActivityLevel.sedentary:
+        return 1.2;
+      case ActivityLevel.light:
+        return 1.375;
+      case ActivityLevel.moderate:
+        return 1.55;
+      case ActivityLevel.active:
+        return 1.725;
+      case ActivityLevel.veryActive:
+        return 1.9;
+    }
+  }
+}
+
+enum Goal { lose, maintain, gain }
+
+extension GoalLabel on Goal {
+  String get label {
+    switch (this) {
+      case Goal.lose:
+        return 'Slăbit';
+      case Goal.maintain:
+        return 'Menținere';
+      case Goal.gain:
+        return 'Masă musculară';
+    }
+  }
+}
+
+class UserProfile {
+  const UserProfile({
+    required this.heightCm,
+    required this.weightKg,
+    required this.age,
+    required this.sex,
+    required this.activityLevel,
+    required this.goal,
+    required this.targetRateKgPerWeek,
+    required this.programStartDate,
+  });
+
+  final double heightCm;
+  final double weightKg;
+  final int age;
+  final Sex sex;
+  final ActivityLevel activityLevel;
+  final Goal goal;
+
+  /// Positive number of kg/week — direction is implied by [goal].
+  final double targetRateKgPerWeek;
+
+  /// Set once, the first time the profile is created — the anchor date
+  /// for "since the weight-loss program started" charts.
+  final DateTime programStartDate;
+
+  Map<String, dynamic> toJson() => {
+    'heightCm': heightCm,
+    'weightKg': weightKg,
+    'age': age,
+    'sex': sex.name,
+    'activityLevel': activityLevel.name,
+    'goal': goal.name,
+    'targetRateKgPerWeek': targetRateKgPerWeek,
+    'programStartDate': programStartDate.toIso8601String(),
+  };
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      heightCm: (json['heightCm'] as num).toDouble(),
+      weightKg: (json['weightKg'] as num).toDouble(),
+      age: json['age'] as int,
+      sex: Sex.values.firstWhere((s) => s.name == json['sex'], orElse: () => Sex.female),
+      activityLevel: ActivityLevel.values.firstWhere(
+        (a) => a.name == json['activityLevel'],
+        orElse: () => ActivityLevel.sedentary,
+      ),
+      goal: Goal.values.firstWhere((g) => g.name == json['goal'], orElse: () => Goal.maintain),
+      targetRateKgPerWeek: (json['targetRateKgPerWeek'] as num).toDouble(),
+      programStartDate: DateTime.parse(json['programStartDate'] as String),
+    );
+  }
+}

@@ -1,17 +1,63 @@
-// Basic smoke test: verifies a signed-in user sees the food log (home
-// screen as of Phase 1) with its three meal sections, without throwing.
+// Basic smoke test: verifies the auth/onboarding gate routes correctly —
+// signed out -> login, signed in without a profile -> onboarding, signed
+// in with a profile -> the food log home screen.
 
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:calorie_app/app.dart';
+import 'package:calorie_app/data/models/user_profile.dart';
 import 'package:calorie_app/features/auth/auth_providers.dart';
 import 'package:calorie_app/features/food_log/food_log_providers.dart';
 
 void main() {
-  testWidgets('CalorieApp shows the food log with all three meal sections when signed in', (
+  testWidgets('CalorieApp shows the food log with all meal sections for a user with a saved profile', (
+    WidgetTester tester,
+  ) async {
+    // Tall surface so every meal card (including the last, "Gustare") is
+    // actually mounted by the ListView's sliver viewport rather than left
+    // unbuilt below the default 600px test viewport.
+    tester.view.physicalSize = const Size(1080, 3400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
+    final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: true);
+    final fakeFirestore = FakeFirebaseFirestore();
+    final profile = UserProfile(
+      heightCm: 170,
+      weightKg: 70,
+      age: 30,
+      sex: Sex.female,
+      activityLevel: ActivityLevel.moderate,
+      goal: Goal.lose,
+      targetRateKgPerWeek: 0.5,
+      programStartDate: DateTime(2026, 1, 1),
+    );
+    await fakeFirestore.collection('users').doc('test-uid').set(profile.toJson());
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          firebaseAuthProvider.overrideWithValue(mockAuth),
+          firestoreProvider.overrideWithValue(fakeFirestore),
+        ],
+        child: const CalorieApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Dimineață'), findsOneWidget);
+    expect(find.text('Prânz'), findsOneWidget);
+    expect(find.text('Seară'), findsOneWidget);
+    expect(find.text('Gustare'), findsOneWidget);
+  });
+
+  testWidgets('CalorieApp sends a signed-in user with no saved profile to onboarding', (
     WidgetTester tester,
   ) async {
     final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
@@ -29,10 +75,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Dimineață'), findsOneWidget);
-    expect(find.text('Prânz'), findsOneWidget);
-    expect(find.text('Seară'), findsOneWidget);
-    expect(find.text('Total azi'), findsOneWidget);
+    expect(find.text('Câțiva ani și sexul biologic'), findsOneWidget);
   });
 
   testWidgets('CalorieApp shows the login screen when signed out', (WidgetTester tester) async {

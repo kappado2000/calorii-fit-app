@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
+import '../../domain/usecases/tdee_calculator.dart';
+import '../../shared_widgets/animated_gauge.dart';
 import '../auth/auth_providers.dart';
 import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
+import '../profile/profile_providers.dart';
+import '../progress/progress_screen.dart';
 import 'add_food_entry_sheet.dart';
 import 'food_log_providers.dart';
 
@@ -17,14 +22,25 @@ class FoodLogScreen extends ConsumerWidget {
     final today = normalizeDate(DateTime.now());
     final entries = ref.watch(dailyLogProvider(today));
     final totalCalories = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
+    final tdee = ref.watch(tdeeResultProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Calorii Fit — ${_formatDateRo(today)}'),
         actions: [
+          IconButton(
+            tooltip: 'Progres',
+            icon: const Icon(Icons.show_chart),
+            onPressed: () =>
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProgressScreen())),
+          ),
           PopupMenuButton<VoidCallback>(
             onSelected: (action) => action(),
             itemBuilder: (context) => [
+              PopupMenuItem(
+                value: () => context.push('/onboarding'),
+                child: const Text('Editează profil/obiectiv'),
+              ),
               PopupMenuItem(
                 value: () => Navigator.of(
                   context,
@@ -48,13 +64,14 @@ class FoodLogScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _DailyTotalCard(totalCalories: totalCalories),
+          _DailyProgressCard(totalCalories: totalCalories, tdee: tdee),
           const SizedBox(height: 16),
           for (final mealType in MealType.values) ...[
             _MealSection(
               mealType: mealType,
               date: today,
               entries: entries.where((entry) => entry.mealType == mealType).toList(),
+              dailyTarget: tdee?.calorieTarget,
             ),
             const SizedBox(height: 12),
           ],
@@ -81,24 +98,85 @@ const _romanianMonths = [
 
 String _formatDateRo(DateTime date) => '${date.day} ${_romanianMonths[date.month - 1]}';
 
-class _DailyTotalCard extends StatelessWidget {
-  const _DailyTotalCard({required this.totalCalories});
+class _DailyProgressCard extends StatelessWidget {
+  const _DailyProgressCard({required this.totalCalories, required this.tdee});
 
   final double totalCalories;
+  final TdeeResult? tdee;
 
   @override
   Widget build(BuildContext context) {
+    if (tdee == null) {
+      return Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Total azi', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    '${totalCalories.round()} kcal',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              FilledButton(
+                onPressed: () => context.push('/onboarding'),
+                child: const Text('Setează obiectiv'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final target = tdee!.calorieTarget;
+    final progress = target > 0 ? totalCalories / target : 0.0;
+    final remaining = target - totalCalories;
+    final isOverTarget = remaining < 0;
+
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Total azi', style: Theme.of(context).textTheme.titleMedium),
-            Text(
-              '${totalCalories.round()} kcal',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            AnimatedGauge(
+              value: progress,
+              size: 100,
+              centerText: '${totalCalories.round()}',
+              centerSubtext: 'kcal',
+              color: isOverTarget ? Theme.of(context).colorScheme.error : null,
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Țintă: ${target.round()} kcal', style: Theme.of(context).textTheme.bodyMedium),
+                  const SizedBox(height: 4),
+                  Text(
+                    isOverTarget
+                        ? 'Peste țintă cu ${(-remaining).round()} kcal'
+                        : '${remaining.round()} kcal rămase',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Deficit caloric azi: ${(tdee!.tdee - totalCalories).round()} kcal',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -108,15 +186,22 @@ class _DailyTotalCard extends StatelessWidget {
 }
 
 class _MealSection extends ConsumerWidget {
-  const _MealSection({required this.mealType, required this.date, required this.entries});
+  const _MealSection({
+    required this.mealType,
+    required this.date,
+    required this.entries,
+    required this.dailyTarget,
+  });
 
   final MealType mealType;
   final DateTime date;
   final List<FoodLogEntry> entries;
+  final double? dailyTarget;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final subtotal = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
+    final mealTarget = dailyTarget != null ? dailyTarget! * mealType.dailyShare : null;
 
     return Card(
       child: Padding(
@@ -125,6 +210,14 @@ class _MealSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ListTile(
+              leading: mealTarget != null
+                  ? AnimatedGauge(
+                      value: subtotal / mealTarget,
+                      size: 44,
+                      strokeWidth: 5,
+                      centerText: '',
+                    )
+                  : null,
               title: Text(mealType.label, style: Theme.of(context).textTheme.titleMedium),
               trailing: Text('${subtotal.round()} kcal'),
             ),

@@ -34,4 +34,27 @@ class FoodLogFirestoreDataSource {
   }
 
   Future<void> delete(String id) => _collection.doc(id).delete();
+
+  /// Total calories per day within [start, end] (inclusive of both ends'
+  /// calendar days) — the aggregation the progress chart needs, computed
+  /// client-side since Firestore has no server-side GROUP BY.
+  Stream<Map<DateTime, double>> watchDailyTotalsForRange(DateTime start, DateTime end) {
+    final rangeStart = Timestamp.fromDate(DateTime(start.year, start.month, start.day));
+    final rangeEnd = Timestamp.fromDate(DateTime(end.year, end.month, end.day).add(const Duration(days: 1)));
+    return _collection
+        .where('date', isGreaterThanOrEqualTo: rangeStart)
+        .where('date', isLessThan: rangeEnd)
+        .snapshots()
+        .map((snapshot) {
+          final totals = <DateTime, double>{};
+          for (final doc in snapshot.docs) {
+            final data = doc.data();
+            final date = (data['date'] as Timestamp).toDate();
+            final normalized = DateTime(date.year, date.month, date.day);
+            final entry = FoodLogEntry.fromJson({...data, 'id': doc.id});
+            totals[normalized] = (totals[normalized] ?? 0) + entry.calories;
+          }
+          return totals;
+        });
+  }
 }

@@ -9,7 +9,7 @@ import '../../data/datasources/remote/firestore/food_log_firestore_datasource.da
 import '../../data/models/custom_food.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
-import '../auth/auth_providers.dart';
+import '../auth/uid_provider.dart';
 
 const _uuid = Uuid();
 
@@ -18,26 +18,6 @@ DateTime normalizeDate(DateTime date) => DateTime(date.year, date.month, date.da
 /// Overridable in tests (e.g. with FakeFirebaseFirestore) rather than
 /// reaching for FirebaseFirestore.instance directly in the providers below.
 final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
-
-/// The food log / custom foods screens are only ever shown while signed in
-/// (see routing/app_router.dart's redirect), so a null uid here means this
-/// provider was built outside that guarantee — worth failing loudly rather
-/// than silently reading/writing nothing.
-///
-/// Watches authStateChangesProvider (for reactive rebuilds on sign-in/out),
-/// but falls back to the synchronous `currentUser` getter when that
-/// StreamProvider hasn't delivered its first event yet — otherwise there's
-/// a real race on cold start: go_router's redirect already used the
-/// synchronous `currentUser` to route here, but the stream-based value can
-/// still be AsyncLoading on the very first frame.
-final _uidProvider = Provider<String>((ref) {
-  final streamUid = ref.watch(authStateChangesProvider).valueOrNull?.uid;
-  final uid = streamUid ?? ref.watch(firebaseAuthProvider).currentUser?.uid;
-  if (uid == null) {
-    throw StateError('food_log_providers read without an authenticated user');
-  }
-  return uid;
-});
 
 class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
   CustomFoodsNotifier(this._dataSource) : super([]) {
@@ -70,7 +50,7 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
 }
 
 final customFoodsProvider = StateNotifierProvider<CustomFoodsNotifier, List<CustomFood>>((ref) {
-  final uid = ref.watch(_uidProvider);
+  final uid = ref.watch(currentUidProvider);
   return CustomFoodsNotifier(CustomFoodsFirestoreDataSource(ref.watch(firestoreProvider), uid));
 });
 
@@ -110,7 +90,7 @@ class DailyLogNotifier extends StateNotifier<List<FoodLogEntry>> {
 
 final dailyLogProvider =
     StateNotifierProvider.family<DailyLogNotifier, List<FoodLogEntry>, DateTime>((ref, date) {
-      final uid = ref.watch(_uidProvider);
+      final uid = ref.watch(currentUidProvider);
       return DailyLogNotifier(
         FoodLogFirestoreDataSource(ref.watch(firestoreProvider), uid),
         normalizeDate(date),
