@@ -25,70 +25,96 @@ interface SearchFoodsResult {
   products: FoodProductResult[];
 }
 
-interface OffProduct {
+interface OffHit {
   code?: string;
   product_name?: string;
   product_name_ro?: string;
-  brands?: string;
-  image_small_url?: string;
+  brands?: string[];
   nutriments?: Record<string, number | string | undefined>;
 }
 
 interface OffSearchResponse {
-  products?: OffProduct[];
+  hits?: OffHit[];
 }
 
 /**
- * Open Food Facts is a free, open, no-API-key nutrition database covering
- * both foods AND beverages worldwide — exactly the "toate alimentele si
- * bauturile din comert" lookup the user asked for. We only ever ask it for
- * products that carry a usable kcal/100g value; anything else is useless
- * for calorie tracking and is filtered out rather than shown with a blank
- * calorie field.
+ * search.openfoodfacts.org (search-a-licious) — the actively maintained
+ * search API, covering both foods AND beverages worldwide. The legacy
+ * world.openfoodfacts.org/cgi/search.pl endpoint used previously turned out
+ * to be flaky/intermittently down (confirmed live: a "temporarily
+ * unavailable" response mid-session), which is the real reason searches were
+ * unreliable, not just a relevance problem.
  *
- * Deliberately NOT filtering by cc=ro (country) — most products in OFF,
- * including beverages sold in Romania, aren't consistently tagged with a
- * country, so that filter cut the result pool down to a small fraction of
- * what's actually available. lc=ro only affects which language the returned
- * name is in when available, not which products match.
+ * Deliberately not scoping the query to a specific field (e.g.
+ * product_name_ro) — most products, including ones sold in Romania, don't
+ * have a populated Romanian name, so a language-scoped field match misses
+ * the vast majority of real products. Plain full-text `q` searches product
+ * name, brand, categories and ingredients together, which is broader but
+ * necessarily less precise — reranked below to compensate.
  */
 function buildSearchUrl(query: string): string {
   const params = new URLSearchParams({
-    search_terms: query,
-    search_simple: "1",
-    action: "process",
-    json: "1",
+    q: query,
     page_size: "50",
-    lc: "ro",
-    fields: "code,product_name,product_name_ro,brands,nutriments,image_small_url",
+    langs: "ro",
   });
-  return `https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`;
+  return `https://search.openfoodfacts.org/search?${params.toString()}`;
 }
 
-function toResult(product: OffProduct): FoodProductResult | null {
-  const name = (product.product_name_ro || product.product_name || "").trim();
+function toResult(hit: OffHit): FoodProductResult | null {
+  const name = (hit.product_name_ro || hit.product_name || "").trim();
   if (!name) return null;
 
-  const nutriments = product.nutriments ?? {};
-  const kcal = numberOrNull(nutriments["energy-kcal_100g"]);
+  const nutriments = hit.nutriments ?? {};
+  const kcal = kcalPer100g(nutriments);
   if (kcal === null || kcal <= 0) return null;
 
   return {
-    barcode: product.code ?? null,
+    barcode: hit.code ?? null,
     name,
-    brand: product.brands?.split(",")[0]?.trim() || null,
+    brand: hit.brands?.[0]?.trim() || null,
     kcalPer100g: kcal,
     proteinPer100g: numberOrNull(nutriments["proteins_100g"]),
     carbsPer100g: numberOrNull(nutriments["carbohydrates_100g"]),
     fatPer100g: numberOrNull(nutriments["fat_100g"]),
-    imageUrl: product.image_small_url ?? null,
+    // This API's image field is a nested per-crop/per-size object rather
+    // than a ready-made URL — not worth reconstructing since the app
+    // doesn't render a product image in the search results list today.
+    imageUrl: null,
   };
+}
+
+/** Falls back to computing kcal from kJ — many hits only carry the kJ field. */
+function kcalPer100g(nutriments: Record<string, number | string | undefined>): number | null {
+  const kcal = numberOrNull(nutriments["energy-kcal_100g"]);
+  if (kcal !== null) return kcal;
+  const kj = numberOrNull(nutriments["energy-kj_100g"]);
+  return kj !== null ? kj / 4.184 : null;
 }
 
 function numberOrNull(value: number | string | undefined): number | null {
   if (value === undefined || value === null) return null;
   const num = typeof value === "number" ? value : Number(value);
   return Number.isFinite(num) ? num : null;
+}
+
+/**
+ * The API's own relevance ranking weighs popularity/completeness heavily,
+ * which routinely surfaces a product that merely *mentions* the query (e.g.
+ * crackers "cu vin alb") ahead of a product that actually *is* the thing
+ * searched for. A simple, robust correction: results whose own name starts
+ * with the query move to the front, in their original relative order;
+ * everything else keeps following after, also in original order. This is
+ * intentionally naive (no stemming/diacritic-folding) rather than a deeper
+ * relevance model — it fixes the common "generic descriptor" case without
+ * risking new false negatives from more aggressive matching.
+ */
+function rerankByNamePrefix(products: FoodProductResult[], query: string): FoodProductResult[] {
+  const normalizedQuery = query.trim().toLowerCase();
+  const startsWithQuery = (p: FoodProductResult) => p.name.trim().toLowerCase().startsWith(normalizedQuery);
+  const prefixMatches = products.filter(startsWithQuery);
+  const rest = products.filter((p) => !startsWithQuery(p));
+  return [...prefixMatches, ...rest];
 }
 
 /**
@@ -124,10 +150,12 @@ export const searchFoods = onCall<SearchFoodsRequest>(
     }
 
     const data = (await response.json()) as OffSearchResponse;
-    const products = (data.products ?? [])
-      .map(toResult)
-      .filter((p): p is FoodProductResult => p !== null)
-      .slice(0, 40);
+    const products = rerankByNamePrefix(
+      (data.hits ?? [])
+        .map(toResult)
+        .filter((p): p is FoodProductResult => p !== null),
+      query,
+    ).slice(0, 40);
 
     await cacheProducts(products);
 
