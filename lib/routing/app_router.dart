@@ -23,13 +23,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isOnOnboarding = state.matchedLocation == '/onboarding';
 
       if (!isSignedIn) return isOnLogin ? null : '/login';
-      if (isOnLogin) return '/';
 
-      if (refreshListenable.profileLoaded) {
-        if (!refreshListenable.hasProfile && !isOnOnboarding) return '/onboarding';
-        if (refreshListenable.hasProfile && isOnOnboarding) return '/';
+      // Signed in from here on. Don't special-case "just left /login" —
+      // that previously short-circuited straight to '/' before the
+      // profile check ever ran, so a brand-new signup could get stranded
+      // on the food log screen instead of being sent to onboarding.
+      if (!refreshListenable.profileLoaded) {
+        // Profile existence not known yet — park on '/' rather than
+        // leaving the user on the login screen once they're signed in;
+        // the food log screen already handles "no profile yet" gracefully.
+        return isOnLogin ? '/' : null;
       }
-      return null;
+
+      if (!refreshListenable.hasProfile) {
+        return isOnOnboarding ? null : '/onboarding';
+      }
+      return (isOnOnboarding || isOnLogin) ? '/' : null;
     },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const FoodLogScreen()),

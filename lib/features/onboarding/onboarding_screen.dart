@@ -106,8 +106,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ageController: _ageController,
                   sex: _sex,
                   onSexChanged: (sex) => setState(() => _sex = sex),
+                  onTextChanged: () => setState(() {}),
                 ),
-                _HeightWeightStep(heightController: _heightController, weightController: _weightController),
+                _HeightWeightStep(
+                  heightController: _heightController,
+                  weightController: _weightController,
+                  onTextChanged: () => setState(() {}),
+                ),
                 _ActivityStep(
                   activityLevel: _activityLevel,
                   onChanged: (level) => setState(() => _activityLevel = level),
@@ -116,6 +121,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   goal: _goal,
                   targetRateController: _targetRateController,
                   onGoalChanged: (goal) => setState(() => _goal = goal),
+                  onTextChanged: () => setState(() {}),
                 ),
               ],
             ),
@@ -164,11 +170,17 @@ class _StepScaffold extends StatelessWidget {
 }
 
 class _AgeSexStep extends StatelessWidget {
-  const _AgeSexStep({required this.ageController, required this.sex, required this.onSexChanged});
+  const _AgeSexStep({
+    required this.ageController,
+    required this.sex,
+    required this.onSexChanged,
+    required this.onTextChanged,
+  });
 
   final TextEditingController ageController;
   final Sex sex;
   final ValueChanged<Sex> onSexChanged;
+  final VoidCallback onTextChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +191,7 @@ class _AgeSexStep extends StatelessWidget {
           controller: ageController,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(labelText: 'Vârstă', suffixText: 'ani'),
+          onChanged: (_) => onTextChanged(),
         ),
         const SizedBox(height: 20),
         SegmentedButton<Sex>(
@@ -200,10 +213,15 @@ class _AgeSexStep extends StatelessWidget {
 }
 
 class _HeightWeightStep extends StatelessWidget {
-  const _HeightWeightStep({required this.heightController, required this.weightController});
+  const _HeightWeightStep({
+    required this.heightController,
+    required this.weightController,
+    required this.onTextChanged,
+  });
 
   final TextEditingController heightController;
   final TextEditingController weightController;
+  final VoidCallback onTextChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -214,12 +232,14 @@ class _HeightWeightStep extends StatelessWidget {
           controller: heightController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: const InputDecoration(labelText: 'Înălțime', suffixText: 'cm'),
+          onChanged: (_) => onTextChanged(),
         ),
         const SizedBox(height: 16),
         TextField(
           controller: weightController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: const InputDecoration(labelText: 'Greutate', suffixText: 'kg'),
+          onChanged: (_) => onTextChanged(),
         ),
       ],
     );
@@ -253,11 +273,17 @@ class _ActivityStep extends StatelessWidget {
 }
 
 class _GoalStep extends StatelessWidget {
-  const _GoalStep({required this.goal, required this.targetRateController, required this.onGoalChanged});
+  const _GoalStep({
+    required this.goal,
+    required this.targetRateController,
+    required this.onGoalChanged,
+    required this.onTextChanged,
+  });
 
   final Goal goal;
   final TextEditingController targetRateController;
   final ValueChanged<Goal> onGoalChanged;
+  final VoidCallback onTextChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -278,6 +304,7 @@ class _GoalStep extends StatelessWidget {
               labelText: goal == Goal.lose ? 'Ritm de slăbit dorit' : 'Ritm de creștere dorit',
               suffixText: 'kg/săptămână',
             ),
+            onChanged: (_) => onTextChanged(),
           ),
           const SizedBox(height: 8),
           Text(

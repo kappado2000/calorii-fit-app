@@ -12,7 +12,20 @@
           "package_name": "com.kappa.calorieapp.calorie_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "665086885932-unrqnv8scjlgame498ok95kpqr41mr41.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kappa.calorieapp.calorie_app",
+            "certificate_hash": "9952bd6bb8e5ac3ecaee8a8c6b4ddb2db9eabea9"
+          }
+        },
+        {
+          "client_id": "665086885932-d75frbljkhd2vaim3e1st44as2odnkh5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCB14_rp_F7P8xnwgH6RTcrWVaUIuPjSsU"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665086885932-d75frbljkhd2vaim3e1st44as2odnkh5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "665086885932-r6qsq0vko2c4ki3uga8tv2l4tp70p551.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kappa.calorieapp.calorieApp"
+              }
+            }
+          ]
         }
       }
     }
