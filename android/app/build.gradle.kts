@@ -9,7 +9,10 @@ plugins {
 
 android {
     namespace = "com.kappa.calorieapp.calorie_app"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler_android (pulled in for Health Connect/Bluetooth
+    // runtime permissions) requires compileSdk 37 — flutter.compileSdkVersion
+    // is capped at 36 for this Flutter version, so it's overridden explicitly.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -22,7 +25,9 @@ android {
         applicationId = "com.kappa.calorieapp.calorie_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // The `health` plugin (Health Connect sync) requires minSdk 26
+        // (Android 8.0) — raised from Flutter's default of 24.
+        minSdk = 26
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)

@@ -6,6 +6,7 @@ import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../../shared_widgets/animated_gauge.dart';
+import '../activity_sync/activity_sync_screen.dart';
 import '../auth/auth_providers.dart';
 import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
@@ -33,6 +34,13 @@ class FoodLogScreen extends ConsumerWidget {
             icon: const Icon(Icons.show_chart),
             onPressed: () =>
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProgressScreen())),
+          ),
+          IconButton(
+            tooltip: 'Activitate & sincronizare',
+            icon: const Icon(Icons.watch_outlined),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const ActivitySyncScreen())),
           ),
           PopupMenuButton<VoidCallback>(
             onSelected: (action) => action(),
