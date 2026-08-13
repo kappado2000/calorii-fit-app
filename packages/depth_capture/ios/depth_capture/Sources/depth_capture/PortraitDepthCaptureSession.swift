@@ -84,24 +84,32 @@ final class PortraitDepthCaptureSession: NSObject, AVCapturePhotoCaptureDelegate
       let converted = depthData.converting(toDepthDataType: kCVPixelFormatType_DepthFloat32)
       let depthMap = converted.depthDataMap
       let depthValues = LidarCaptureSession.extractDepthValuesMeters(depthMap)
+      let depthWidth = CVPixelBufferGetWidth(depthMap)
+      let depthHeight = CVPixelBufferGetHeight(depthMap)
 
-      // TODO(Phase 1 real-device validation): AVCameraCalibrationData's
-      // intrinsicMatrix is referenced against
-      // intrinsicMatrixReferenceDimensions, which may differ from the
-      // depth map's own pixel dimensions — needs a scale-factor correction
-      // (referenceDims -> depthMap dims) verified on real hardware before
-      // this path's volume math can be trusted at the same tier as LiDAR.
+      // Confirmed on real hardware (same bug as the LiDAR path, see its
+      // comment): AVCameraCalibrationData's intrinsicMatrix is referenced
+      // against intrinsicMatrixReferenceDimensions (the photo's resolution),
+      // not the depth map's own — must be rescaled into depth-map pixel
+      // space or the volume estimate comes out near-zero.
       let intrinsicMatrix = depthData.cameraCalibrationData?.intrinsicMatrix
+      let referenceDimensions = depthData.cameraCalibrationData?.intrinsicMatrixReferenceDimensions
+      let scaleX =
+        (referenceDimensions?.width ?? 0) > 0
+        ? Double(depthWidth) / Double(referenceDimensions!.width) : 1
+      let scaleY =
+        (referenceDimensions?.height ?? 0) > 0
+        ? Double(depthHeight) / Double(referenceDimensions!.height) : 1
       let outcome = CaptureOutcome(
         photoPath: path,
         depthSource: "portraitDualCamera",
-        depthWidth: CVPixelBufferGetWidth(depthMap),
-        depthHeight: CVPixelBufferGetHeight(depthMap),
+        depthWidth: depthWidth,
+        depthHeight: depthHeight,
         depthValuesMeters: depthValues,
-        focalLengthXPx: intrinsicMatrix.map { Double($0.columns.0.x) } ?? 0,
-        focalLengthYPx: intrinsicMatrix.map { Double($0.columns.1.y) } ?? 0,
-        principalPointXPx: intrinsicMatrix.map { Double($0.columns.2.x) } ?? 0,
-        principalPointYPx: intrinsicMatrix.map { Double($0.columns.2.y) } ?? 0
+        focalLengthXPx: intrinsicMatrix.map { Double($0.columns.0.x) * scaleX } ?? 0,
+        focalLengthYPx: intrinsicMatrix.map { Double($0.columns.1.y) * scaleY } ?? 0,
+        principalPointXPx: intrinsicMatrix.map { Double($0.columns.2.x) * scaleX } ?? 0,
+        principalPointYPx: intrinsicMatrix.map { Double($0.columns.2.y) * scaleY } ?? 0
       )
       handler(.success(outcome))
     } catch {

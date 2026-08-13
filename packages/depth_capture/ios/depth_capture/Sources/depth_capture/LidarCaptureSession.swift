@@ -56,19 +56,34 @@ final class LidarCaptureSession: NSObject, ARSessionDelegate {
   static func buildOutcome(frame: ARFrame, depthMap: CVPixelBuffer) throws -> CaptureOutcome {
     let photoPath = try savePhoto(pixelBuffer: frame.capturedImage)
     let depthValues = extractDepthValuesMeters(depthMap)
+    let depthWidth = CVPixelBufferGetWidth(depthMap)
+    let depthHeight = CVPixelBufferGetHeight(depthMap)
+
+    // frame.camera.intrinsics is reported relative to frame.camera.imageResolution
+    // (the captured photo's resolution, e.g. 1920x1440) — NOT sceneDepth.depthMap's
+    // resolution (e.g. 256x192, same aspect ratio but far fewer pixels). The volume
+    // calculator on the Dart side indexes depth values by depth-map pixel coordinates,
+    // so the intrinsics must be rescaled into that pixel space; otherwise every
+    // real-world-size-per-pixel computation downstream comes out wrong by the
+    // resolution ratio (squared, once for each spatial dimension), which is exactly
+    // what produced near-zero volume estimates on real hardware.
     // frame.camera.intrinsics is a simd_float3x3 in column-major order:
     // columns.0 = [fx, 0, 0], columns.1 = [0, fy, 0], columns.2 = [cx, cy, 1]
     let intrinsics = frame.camera.intrinsics
+    let referenceResolution = frame.camera.imageResolution
+    let scaleX = referenceResolution.width > 0 ? Double(depthWidth) / Double(referenceResolution.width) : 1
+    let scaleY = referenceResolution.height > 0 ? Double(depthHeight) / Double(referenceResolution.height) : 1
+
     return CaptureOutcome(
       photoPath: photoPath,
       depthSource: "lidar",
-      depthWidth: CVPixelBufferGetWidth(depthMap),
-      depthHeight: CVPixelBufferGetHeight(depthMap),
+      depthWidth: depthWidth,
+      depthHeight: depthHeight,
       depthValuesMeters: depthValues,
-      focalLengthXPx: Double(intrinsics.columns.0.x),
-      focalLengthYPx: Double(intrinsics.columns.1.y),
-      principalPointXPx: Double(intrinsics.columns.2.x),
-      principalPointYPx: Double(intrinsics.columns.2.y)
+      focalLengthXPx: Double(intrinsics.columns.0.x) * scaleX,
+      focalLengthYPx: Double(intrinsics.columns.1.y) * scaleY,
+      principalPointXPx: Double(intrinsics.columns.2.x) * scaleX,
+      principalPointYPx: Double(intrinsics.columns.2.y) * scaleY
     )
   }
 
