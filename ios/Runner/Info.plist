@@ -32,6 +32,8 @@
 	<string>Calorii Fit poate salva înregistrări de greutate în Apple Health.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Calorii Fit folosește Bluetooth pentru a se conecta la cântare inteligente.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Calorii Fit folosește camera pentru a fotografia farfuria și a estima caloriile din porție.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
