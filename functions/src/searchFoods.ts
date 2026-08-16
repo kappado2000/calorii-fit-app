@@ -1,6 +1,7 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { getFirestore } from "firebase-admin/firestore";
 import { getApps, initializeApp } from "firebase-admin/app";
+import { genericFoodsTable } from "./genericFoodsTable";
 
 if (getApps().length === 0) {
   initializeApp();
@@ -109,6 +110,43 @@ function numberOrNull(value: number | string | undefined): number | null {
  * relevance model — it fixes the common "generic descriptor" case without
  * risking new false negatives from more aggressive matching.
  */
+function foldDiacritics(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[ăâ]/g, "a")
+    .replace(/[î]/g, "i")
+    .replace(/[șş]/g, "s")
+    .replace(/[țţ]/g, "t");
+}
+
+/**
+ * Matches the curated staples table (see genericFoodsTable.ts) — every
+ * word in the query must appear somewhere in the item's name, diacritic- and
+ * case-insensitive, so "vin alb" or "vin rosu" (no diacritics typed) both
+ * match correctly. These are guaranteed-relevant, guaranteed-complete
+ * entries, so matches are always shown ahead of external results.
+ */
+function matchGenericFoodItems(query: string): FoodProductResult[] {
+  const queryWords = foldDiacritics(query).split(/\s+/).filter(Boolean);
+  if (queryWords.length === 0) return [];
+
+  return genericFoodsTable
+    .filter((item) => {
+      const normalizedName = foldDiacritics(item.name);
+      return queryWords.every((word) => normalizedName.includes(word));
+    })
+    .map((item) => ({
+      barcode: null,
+      name: item.name,
+      brand: null,
+      kcalPer100g: item.kcalPer100g,
+      proteinPer100g: item.proteinPer100g,
+      carbsPer100g: item.carbsPer100g,
+      fatPer100g: item.fatPer100g,
+      imageUrl: null,
+    }));
+}
+
 function rerankByNamePrefix(products: FoodProductResult[], query: string): FoodProductResult[] {
   const normalizedQuery = query.trim().toLowerCase();
   const startsWithQuery = (p: FoodProductResult) => p.name.trim().toLowerCase().startsWith(normalizedQuery);
@@ -144,18 +182,29 @@ export const searchFoods = onCall<SearchFoodsRequest>(
       throw new HttpsError("invalid-argument", "query must be at least 2 characters.");
     }
 
+    const genericMatches = matchGenericFoodItems(query);
+
     const response = await fetch(buildSearchUrl(query));
     if (!response.ok) {
       throw new HttpsError("unavailable", `Open Food Facts returned HTTP ${response.status}.`);
     }
 
     const data = (await response.json()) as OffSearchResponse;
-    const products = rerankByNamePrefix(
+    const offProducts = rerankByNamePrefix(
       (data.hits ?? [])
         .map(toResult)
         .filter((p): p is FoodProductResult => p !== null),
       query,
-    ).slice(0, 40);
+    );
+
+    // Curated matches (always relevant, always complete) lead; external
+    // results fill in behind, deduplicated by name so a beverage that OFF
+    // does happen to have data for isn't shown twice.
+    const genericNames = new Set(genericMatches.map((p) => p.name.toLowerCase()));
+    const products = [
+      ...genericMatches,
+      ...offProducts.filter((p) => !genericNames.has(p.name.toLowerCase())),
+    ].slice(0, 40);
 
     await cacheProducts(products);
 
