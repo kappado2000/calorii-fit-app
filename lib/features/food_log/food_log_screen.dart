@@ -10,6 +10,7 @@ import '../../data/models/workout_entry.dart';
 import '../../domain/usecases/met_calorie_estimator.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../../shared_widgets/animated_gauge.dart';
+import '../../shared_widgets/deficit_gauge.dart';
 import '../activity_sync/activity_sync_screen.dart';
 import '../auth/auth_providers.dart';
 import '../camera_capture/camera_capture_screen.dart';
@@ -238,79 +239,141 @@ class _DailyProgressCard extends StatelessWidget {
     // used by mainstream trackers, layered on top of the activity-level
     // multiplier already baked into TDEE.
     final adjustedTarget = tdee!.calorieTarget + totalBurned;
-    final progress = adjustedTarget > 0 ? totalCalories / adjustedTarget : 0.0;
-    final remaining = adjustedTarget - totalCalories;
-    final isOverTarget = remaining < 0;
-    final trueDeficit = tdee!.tdee + totalBurned - totalCalories;
+    final totalBurnedToday = tdee!.tdee + totalBurned;
+    final trueDeficit = totalBurnedToday - totalCalories;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: isOverTarget ? appColors.warningGradient : appColors.heroGradient,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(color: appColors.cardShadow, blurRadius: 24, offset: const Offset(0, 10)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AnimatedGauge(
-                value: progress,
-                size: 104,
-                strokeWidth: 10,
-                centerText: '${totalCalories.round()}',
-                centerSubtext: 'kcal',
-                color: Colors.white,
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      totalBurned > 0
-                          ? 'Țintă: ${adjustedTarget.round()} kcal (+${totalBurned.round()} din sport)'
-                          : 'Țintă: ${adjustedTarget.round()} kcal',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      isOverTarget
-                          ? 'Peste țintă cu ${(-remaining).round()} kcal'
-                          : '${remaining.round()} kcal rămase',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Deficit caloric azi: ${trueDeficit.round()} kcal',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white70),
-                    ),
-                  ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+        child: Column(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                DeficitGauge(deficit: trueDeficit, goalDeficit: tdee!.dailyDeficit, width: 260),
+                Padding(
+                  padding: const EdgeInsets.only(top: 56),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Deficit caloric', style: Theme.of(context).textTheme.bodyMedium),
+                          const SizedBox(width: 4),
+                          Icon(Icons.info_outline_rounded, size: 15, color: colorScheme.onSurfaceVariant),
+                        ],
+                      ),
+                      Text(
+                        '${trueDeficit.round()}',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _StatBlock(
+                    icon: Icons.local_fire_department_rounded,
+                    iconColor: appColors.protein,
+                    label: 'Total arse',
+                    value: totalBurned.round(),
+                    target: totalBurnedToday.round(),
+                  ),
+                ),
+                Expanded(
+                  child: _StatBlock(
+                    icon: Icons.shopping_basket_rounded,
+                    iconColor: const Color(0xFF1FAE7E),
+                    label: 'Total consumate',
+                    value: totalCalories.round(),
+                    target: adjustedTarget.round(),
+                  ),
+                ),
+              ],
+            ),
+            if (totalProtein != null || totalCarbs != null || totalFat != null) ...[
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _MacroPill(label: 'Proteine', value: totalProtein, color: appColors.protein),
+                  const SizedBox(width: 8),
+                  _MacroPill(label: 'Carbo', value: totalCarbs, color: appColors.carbs),
+                  const SizedBox(width: 8),
+                  _MacroPill(label: 'Grăsimi', value: totalFat, color: appColors.fat),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatBlock extends StatelessWidget {
+  const _StatBlock({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.value,
+    required this.target,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final int value;
+  final int target;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.15), shape: BoxShape.circle),
+              alignment: Alignment.center,
+              child: Icon(icon, size: 15, color: iconColor),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        RichText(
+          text: TextSpan(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+            children: [
+              TextSpan(text: '$value'),
+              TextSpan(
+                text: ' / $target kcal',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w400),
               ),
             ],
           ),
-          if (totalProtein != null || totalCarbs != null || totalFat != null) ...[
-            const SizedBox(height: 18),
-            Row(
-              children: [
-                _MacroPill(label: 'Proteine', value: totalProtein, color: appColors.protein),
-                const SizedBox(width: 8),
-                _MacroPill(label: 'Carbo', value: totalCarbs, color: appColors.carbs),
-                const SizedBox(width: 8),
-                _MacroPill(label: 'Grăsimi', value: totalFat, color: appColors.fat),
-              ],
-            ),
-          ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
