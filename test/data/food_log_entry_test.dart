@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:calorie_app/core/constants/micronutrient_reference.dart';
 import 'package:calorie_app/data/models/food_log_entry.dart';
 import 'package:calorie_app/data/models/meal_type.dart';
 
@@ -51,5 +52,38 @@ void main() {
     expect(decodedNoMacros.proteinPer100g, isNull);
     expect(decodedNoMacros.carbsPer100g, isNull);
     expect(decodedNoMacros.fatPer100g, isNull);
+  });
+
+  test('micronutrientAmount scales the known nutrient by grams, others stay null', () {
+    final entry = FoodLogEntry(
+      id: '5',
+      mealType: MealType.breakfast,
+      foodName: 'Portocală',
+      grams: 200,
+      kcalPer100g: 47,
+      micronutrients: const MicronutrientProfile(vitaminCMg: 53.2, calciumMg: 40),
+    );
+
+    expect(entry.micronutrientAmount(Micronutrient.vitaminC), closeTo(106.4, 0.001));
+    expect(entry.micronutrientAmount(Micronutrient.calcium), closeTo(80, 0.001));
+    expect(entry.micronutrientAmount(Micronutrient.iron), isNull);
+  });
+
+  test('micronutrients toJson/fromJson round-trips, including a fully-null profile', () {
+    final withData = FoodLogEntry(
+      id: '6',
+      mealType: MealType.lunch,
+      foodName: 'Măr',
+      grams: 100,
+      kcalPer100g: 52,
+      micronutrients: const MicronutrientProfile(vitaminCMg: 4.6, potassiumMg: 107),
+    );
+    final decoded = FoodLogEntry.fromJson(withData.toJson());
+    expect(decoded.micronutrients?.vitaminCMg, 4.6);
+    expect(decoded.micronutrients?.potassiumMg, 107);
+    expect(decoded.micronutrients?.calciumMg, isNull);
+
+    const withoutData = FoodLogEntry(id: '7', mealType: MealType.dinner, foodName: 'Y', grams: 100, kcalPer100g: 90);
+    expect(FoodLogEntry.fromJson(withoutData.toJson()).micronutrients, isNull);
   });
 }

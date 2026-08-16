@@ -35,6 +35,24 @@ class FoodLogFirestoreDataSource {
 
   Future<void> delete(String id) => _collection.doc(id).delete();
 
+  /// Every logged entry within [start, end] (inclusive of both ends'
+  /// calendar days), unaggregated — what the macro/micronutrient analysis
+  /// needs, since summing those requires each entry's own per-100g values,
+  /// not just a calorie total per day.
+  Stream<List<FoodLogEntry>> watchEntriesForRange(DateTime start, DateTime end) {
+    final rangeStart = Timestamp.fromDate(DateTime(start.year, start.month, start.day));
+    final rangeEnd = Timestamp.fromDate(DateTime(end.year, end.month, end.day).add(const Duration(days: 1)));
+    return _collection
+        .where('date', isGreaterThanOrEqualTo: rangeStart)
+        .where('date', isLessThan: rangeEnd)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => FoodLogEntry.fromJson({...doc.data(), 'id': doc.id}))
+              .toList(growable: false),
+        );
+  }
+
   /// Total calories per day within [start, end] (inclusive of both ends'
   /// calendar days) — the aggregation the progress chart needs, computed
   /// client-side since Firestore has no server-side GROUP BY.

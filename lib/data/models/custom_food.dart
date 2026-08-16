@@ -1,3 +1,5 @@
+import '../../core/constants/micronutrient_reference.dart';
+
 /// A product remembered for reuse — either typed in manually, or picked
 /// once from the commercial-product search (see FoodProduct) and kept here
 /// so the next search for the same name is instant even offline. Macro
@@ -15,6 +17,7 @@ class CustomFood {
     this.carbsPer100g,
     this.fatPer100g,
     this.lastGramsUsed,
+    this.micronutrients,
   });
 
   final String id;
@@ -24,6 +27,7 @@ class CustomFood {
   final double? carbsPer100g;
   final double? fatPer100g;
   final double? lastGramsUsed;
+  final MicronutrientProfile? micronutrients;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -33,9 +37,11 @@ class CustomFood {
     'carbsPer100g': carbsPer100g,
     'fatPer100g': fatPer100g,
     'lastGramsUsed': lastGramsUsed,
+    'micronutrients': micronutrients?.toJson(),
   };
 
   factory CustomFood.fromJson(Map<String, dynamic> json) {
+    final micronutrientsJson = json['micronutrients'] as Map<String, dynamic>?;
     return CustomFood(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -44,6 +50,7 @@ class CustomFood {
       carbsPer100g: (json['carbsPer100g'] as num?)?.toDouble(),
       fatPer100g: (json['fatPer100g'] as num?)?.toDouble(),
       lastGramsUsed: (json['lastGramsUsed'] as num?)?.toDouble(),
+      micronutrients: micronutrientsJson == null ? null : MicronutrientProfile.fromJson(micronutrientsJson),
     );
   }
 }

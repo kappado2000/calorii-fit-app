@@ -1,3 +1,5 @@
+import '../../core/constants/micronutrient_reference.dart';
+
 /// A commercial product returned by the searchFoods Cloud Function
 /// (Open Food Facts) — the app-determined nutritional facts for a product
 /// the user picked by name, before they enter how many grams they ate.
@@ -11,6 +13,7 @@ class FoodProduct {
     this.carbsPer100g,
     this.fatPer100g,
     this.imageUrl,
+    this.micronutrients,
   });
 
   final String? barcode;
@@ -21,12 +24,14 @@ class FoodProduct {
   final double? carbsPer100g;
   final double? fatPer100g;
   final String? imageUrl;
+  final MicronutrientProfile? micronutrients;
 
   /// Name including brand, when known, for disambiguating near-identical
   /// product names in the results list (e.g. two different "Iaurt grecesc").
   String get displayName => brand == null ? name : '$name — $brand';
 
   factory FoodProduct.fromJson(Map<String, dynamic> json) {
+    final micronutrientsJson = json['micronutrients'] as Map<String, dynamic>?;
     return FoodProduct(
       barcode: json['barcode'] as String?,
       name: json['name'] as String,
@@ -36,6 +41,7 @@ class FoodProduct {
       carbsPer100g: (json['carbsPer100g'] as num?)?.toDouble(),
       fatPer100g: (json['fatPer100g'] as num?)?.toDouble(),
       imageUrl: json['imageUrl'] as String?,
+      micronutrients: micronutrientsJson == null ? null : MicronutrientProfile.fromJson(micronutrientsJson),
     );
   }
 }

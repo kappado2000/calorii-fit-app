@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants/micronutrient_reference.dart';
 import '../../data/models/custom_food.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
@@ -99,6 +100,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
             proteinPer100g: food.proteinPer100g,
             carbsPer100g: food.carbsPer100g,
             fatPer100g: food.fatPer100g,
+            micronutrients: food.micronutrients,
           );
     }
     if (mounted) Navigator.of(context).pop();
@@ -119,17 +121,20 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
     final double? proteinPer100g;
     final double? carbsPer100g;
     final double? fatPer100g;
+    final MicronutrientProfile? micronutrients;
 
     if (_selectedProduct != null) {
       kcalPer100g = _selectedProduct!.kcalPer100g;
       proteinPer100g = _selectedProduct!.proteinPer100g;
       carbsPer100g = _selectedProduct!.carbsPer100g;
       fatPer100g = _selectedProduct!.fatPer100g;
+      micronutrients = _selectedProduct!.micronutrients;
     } else {
       kcalPer100g = double.parse(_manualKcalController.text.replaceAll(',', '.'));
       proteinPer100g = _parseOptional(_manualProteinController.text);
       carbsPer100g = _parseOptional(_manualCarbsController.text);
       fatPer100g = _parseOptional(_manualFatController.text);
+      micronutrients = null;
     }
 
     await ref
@@ -141,6 +146,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
           carbsPer100g: carbsPer100g,
           fatPer100g: fatPer100g,
           gramsUsed: grams,
+          micronutrients: micronutrients,
         );
     await ref
         .read(dailyLogProvider(widget.date).notifier)
@@ -152,6 +158,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
           proteinPer100g: proteinPer100g,
           carbsPer100g: carbsPer100g,
           fatPer100g: fatPer100g,
+          micronutrients: micronutrients,
         );
 
     if (mounted) Navigator.of(context).pop();

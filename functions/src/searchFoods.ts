@@ -7,6 +7,16 @@ if (getApps().length === 0) {
   initializeApp();
 }
 
+/** Mirrors MicronutrientProfile on the Dart side. */
+interface MicronutrientsResult {
+  vitaminCMg: number | null;
+  vitaminDMcg: number | null;
+  calciumMg: number | null;
+  ironMg: number | null;
+  magnesiumMg: number | null;
+  potassiumMg: number | null;
+}
+
 interface FoodProductResult {
   barcode: string | null;
   name: string;
@@ -16,6 +26,7 @@ interface FoodProductResult {
   carbsPer100g: number | null;
   fatPer100g: number | null;
   imageUrl: string | null;
+  micronutrients: MicronutrientsResult | null;
 }
 
 interface SearchFoodsRequest {
@@ -82,7 +93,29 @@ function toResult(hit: OffHit): FoodProductResult | null {
     // than a ready-made URL — not worth reconstructing since the app
     // doesn't render a product image in the search results list today.
     imageUrl: null,
+    micronutrients: extractMicronutrients(nutriments),
   };
+}
+
+/**
+ * Pulls the six tracked micronutrients from OFF's nutriments object when
+ * present — coverage is sparse (most contributors scan macros, not the
+ * full vitamin/mineral panel), so this returns null fields rather than
+ * fabricating a number, same as every other optional nutrient here.
+ */
+function extractMicronutrients(
+  nutriments: Record<string, number | string | undefined>,
+): MicronutrientsResult | null {
+  const result: MicronutrientsResult = {
+    vitaminCMg: numberOrNull(nutriments["vitamin-c_100g"]),
+    vitaminDMcg: numberOrNull(nutriments["vitamin-d_100g"]),
+    calciumMg: numberOrNull(nutriments["calcium_100g"]),
+    ironMg: numberOrNull(nutriments["iron_100g"]),
+    magnesiumMg: numberOrNull(nutriments["magnesium_100g"]),
+    potassiumMg: numberOrNull(nutriments["potassium_100g"]),
+  };
+  const hasAnyValue = Object.values(result).some((v) => v !== null);
+  return hasAnyValue ? result : null;
 }
 
 /** Falls back to computing kcal from kJ — many hits only carry the kJ field. */
@@ -144,6 +177,16 @@ function matchGenericFoodItems(query: string): FoodProductResult[] {
       carbsPer100g: item.carbsPer100g,
       fatPer100g: item.fatPer100g,
       imageUrl: null,
+      micronutrients: item.micronutrients
+        ? {
+            vitaminCMg: item.micronutrients.vitaminCMg ?? null,
+            vitaminDMcg: item.micronutrients.vitaminDMcg ?? null,
+            calciumMg: item.micronutrients.calciumMg ?? null,
+            ironMg: item.micronutrients.ironMg ?? null,
+            magnesiumMg: item.micronutrients.magnesiumMg ?? null,
+            potassiumMg: item.micronutrients.potassiumMg ?? null,
+          }
+        : null,
     }));
 }
 

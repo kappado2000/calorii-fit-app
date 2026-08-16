@@ -18,12 +18,28 @@
  * "reasonable estimate, user corrects portion" model the rest of the app
  * already uses, not lab-measured figures for one specific preparation.
  */
+/** Mirrors MicronutrientProfile on the Dart side — same six nutrients, same field names. */
+export interface GenericMicronutrients {
+  vitaminCMg?: number;
+  vitaminDMcg?: number;
+  calciumMg?: number;
+  ironMg?: number;
+  magnesiumMg?: number;
+  potassiumMg?: number;
+}
+
 export interface GenericFoodItem {
   name: string;
   kcalPer100g: number;
   proteinPer100g: number;
   carbsPer100g: number;
   fatPer100g: number;
+  /** Only populated for ~35 whole foods with well-documented values (see
+   * micronutrients section below) — composite dishes deliberately don't
+   * carry this, for the same reason their macros are rough averages: no
+   * single "true" vitamin/mineral value exists for a recipe that varies
+   * by household. */
+  micronutrients?: GenericMicronutrients;
 }
 
 export const genericFoodsTable: GenericFoodItem[] = [
@@ -50,10 +66,38 @@ export const genericFoodsTable: GenericFoodItem[] = [
   { name: "Lichior", kcalPer100g: 300, proteinPer100g: 0, carbsPer100g: 30, fatPer100g: 0 },
 
   // --- Eggs (standardized preparations) ---
-  { name: "Ou fiert", kcalPer100g: 155, proteinPer100g: 13, carbsPer100g: 1.1, fatPer100g: 11 },
-  { name: "Ou moale", kcalPer100g: 148, proteinPer100g: 12.5, carbsPer100g: 0.8, fatPer100g: 10.5 },
-  { name: "Ou ochi / Ochiuri", kcalPer100g: 196, proteinPer100g: 13.6, carbsPer100g: 0.8, fatPer100g: 15.3 },
-  { name: "Omletă simplă", kcalPer100g: 165, proteinPer100g: 11, carbsPer100g: 1.5, fatPer100g: 12.5 },
+  {
+    name: "Ou fiert",
+    kcalPer100g: 155,
+    proteinPer100g: 13,
+    carbsPer100g: 1.1,
+    fatPer100g: 11,
+    micronutrients: { vitaminDMcg: 2, calciumMg: 50, ironMg: 1.2, magnesiumMg: 10, potassiumMg: 126 },
+  },
+  {
+    name: "Ou moale",
+    kcalPer100g: 148,
+    proteinPer100g: 12.5,
+    carbsPer100g: 0.8,
+    fatPer100g: 10.5,
+    micronutrients: { vitaminDMcg: 1.9, calciumMg: 48, ironMg: 1.15, magnesiumMg: 10, potassiumMg: 122 },
+  },
+  {
+    name: "Ou ochi / Ochiuri",
+    kcalPer100g: 196,
+    proteinPer100g: 13.6,
+    carbsPer100g: 0.8,
+    fatPer100g: 15.3,
+    micronutrients: { vitaminDMcg: 2.2, calciumMg: 52, ironMg: 1.3, magnesiumMg: 11, potassiumMg: 130 },
+  },
+  {
+    name: "Omletă simplă",
+    kcalPer100g: 165,
+    proteinPer100g: 11,
+    carbsPer100g: 1.5,
+    fatPer100g: 12.5,
+    micronutrients: { vitaminDMcg: 1.8, calciumMg: 55, ironMg: 1.1, magnesiumMg: 10, potassiumMg: 128 },
+  },
   { name: "Omletă cu cașcaval", kcalPer100g: 220, proteinPer100g: 14, carbsPer100g: 1.5, fatPer100g: 17.5 },
   { name: "Ou jumări / Scrob", kcalPer100g: 180, proteinPer100g: 12, carbsPer100g: 1.5, fatPer100g: 14 },
 
@@ -62,7 +106,14 @@ export const genericFoodsTable: GenericFoodItem[] = [
   { name: "Piept de porc la grătar", kcalPer100g: 260, proteinPer100g: 21, carbsPer100g: 0, fatPer100g: 19 },
   { name: "Cârnați la grătar", kcalPer100g: 300, proteinPer100g: 14, carbsPer100g: 3, fatPer100g: 26 },
   { name: "Mititei / Mici", kcalPer100g: 260, proteinPer100g: 18, carbsPer100g: 2, fatPer100g: 20 },
-  { name: "Piept de pui la grătar", kcalPer100g: 165, proteinPer100g: 31, carbsPer100g: 0, fatPer100g: 3.6 },
+  {
+    name: "Piept de pui la grătar",
+    kcalPer100g: 165,
+    proteinPer100g: 31,
+    carbsPer100g: 0,
+    fatPer100g: 3.6,
+    micronutrients: { calciumMg: 5, ironMg: 0.7, magnesiumMg: 25, potassiumMg: 220 },
+  },
   { name: "Pui la cuptor", kcalPer100g: 215, proteinPer100g: 27, carbsPer100g: 0, fatPer100g: 11 },
 
   // --- Ciorbe / supe ---
@@ -125,38 +176,262 @@ export const genericFoodsTable: GenericFoodItem[] = [
   // universal (aceleasi cifre in orice sursa), deci incredere mare aici.
   // Adaugate pentru ca produsele procesate/ambalate domina rezultatele OFF
   // pentru multe dintre ele (ex. "banana" scotea chipsuri, nu fructul). ---
-  { name: "Măr", kcalPer100g: 52, proteinPer100g: 0.3, carbsPer100g: 14, fatPer100g: 0.2 },
-  { name: "Banană", kcalPer100g: 89, proteinPer100g: 1.1, carbsPer100g: 23, fatPer100g: 0.3 },
-  { name: "Portocală", kcalPer100g: 47, proteinPer100g: 0.9, carbsPer100g: 12, fatPer100g: 0.1 },
-  { name: "Pară", kcalPer100g: 57, proteinPer100g: 0.4, carbsPer100g: 15, fatPer100g: 0.1 },
-  { name: "Struguri", kcalPer100g: 69, proteinPer100g: 0.7, carbsPer100g: 18, fatPer100g: 0.2 },
-  { name: "Căpșuni", kcalPer100g: 32, proteinPer100g: 0.7, carbsPer100g: 7.7, fatPer100g: 0.3 },
-  { name: "Pepene roșu", kcalPer100g: 30, proteinPer100g: 0.6, carbsPer100g: 8, fatPer100g: 0.2 },
-  { name: "Pepene galben", kcalPer100g: 34, proteinPer100g: 0.8, carbsPer100g: 8, fatPer100g: 0.2 },
-  { name: "Kiwi", kcalPer100g: 61, proteinPer100g: 1.1, carbsPer100g: 15, fatPer100g: 0.5 },
-  { name: "Piersică", kcalPer100g: 39, proteinPer100g: 0.9, carbsPer100g: 10, fatPer100g: 0.3 },
-  { name: "Prună", kcalPer100g: 46, proteinPer100g: 0.7, carbsPer100g: 11, fatPer100g: 0.3 },
-  { name: "Cireșe", kcalPer100g: 63, proteinPer100g: 1.1, carbsPer100g: 16, fatPer100g: 0.2 },
-  { name: "Mandarine", kcalPer100g: 53, proteinPer100g: 0.8, carbsPer100g: 13, fatPer100g: 0.3 },
-  { name: "Lămâie", kcalPer100g: 29, proteinPer100g: 1.1, carbsPer100g: 9, fatPer100g: 0.3 },
-  { name: "Ananas", kcalPer100g: 50, proteinPer100g: 0.5, carbsPer100g: 13, fatPer100g: 0.1 },
-  { name: "Roșii", kcalPer100g: 18, proteinPer100g: 0.9, carbsPer100g: 3.9, fatPer100g: 0.2 },
-  { name: "Castraveți", kcalPer100g: 15, proteinPer100g: 0.7, carbsPer100g: 3.6, fatPer100g: 0.1 },
-  { name: "Morcovi", kcalPer100g: 41, proteinPer100g: 0.9, carbsPer100g: 10, fatPer100g: 0.2 },
-  { name: "Ceapă", kcalPer100g: 40, proteinPer100g: 1.1, carbsPer100g: 9, fatPer100g: 0.1 },
-  { name: "Usturoi", kcalPer100g: 149, proteinPer100g: 6.4, carbsPer100g: 33, fatPer100g: 0.5 },
-  { name: "Varză albă", kcalPer100g: 25, proteinPer100g: 1.3, carbsPer100g: 6, fatPer100g: 0.1 },
-  { name: "Ardei gras", kcalPer100g: 20, proteinPer100g: 1, carbsPer100g: 4.6, fatPer100g: 0.2 },
-  { name: "Vinete", kcalPer100g: 25, proteinPer100g: 1, carbsPer100g: 6, fatPer100g: 0.2 },
-  { name: "Dovlecei", kcalPer100g: 17, proteinPer100g: 1.2, carbsPer100g: 3.1, fatPer100g: 0.3 },
-  { name: "Broccoli", kcalPer100g: 34, proteinPer100g: 2.8, carbsPer100g: 7, fatPer100g: 0.4 },
-  { name: "Conopidă", kcalPer100g: 25, proteinPer100g: 1.9, carbsPer100g: 5, fatPer100g: 0.3 },
-  { name: "Fasole verde", kcalPer100g: 31, proteinPer100g: 1.8, carbsPer100g: 7, fatPer100g: 0.1 },
-  { name: "Mazăre verde", kcalPer100g: 81, proteinPer100g: 5.4, carbsPer100g: 14, fatPer100g: 0.4 },
-  { name: "Sfeclă roșie", kcalPer100g: 43, proteinPer100g: 1.6, carbsPer100g: 10, fatPer100g: 0.2 },
-  { name: "Ridichi", kcalPer100g: 16, proteinPer100g: 0.7, carbsPer100g: 3.4, fatPer100g: 0.1 },
-  { name: "Salată verde", kcalPer100g: 15, proteinPer100g: 1.4, carbsPer100g: 2.9, fatPer100g: 0.2 },
-  { name: "Ciuperci champignon", kcalPer100g: 22, proteinPer100g: 3.1, carbsPer100g: 3.3, fatPer100g: 0.3 },
+  {
+    name: "Măr",
+    kcalPer100g: 52,
+    proteinPer100g: 0.3,
+    carbsPer100g: 14,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 4.6, calciumMg: 6, ironMg: 0.1, magnesiumMg: 5, potassiumMg: 107 },
+  },
+  {
+    name: "Banană",
+    kcalPer100g: 89,
+    proteinPer100g: 1.1,
+    carbsPer100g: 23,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 8.7, calciumMg: 5, ironMg: 0.26, magnesiumMg: 27, potassiumMg: 358 },
+  },
+  {
+    name: "Portocală",
+    kcalPer100g: 47,
+    proteinPer100g: 0.9,
+    carbsPer100g: 12,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 53.2, calciumMg: 40, ironMg: 0.1, magnesiumMg: 10, potassiumMg: 181 },
+  },
+  {
+    name: "Pară",
+    kcalPer100g: 57,
+    proteinPer100g: 0.4,
+    carbsPer100g: 15,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 4.3, calciumMg: 9, ironMg: 0.18, magnesiumMg: 7, potassiumMg: 116 },
+  },
+  {
+    name: "Struguri",
+    kcalPer100g: 69,
+    proteinPer100g: 0.7,
+    carbsPer100g: 18,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 3.2, calciumMg: 10, ironMg: 0.36, magnesiumMg: 7, potassiumMg: 191 },
+  },
+  {
+    name: "Căpșuni",
+    kcalPer100g: 32,
+    proteinPer100g: 0.7,
+    carbsPer100g: 7.7,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 58.8, calciumMg: 16, ironMg: 0.41, magnesiumMg: 13, potassiumMg: 153 },
+  },
+  {
+    name: "Pepene roșu",
+    kcalPer100g: 30,
+    proteinPer100g: 0.6,
+    carbsPer100g: 8,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 8.1, calciumMg: 7, ironMg: 0.24, magnesiumMg: 10, potassiumMg: 112 },
+  },
+  {
+    name: "Pepene galben",
+    kcalPer100g: 34,
+    proteinPer100g: 0.8,
+    carbsPer100g: 8,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 36.7, calciumMg: 9, ironMg: 0.21, magnesiumMg: 12, potassiumMg: 267 },
+  },
+  {
+    name: "Kiwi",
+    kcalPer100g: 61,
+    proteinPer100g: 1.1,
+    carbsPer100g: 15,
+    fatPer100g: 0.5,
+    micronutrients: { vitaminCMg: 92.7, calciumMg: 34, ironMg: 0.31, magnesiumMg: 17, potassiumMg: 312 },
+  },
+  {
+    name: "Piersică",
+    kcalPer100g: 39,
+    proteinPer100g: 0.9,
+    carbsPer100g: 10,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 6.6, calciumMg: 6, ironMg: 0.25, magnesiumMg: 9, potassiumMg: 190 },
+  },
+  {
+    name: "Prună",
+    kcalPer100g: 46,
+    proteinPer100g: 0.7,
+    carbsPer100g: 11,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 9.5, calciumMg: 6, ironMg: 0.17, magnesiumMg: 7, potassiumMg: 157 },
+  },
+  {
+    name: "Cireșe",
+    kcalPer100g: 63,
+    proteinPer100g: 1.1,
+    carbsPer100g: 16,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 7, calciumMg: 13, ironMg: 0.36, magnesiumMg: 11, potassiumMg: 222 },
+  },
+  {
+    name: "Mandarine",
+    kcalPer100g: 53,
+    proteinPer100g: 0.8,
+    carbsPer100g: 13,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 26.7, calciumMg: 37, ironMg: 0.15, magnesiumMg: 12, potassiumMg: 166 },
+  },
+  {
+    name: "Lămâie",
+    kcalPer100g: 29,
+    proteinPer100g: 1.1,
+    carbsPer100g: 9,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 53, calciumMg: 26, ironMg: 0.6, magnesiumMg: 8, potassiumMg: 138 },
+  },
+  {
+    name: "Ananas",
+    kcalPer100g: 50,
+    proteinPer100g: 0.5,
+    carbsPer100g: 13,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 47.8, calciumMg: 13, ironMg: 0.29, magnesiumMg: 12, potassiumMg: 109 },
+  },
+  {
+    name: "Roșii",
+    kcalPer100g: 18,
+    proteinPer100g: 0.9,
+    carbsPer100g: 3.9,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 13.7, calciumMg: 10, ironMg: 0.27, magnesiumMg: 11, potassiumMg: 237 },
+  },
+  {
+    name: "Castraveți",
+    kcalPer100g: 15,
+    proteinPer100g: 0.7,
+    carbsPer100g: 3.6,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 2.8, calciumMg: 16, ironMg: 0.28, magnesiumMg: 13, potassiumMg: 147 },
+  },
+  {
+    name: "Morcovi",
+    kcalPer100g: 41,
+    proteinPer100g: 0.9,
+    carbsPer100g: 10,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 5.9, calciumMg: 33, ironMg: 0.3, magnesiumMg: 12, potassiumMg: 320 },
+  },
+  {
+    name: "Ceapă",
+    kcalPer100g: 40,
+    proteinPer100g: 1.1,
+    carbsPer100g: 9,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 7.4, calciumMg: 23, ironMg: 0.21, magnesiumMg: 10, potassiumMg: 146 },
+  },
+  {
+    name: "Usturoi",
+    kcalPer100g: 149,
+    proteinPer100g: 6.4,
+    carbsPer100g: 33,
+    fatPer100g: 0.5,
+    micronutrients: { vitaminCMg: 31.2, calciumMg: 181, ironMg: 1.7, magnesiumMg: 25, potassiumMg: 401 },
+  },
+  {
+    name: "Varză albă",
+    kcalPer100g: 25,
+    proteinPer100g: 1.3,
+    carbsPer100g: 6,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 36.6, calciumMg: 40, ironMg: 0.47, magnesiumMg: 12, potassiumMg: 170 },
+  },
+  {
+    name: "Ardei gras",
+    kcalPer100g: 20,
+    proteinPer100g: 1,
+    carbsPer100g: 4.6,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 127.7, calciumMg: 7, ironMg: 0.34, magnesiumMg: 10, potassiumMg: 175 },
+  },
+  {
+    name: "Vinete",
+    kcalPer100g: 25,
+    proteinPer100g: 1,
+    carbsPer100g: 6,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 2.2, calciumMg: 9, ironMg: 0.23, magnesiumMg: 14, potassiumMg: 229 },
+  },
+  {
+    name: "Dovlecei",
+    kcalPer100g: 17,
+    proteinPer100g: 1.2,
+    carbsPer100g: 3.1,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 17.9, calciumMg: 16, ironMg: 0.37, magnesiumMg: 18, potassiumMg: 261 },
+  },
+  {
+    name: "Broccoli",
+    kcalPer100g: 34,
+    proteinPer100g: 2.8,
+    carbsPer100g: 7,
+    fatPer100g: 0.4,
+    micronutrients: { vitaminCMg: 89.2, calciumMg: 47, ironMg: 0.73, magnesiumMg: 21, potassiumMg: 316 },
+  },
+  {
+    name: "Conopidă",
+    kcalPer100g: 25,
+    proteinPer100g: 1.9,
+    carbsPer100g: 5,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminCMg: 48.2, calciumMg: 22, ironMg: 0.42, magnesiumMg: 15, potassiumMg: 299 },
+  },
+  {
+    name: "Fasole verde",
+    kcalPer100g: 31,
+    proteinPer100g: 1.8,
+    carbsPer100g: 7,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 12.2, calciumMg: 37, ironMg: 1.03, magnesiumMg: 25, potassiumMg: 211 },
+  },
+  {
+    name: "Mazăre verde",
+    kcalPer100g: 81,
+    proteinPer100g: 5.4,
+    carbsPer100g: 14,
+    fatPer100g: 0.4,
+    micronutrients: { vitaminCMg: 40, calciumMg: 25, ironMg: 1.47, magnesiumMg: 33, potassiumMg: 244 },
+  },
+  {
+    name: "Sfeclă roșie",
+    kcalPer100g: 43,
+    proteinPer100g: 1.6,
+    carbsPer100g: 10,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 4.9, calciumMg: 16, ironMg: 0.8, magnesiumMg: 23, potassiumMg: 325 },
+  },
+  {
+    name: "Ridichi",
+    kcalPer100g: 16,
+    proteinPer100g: 0.7,
+    carbsPer100g: 3.4,
+    fatPer100g: 0.1,
+    micronutrients: { vitaminCMg: 14.8, calciumMg: 25, ironMg: 0.34, magnesiumMg: 10, potassiumMg: 233 },
+  },
+  {
+    name: "Salată verde",
+    kcalPer100g: 15,
+    proteinPer100g: 1.4,
+    carbsPer100g: 2.9,
+    fatPer100g: 0.2,
+    micronutrients: { vitaminCMg: 9.2, calciumMg: 36, ironMg: 0.86, magnesiumMg: 13, potassiumMg: 194 },
+  },
+  {
+    name: "Ciuperci champignon",
+    kcalPer100g: 22,
+    proteinPer100g: 3.1,
+    carbsPer100g: 3.3,
+    fatPer100g: 0.3,
+    micronutrients: { vitaminDMcg: 0.2, calciumMg: 3, ironMg: 0.5, magnesiumMg: 9, potassiumMg: 318 },
+  },
 
   // --- A doua trecere prin Lista de mancaruri romanesti (Wikipedia) —
   // categoriile feluri principale/gustari/salate/sosuri/deserturi/street
@@ -233,7 +508,14 @@ export const genericFoodsTable: GenericFoodItem[] = [
   // ca la fructe/legume: valorile sunt standardizate universal, dar
   // produsele procesate/ambalate domina rezultatele OFF (confirmat live:
   // "somon"/"creveti" scoteau paste si produse semipreparate). ---
-  { name: "Somon", kcalPer100g: 208, proteinPer100g: 20, carbsPer100g: 0, fatPer100g: 13 },
+  {
+    name: "Somon",
+    kcalPer100g: 208,
+    proteinPer100g: 20,
+    carbsPer100g: 0,
+    fatPer100g: 13,
+    micronutrients: { vitaminDMcg: 11, calciumMg: 9, ironMg: 0.34, magnesiumMg: 27, potassiumMg: 384 },
+  },
   { name: "Ton", kcalPer100g: 132, proteinPer100g: 28, carbsPer100g: 0, fatPer100g: 1.3 },
   { name: "Păstrăv", kcalPer100g: 148, proteinPer100g: 20, carbsPer100g: 0, fatPer100g: 6.6 },
   { name: "Crap", kcalPer100g: 127, proteinPer100g: 17.8, carbsPer100g: 0, fatPer100g: 5.6 },

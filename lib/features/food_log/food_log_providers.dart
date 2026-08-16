@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/constants/micronutrient_reference.dart';
 import '../../data/datasources/remote/cloud_functions/search_foods_api_client.dart';
 import '../../data/datasources/remote/firestore/custom_foods_firestore_datasource.dart';
 import '../../data/datasources/remote/firestore/food_log_firestore_datasource.dart';
@@ -47,6 +48,7 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
     double? carbsPer100g,
     double? fatPer100g,
     double? gramsUsed,
+    MicronutrientProfile? micronutrients,
   }) async {
     final trimmedName = name.trim();
     final existing = state
@@ -60,6 +62,7 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
       carbsPer100g: carbsPer100g,
       fatPer100g: fatPer100g,
       lastGramsUsed: gramsUsed ?? existing?.lastGramsUsed,
+      micronutrients: micronutrients ?? existing?.micronutrients,
     );
     await _dataSource.upsert(food);
     return food;
@@ -121,6 +124,7 @@ class FoodSearchNotifier extends StateNotifier<FoodSearchState> {
             proteinPer100g: food.proteinPer100g,
             carbsPer100g: food.carbsPer100g,
             fatPer100g: food.fatPer100g,
+            micronutrients: food.micronutrients,
           ),
         )
         .toList();
@@ -173,6 +177,7 @@ class DailyLogNotifier extends StateNotifier<List<FoodLogEntry>> {
     double? proteinPer100g,
     double? carbsPer100g,
     double? fatPer100g,
+    MicronutrientProfile? micronutrients,
   }) async {
     final entry = FoodLogEntry(
       id: _uuid.v4(),
@@ -183,6 +188,7 @@ class DailyLogNotifier extends StateNotifier<List<FoodLogEntry>> {
       proteinPer100g: proteinPer100g,
       carbsPer100g: carbsPer100g,
       fatPer100g: fatPer100g,
+      micronutrients: micronutrients,
     );
     await _dataSource.add(entry, _date);
   }
