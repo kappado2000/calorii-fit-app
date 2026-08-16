@@ -80,4 +80,42 @@ export const genericFoodsTable: GenericFoodItem[] = [
   // --- Paste / Pizza ---
   { name: "Paste fierte simple", kcalPer100g: 131, proteinPer100g: 5, carbsPer100g: 25, fatPer100g: 1.1 },
   { name: "Pizza cu brânză", kcalPer100g: 266, proteinPer100g: 11, carbsPer100g: 33, fatPer100g: 10 },
+
+  // --- Mâncare de casă tradițională (subset comun, din Lista de mâncăruri
+  // românești de pe Wikipedia — preparatele foarte regionale/de nișă din
+  // acea listă nu sunt incluse aici, pentru ca nu exista o valoare de
+  // referinta in care sa am incredere reala pentru ele) ---
+  { name: "Mămăligă simplă", kcalPer100g: 70, proteinPer100g: 1.5, carbsPer100g: 15, fatPer100g: 0.5 },
+  {
+    name: "Mămăligă cu brânză și smântână",
+    kcalPer100g: 180,
+    proteinPer100g: 7,
+    carbsPer100g: 16,
+    fatPer100g: 10,
+  },
+  { name: "Musaca", kcalPer100g: 160, proteinPer100g: 8, carbsPer100g: 12, fatPer100g: 9 },
+  { name: "Chiftele", kcalPer100g: 250, proteinPer100g: 15, carbsPer100g: 10, fatPer100g: 17 },
+  { name: "Chiftele de pește", kcalPer100g: 200, proteinPer100g: 14, carbsPer100g: 8, fatPer100g: 12 },
+  { name: "Papanași", kcalPer100g: 280, proteinPer100g: 8, carbsPer100g: 35, fatPer100g: 12 },
+  { name: "Fasole bătută", kcalPer100g: 140, proteinPer100g: 7, carbsPer100g: 20, fatPer100g: 4 },
+  { name: "Drob de miel", kcalPer100g: 250, proteinPer100g: 16, carbsPer100g: 4, fatPer100g: 19 },
+  { name: "Piftie / Răcitură", kcalPer100g: 150, proteinPer100g: 14, carbsPer100g: 1, fatPer100g: 10 },
+  { name: "Ardei umpluți", kcalPer100g: 120, proteinPer100g: 7, carbsPer100g: 12, fatPer100g: 5 },
+  { name: "Colțunași cu brânză", kcalPer100g: 210, proteinPer100g: 9, carbsPer100g: 32, fatPer100g: 5 },
+  { name: "Tochitură", kcalPer100g: 280, proteinPer100g: 18, carbsPer100g: 5, fatPer100g: 21 },
+  { name: "Ghiveci de legume", kcalPer100g: 70, proteinPer100g: 2, carbsPer100g: 10, fatPer100g: 3 },
+  { name: "Tocăniță de cartofi", kcalPer100g: 110, proteinPer100g: 3, carbsPer100g: 15, fatPer100g: 4.5 },
+  { name: "Tocană / Tocăniță de carne", kcalPer100g: 180, proteinPer100g: 12, carbsPer100g: 8, fatPer100g: 11 },
+  { name: "Papricaș de pui", kcalPer100g: 190, proteinPer100g: 16, carbsPer100g: 6, fatPer100g: 11 },
+  { name: "Ciulama de pui", kcalPer100g: 160, proteinPer100g: 12, carbsPer100g: 8, fatPer100g: 9 },
+  { name: "Rasol de vită", kcalPer100g: 220, proteinPer100g: 26, carbsPer100g: 0, fatPer100g: 12 },
+  { name: "Salată de boeuf", kcalPer100g: 260, proteinPer100g: 6, carbsPer100g: 14, fatPer100g: 21 },
+  { name: "Zacuscă", kcalPer100g: 140, proteinPer100g: 2, carbsPer100g: 12, fatPer100g: 9 },
+  { name: "Bulz", kcalPer100g: 230, proteinPer100g: 9, carbsPer100g: 20, fatPer100g: 13 },
+  { name: "Gogoși", kcalPer100g: 330, proteinPer100g: 6, carbsPer100g: 40, fatPer100g: 16 },
+  { name: "Plăcintă cu brânză", kcalPer100g: 290, proteinPer100g: 8, carbsPer100g: 35, fatPer100g: 13 },
+  { name: "Plăcintă cu mere", kcalPer100g: 250, proteinPer100g: 4, carbsPer100g: 40, fatPer100g: 8 },
+  { name: "Frigărui", kcalPer100g: 200, proteinPer100g: 22, carbsPer100g: 2, fatPer100g: 11 },
+  { name: "Iahnie de fasole", kcalPer100g: 130, proteinPer100g: 6, carbsPer100g: 18, fatPer100g: 4 },
+  { name: "Salată de icre", kcalPer100g: 350, proteinPer100g: 4, carbsPer100g: 6, fatPer100g: 35 },
 ];
