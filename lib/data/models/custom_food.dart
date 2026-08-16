@@ -2,7 +2,10 @@
 /// once from the commercial-product search (see FoodProduct) and kept here
 /// so the next search for the same name is instant even offline. Macro
 /// fields are nullable for fully-manual entries where the user only knows
-/// the calorie index.
+/// the calorie index. [lastGramsUsed] is the portion size from the most
+/// recent time this food was logged — it's what the quick-add checklist
+/// pre-fills, so re-logging a usual breakfast doesn't mean re-typing the
+/// same 200g every time.
 class CustomFood {
   const CustomFood({
     required this.id,
@@ -11,6 +14,7 @@ class CustomFood {
     this.proteinPer100g,
     this.carbsPer100g,
     this.fatPer100g,
+    this.lastGramsUsed,
   });
 
   final String id;
@@ -19,6 +23,7 @@ class CustomFood {
   final double? proteinPer100g;
   final double? carbsPer100g;
   final double? fatPer100g;
+  final double? lastGramsUsed;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -27,6 +32,7 @@ class CustomFood {
     'proteinPer100g': proteinPer100g,
     'carbsPer100g': carbsPer100g,
     'fatPer100g': fatPer100g,
+    'lastGramsUsed': lastGramsUsed,
   };
 
   factory CustomFood.fromJson(Map<String, dynamic> json) {
@@ -37,6 +43,7 @@ class CustomFood {
       proteinPer100g: (json['proteinPer100g'] as num?)?.toDouble(),
       carbsPer100g: (json['carbsPer100g'] as num?)?.toDouble(),
       fatPer100g: (json['fatPer100g'] as num?)?.toDouble(),
+      lastGramsUsed: (json['lastGramsUsed'] as num?)?.toDouble(),
     );
   }
 }

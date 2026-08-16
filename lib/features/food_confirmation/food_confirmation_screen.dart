@@ -66,7 +66,7 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
       final kcalPer100g = item.estimate.calories / grams * 100;
       await ref
           .read(customFoodsProvider.notifier)
-          .rememberProduct(name: item.analyzed.label, kcalPer100g: kcalPer100g);
+          .rememberProduct(name: item.analyzed.label, kcalPer100g: kcalPer100g, gramsUsed: grams);
       await ref
           .read(dailyLogProvider(today).notifier)
           .addEntry(

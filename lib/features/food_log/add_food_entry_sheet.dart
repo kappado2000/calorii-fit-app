@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/models/custom_food.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
 import 'food_log_providers.dart';
@@ -41,6 +42,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
   FoodProduct? _selectedProduct;
   bool _manualMode = false;
   bool _saving = false;
+  final Set<String> _quickAddSelectedIds = {};
 
   @override
   void dispose() {
@@ -69,6 +71,37 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
       _manualCarbsController.clear();
       _manualFatController.clear();
     });
+  }
+
+  void _toggleQuickAdd(String foodId) {
+    setState(() {
+      if (!_quickAddSelectedIds.remove(foodId)) _quickAddSelectedIds.add(foodId);
+    });
+  }
+
+  /// Adds every checked frequent food at once, each at its remembered
+  /// portion (falling back to 100g for a food never logged with a known
+  /// portion) — the whole point of the checklist is not having to re-enter
+  /// grams for a usual breakfast.
+  Future<void> _saveQuickAdd(List<CustomFood> allFoods) async {
+    setState(() => _saving = true);
+    final today = widget.date;
+    final selected = allFoods.where((food) => _quickAddSelectedIds.contains(food.id));
+    for (final food in selected) {
+      final grams = food.lastGramsUsed ?? 100;
+      await ref
+          .read(dailyLogProvider(today).notifier)
+          .addEntry(
+            mealType: widget.mealType,
+            foodName: food.name,
+            grams: grams,
+            kcalPer100g: food.kcalPer100g,
+            proteinPer100g: food.proteinPer100g,
+            carbsPer100g: food.carbsPer100g,
+            fatPer100g: food.fatPer100g,
+          );
+    }
+    if (mounted) Navigator.of(context).pop();
   }
 
   void _startManualEntry() {
@@ -107,6 +140,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
           proteinPer100g: proteinPer100g,
           carbsPer100g: carbsPer100g,
           fatPer100g: fatPer100g,
+          gramsUsed: grams,
         );
     await ref
         .read(dailyLogProvider(widget.date).notifier)
@@ -132,8 +166,10 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(foodSearchProvider);
+    final frequentFoods = ref.watch(customFoodsProvider);
     final query = _queryController.text.trim();
     final showResultsList = _selectedProduct == null && !_manualMode && query.length >= 2;
+    final showQuickAdd = _selectedProduct == null && !_manualMode && query.isEmpty && frequentFoods.isNotEmpty;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -167,6 +203,29 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
               validator: (value) =>
                   (value == null || value.trim().isEmpty) ? 'Introdu denumirea produsului' : null,
             ),
+            if (showQuickAdd) ...[
+              const SizedBox(height: 16),
+              Text('Înregistrate frecvent', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 4),
+              _QuickAddChecklist(
+                foods: frequentFoods,
+                selectedIds: _quickAddSelectedIds,
+                onToggle: _toggleQuickAdd,
+              ),
+              if (_quickAddSelectedIds.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: _saving ? null : () => _saveQuickAdd(frequentFoods),
+                  child: _saving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : Text('Adaugă (${_quickAddSelectedIds.length})'),
+                ),
+              ],
+            ],
             if (showResultsList) ...[
               const SizedBox(height: 8),
               _SearchResultsList(
@@ -260,6 +319,65 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
     final parsed = double.tryParse(value.replaceAll(',', '.'));
     if (parsed == null || parsed <= 0) return 'Valoare invalidă';
     return null;
+  }
+}
+
+/// The "empty state" of the sheet, before the user types anything: a
+/// checklist of previously-remembered foods, each at its last-used portion,
+/// that can be tapped to check/uncheck and add several at once — for a
+/// usual breakfast, that's faster than searching and entering grams one
+/// product at a time.
+class _QuickAddChecklist extends StatelessWidget {
+  const _QuickAddChecklist({required this.foods, required this.selectedIds, required this.onToggle});
+
+  final List<CustomFood> foods;
+  final Set<String> selectedIds;
+  final ValueChanged<String> onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 300),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        itemCount: foods.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final food = foods[index];
+          final grams = food.lastGramsUsed ?? 100;
+          final selected = selectedIds.contains(food.id);
+          return ListTile(
+            onTap: () => onToggle(food.id),
+            leading: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              alignment: Alignment.center,
+              child: Icon(Icons.restaurant_rounded, size: 16, color: colorScheme.onSurfaceVariant),
+            ),
+            title: Text(food.name),
+            subtitle: Text('${(food.kcalPer100g * grams / 100).round()} kcal/${_formatGrams(grams)} g'),
+            trailing: Icon(
+              selected ? Icons.check_circle_rounded : Icons.add_circle_outline_rounded,
+              color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  String _formatGrams(double grams) {
+    return grams == grams.roundToDouble() ? grams.toStringAsFixed(0) : grams.toString();
   }
 }
 

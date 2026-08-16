@@ -9,7 +9,6 @@ import '../../data/models/meal_type.dart';
 import '../../data/models/workout_entry.dart';
 import '../../domain/usecases/met_calorie_estimator.dart';
 import '../../domain/usecases/tdee_calculator.dart';
-import '../../shared_widgets/animated_gauge.dart';
 import '../../shared_widgets/deficit_gauge.dart';
 import '../activity_sync/activity_sync_screen.dart';
 import '../auth/auth_providers.dart';
@@ -30,9 +29,6 @@ class FoodLogScreen extends ConsumerWidget {
     final today = normalizeDate(DateTime.now());
     final entries = ref.watch(dailyLogProvider(today));
     final totalCalories = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
-    final totalProtein = _sumIfAnyKnown(entries.map((e) => e.protein));
-    final totalCarbs = _sumIfAnyKnown(entries.map((e) => e.carbs));
-    final totalFat = _sumIfAnyKnown(entries.map((e) => e.fat));
     final workouts = ref.watch(workoutLogProvider(today));
     final totalBurned = workouts.fold<double>(0, (sum, workout) => sum + workout.caloriesBurned);
     final tdee = ref.watch(tdeeResultProvider);
@@ -108,9 +104,6 @@ class FoodLogScreen extends ConsumerWidget {
             totalCalories: totalCalories,
             totalBurned: totalBurned,
             tdee: tdee,
-            totalProtein: totalProtein,
-            totalCarbs: totalCarbs,
-            totalFat: totalFat,
           ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic),
           const SizedBox(height: 20),
           for (final (i, mealType) in MealType.values.indexed) ...[
@@ -153,15 +146,6 @@ const _romanianMonths = [
 
 String _formatDateRo(DateTime date) => '${date.day} ${_romanianMonths[date.month - 1]}';
 
-/// Sums the known (non-null) macro values across today's entries — entries
-/// without a known macro (fully-manual, calorie-only) simply don't
-/// contribute, rather than the whole day showing "—" because one entry
-/// lacks data. Returns null only when nothing at all is known yet.
-double? _sumIfAnyKnown(Iterable<double?> values) {
-  if (values.every((v) => v == null)) return null;
-  return values.fold<double>(0, (sum, v) => sum + (v ?? 0));
-}
-
 IconData _iconForMeal(MealType mealType) {
   switch (mealType) {
     case MealType.breakfast:
@@ -176,21 +160,11 @@ IconData _iconForMeal(MealType mealType) {
 }
 
 class _DailyProgressCard extends StatelessWidget {
-  const _DailyProgressCard({
-    required this.totalCalories,
-    required this.totalBurned,
-    required this.tdee,
-    required this.totalProtein,
-    required this.totalCarbs,
-    required this.totalFat,
-  });
+  const _DailyProgressCard({required this.totalCalories, required this.totalBurned, required this.tdee});
 
   final double totalCalories;
   final double totalBurned;
   final TdeeResult? tdee;
-  final double? totalProtein;
-  final double? totalCarbs;
-  final double? totalFat;
 
   @override
   Widget build(BuildContext context) {
@@ -299,18 +273,6 @@ class _DailyProgressCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (totalProtein != null || totalCarbs != null || totalFat != null) ...[
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  _MacroPill(label: 'Proteine', value: totalProtein, color: appColors.protein),
-                  const SizedBox(width: 8),
-                  _MacroPill(label: 'Carbo', value: totalCarbs, color: appColors.carbs),
-                  const SizedBox(width: 8),
-                  _MacroPill(label: 'Grăsimi', value: totalFat, color: appColors.fat),
-                ],
-              ),
-            ],
           ],
         ),
       ),
@@ -378,44 +340,7 @@ class _StatBlock extends StatelessWidget {
   }
 }
 
-class _MacroPill extends StatelessWidget {
-  const _MacroPill({required this.label, required this.value, required this.color});
-
-  final String label;
-  final double? value;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.16),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                value == null ? '—' : '${value!.round()}g',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MealSection extends ConsumerWidget {
+class _MealSection extends ConsumerStatefulWidget {
   const _MealSection({
     required this.mealType,
     required this.date,
@@ -429,74 +354,133 @@ class _MealSection extends ConsumerWidget {
   final double? dailyTarget;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final subtotal = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
-    final mealTarget = dailyTarget != null ? dailyTarget! * mealType.dailyShare : null;
+  ConsumerState<_MealSection> createState() => _MealSectionState();
+}
+
+class _MealSectionState extends ConsumerState<_MealSection> {
+  bool _expanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final subtotal = widget.entries.fold<double>(0, (sum, entry) => sum + entry.calories);
+    final mealTarget = widget.dailyTarget != null ? widget.dailyTarget! * widget.mealType.dailyShare : null;
+    // A ±15% band around the meal target, matching how mainstream trackers
+    // present a "recommended range" rather than a single number no one ever
+    // hits exactly.
+    final rangeLow = mealTarget != null ? mealTarget * 0.85 : null;
+    final rangeHigh = mealTarget != null ? mealTarget * 1.15 : null;
+    final isOverRange = rangeHigh != null && subtotal > rangeHigh;
     final colorScheme = Theme.of(context).colorScheme;
+    final warningColor = context.appColors.protein;
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ListTile(
-              leading: Stack(
-                alignment: Alignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+              child: Row(
                 children: [
-                  if (mealTarget != null)
-                    AnimatedGauge(value: subtotal / mealTarget, size: 44, strokeWidth: 5, centerText: ''),
-                  Icon(_iconForMeal(mealType), size: 18, color: colorScheme.primary),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(_iconForMeal(widget.mealType), size: 18, color: colorScheme.primary),
+                            const SizedBox(width: 8),
+                            Text(widget.mealType.label, style: Theme.of(context).textTheme.titleMedium),
+                          ],
+                        ),
+                        if (rangeLow != null && rangeHigh != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            'Valoare recomandată: ${rangeLow.round()}–${rangeHigh.round()} kcal',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '${subtotal.round()} kcal',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: isOverRange ? warningColor : null,
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: _expanded ? 0.25 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurfaceVariant),
+                  ),
                 ],
               ),
-              title: Text(mealType.label, style: Theme.of(context).textTheme.titleMedium),
-              trailing: Text(
-                '${subtotal.round()} kcal',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-              ),
             ),
-            for (final entry in entries)
-              ListTile(
-                dense: true,
-                title: Text(entry.foodName),
-                subtitle: Text(
-                  '${_formatGrams(entry.grams)} g · ${entry.kcalPer100g.round()} kcal/100g'
-                  '${_macroSuffix(entry)}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('${entry.calories.round()} kcal', style: Theme.of(context).textTheme.bodyMedium),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded, size: 18),
-                      onPressed: () => ref.read(dailyLogProvider(date).notifier).removeEntry(entry.id),
+          ),
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            crossFadeState: _expanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            firstChild: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Divider(height: 1),
+                for (final entry in widget.entries)
+                  Dismissible(
+                    key: ValueKey(entry.id),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: colorScheme.errorContainer,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Icon(Icons.delete_outline_rounded, color: colorScheme.onErrorContainer),
                     ),
-                  ],
+                    onDismissed: (_) =>
+                        ref.read(dailyLogProvider(widget.date).notifier).removeEntry(entry.id),
+                    child: ListTile(
+                      dense: true,
+                      leading: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHigh,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(Icons.restaurant_rounded, size: 16, color: colorScheme.onSurfaceVariant),
+                      ),
+                      title: Text(entry.foodName),
+                      subtitle: Text('${_formatGrams(entry.grams)} g'),
+                      trailing: Text(
+                        '${entry.calories.round()} kcal',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        AddFoodEntrySheet.show(context, mealType: widget.mealType, date: widget.date),
+                    icon: const Icon(Icons.add_rounded),
+                    label: const Text('Adaugă aliment'),
+                  ),
                 ),
-              ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: TextButton.icon(
-                onPressed: () => AddFoodEntrySheet.show(context, mealType: mealType, date: date),
-                icon: const Icon(Icons.add_rounded),
-                label: const Text('Adaugă aliment'),
-              ),
+              ],
             ),
-          ],
-        ),
+            secondChild: const SizedBox(width: double.infinity),
+          ),
+        ],
       ),
     );
   }
 
   String _formatGrams(double grams) {
     return grams == grams.roundToDouble() ? grams.toStringAsFixed(0) : grams.toString();
-  }
-
-  String _macroSuffix(FoodLogEntry entry) {
-    if (entry.protein == null && entry.carbs == null && entry.fat == null) return '';
-    String fmt(double? v) => v == null ? '—' : '${v.round()}g';
-    return ' · P ${fmt(entry.protein)} C ${fmt(entry.carbs)} G ${fmt(entry.fat)}';
   }
 }
 

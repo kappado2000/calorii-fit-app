@@ -38,13 +38,15 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
 
   /// Remembers a product for reuse next time — if a product with the same
   /// name (case-insensitive) already exists, it's updated in place rather
-  /// than creating a duplicate entry.
+  /// than creating a duplicate entry. [gramsUsed], when given, becomes the
+  /// portion the quick-add checklist pre-fills next time.
   Future<CustomFood> rememberProduct({
     required String name,
     required double kcalPer100g,
     double? proteinPer100g,
     double? carbsPer100g,
     double? fatPer100g,
+    double? gramsUsed,
   }) async {
     final trimmedName = name.trim();
     final existing = state
@@ -57,6 +59,7 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
       proteinPer100g: proteinPer100g,
       carbsPer100g: carbsPer100g,
       fatPer100g: fatPer100g,
+      lastGramsUsed: gramsUsed ?? existing?.lastGramsUsed,
     );
     await _dataSource.upsert(food);
     return food;
