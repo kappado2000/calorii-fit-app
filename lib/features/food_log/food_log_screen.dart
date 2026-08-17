@@ -159,6 +159,22 @@ IconData _iconForMeal(MealType mealType) {
   }
 }
 
+/// Distinct accent per meal — used only for the icon badge and a thin card
+/// outline, so each meal reads as visually different at a glance while the
+/// card body stays the neutral grey the user asked for earlier.
+Color _colorForMeal(MealType mealType) {
+  switch (mealType) {
+    case MealType.breakfast:
+      return const Color(0xFFEF9B3D);
+    case MealType.lunch:
+      return const Color(0xFF2E9E5B);
+    case MealType.dinner:
+      return const Color(0xFF5B6EE8);
+    case MealType.snack:
+      return const Color(0xFFD9668B);
+  }
+}
+
 class _DailyProgressCard extends StatelessWidget {
   const _DailyProgressCard({required this.totalCalories, required this.totalBurned, required this.tdee});
 
@@ -372,8 +388,13 @@ class _MealSectionState extends ConsumerState<_MealSection> {
     final isOverRange = rangeHigh != null && subtotal > rangeHigh;
     final colorScheme = Theme.of(context).colorScheme;
     final warningColor = context.appColors.protein;
+    final mealColor = _colorForMeal(widget.mealType);
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: mealColor.withValues(alpha: 0.3), width: 1.2),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -389,8 +410,17 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                       children: [
                         Row(
                           children: [
-                            Icon(_iconForMeal(widget.mealType), size: 18, color: colorScheme.primary),
-                            const SizedBox(width: 8),
+                            Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: mealColor.withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: Icon(_iconForMeal(widget.mealType), size: 16, color: mealColor),
+                            ),
+                            const SizedBox(width: 10),
                             Text(widget.mealType.label, style: Theme.of(context).textTheme.titleMedium),
                           ],
                         ),
