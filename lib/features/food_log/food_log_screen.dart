@@ -391,13 +391,15 @@ class _MealSectionState extends ConsumerState<_MealSection> {
     final mealColor = _colorForMeal(widget.mealType);
 
     return Card(
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: mealColor.withValues(alpha: 0.3), width: 1.2),
+        side: BorderSide(color: mealColor.withValues(alpha: 0.55), width: 1.6),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(height: 5, color: mealColor),
           InkWell(
             onTap: () => setState(() => _expanded = !_expanded),
             child: Padding(
@@ -411,17 +413,19 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                         Row(
                           children: [
                             Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                color: mealColor.withValues(alpha: 0.15),
-                                shape: BoxShape.circle,
-                              ),
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(color: mealColor, shape: BoxShape.circle),
                               alignment: Alignment.center,
-                              child: Icon(_iconForMeal(widget.mealType), size: 16, color: mealColor),
+                              child: Icon(_iconForMeal(widget.mealType), size: 17, color: Colors.white),
                             ),
                             const SizedBox(width: 10),
-                            Text(widget.mealType.label, style: Theme.of(context).textTheme.titleMedium),
+                            Text(
+                              widget.mealType.label,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleMedium?.copyWith(color: mealColor, fontWeight: FontWeight.w700),
+                            ),
                           ],
                         ),
                         if (rangeLow != null && rangeHigh != null) ...[
