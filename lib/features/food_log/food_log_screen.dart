@@ -271,11 +271,18 @@ class _DailyProgressCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _StatBlock(
+                    // The headline number is the full daily burn — bazal
+                    // metabolism + activity-level baseline (tdee.tdee)
+                    // plus any logged exercise — not just logged workouts,
+                    // since most calories burned in a day come from simply
+                    // being alive and moving around, not from a sport.
                     icon: Icons.local_fire_department_rounded,
                     iconColor: appColors.protein,
                     label: 'Total arse',
-                    value: totalBurned.round(),
-                    target: totalBurnedToday.round(),
+                    value: totalBurnedToday.round(),
+                    caption: totalBurned > 0
+                        ? 'bazal ${tdee!.tdee.round()} + sport ${totalBurned.round()}'
+                        : 'doar din activitatea zilnică',
                   ),
                 ),
                 Expanded(
@@ -302,14 +309,20 @@ class _StatBlock extends StatelessWidget {
     required this.iconColor,
     required this.label,
     required this.value,
-    required this.target,
+    this.target,
+    this.caption,
   });
 
   final IconData icon;
   final Color iconColor;
   final String label;
   final int value;
-  final int target;
+  final int? target;
+
+  /// A breakdown line shown below the number instead of a "/ target" pair
+  /// — used where a second raw number would be ambiguous (e.g. is it a
+  /// goal, or just a reference point?).
+  final String? caption;
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +356,7 @@ class _StatBlock extends StatelessWidget {
             children: [
               TextSpan(text: '$value'),
               TextSpan(
-                text: ' / $target kcal',
+                text: target != null ? ' / $target kcal' : ' kcal',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w400),
@@ -351,6 +364,13 @@ class _StatBlock extends StatelessWidget {
             ],
           ),
         ),
+        if (caption != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            caption!,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+          ),
+        ],
       ],
     );
   }
