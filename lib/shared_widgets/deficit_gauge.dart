@@ -77,11 +77,11 @@ class _GaugePainter extends CustomPainter {
   static const _sweepAngle = math.pi; // sweeps over the top to pointing right
 
   static const _gaugeColors = [
-    Color(0xFFE0503C),
-    Color(0xFFE8A23C),
-    Color(0xFFE8D23C),
-    Color(0xFF8FCB5C),
-    Color(0xFF3FAE5C),
+    Color(0xFFEF6F63),
+    Color(0xFFF3AE5D),
+    Color(0xFFF0D869),
+    Color(0xFFA3D677),
+    Color(0xFF4CB674),
   ];
 
   double _angleFor(double v) {
@@ -95,6 +95,26 @@ class _GaugePainter extends CustomPainter {
     final radius = math.min(size.width / 2, size.height - 24) - 12;
     final rect = Rect.fromCircle(center: center, radius: radius);
     const strokeWidth = 16.0;
+
+    final trackPaint = Paint()
+      ..color = trackColor.withValues(alpha: 0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(rect, _startAngle, _sweepAngle, false, trackPaint);
+
+    final glowPaint = Paint()
+      ..color = const Color(0xFFFFFFFF).withValues(alpha: 0.35)
+      ..shader = SweepGradient(
+        startAngle: _startAngle,
+        endAngle: _startAngle + _sweepAngle,
+        colors: _gaugeColors,
+      ).createShader(rect)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawArc(rect, _startAngle, _sweepAngle, false, glowPaint);
 
     final arcPaint = Paint()
       ..shader = SweepGradient(
@@ -113,7 +133,7 @@ class _GaugePainter extends CustomPainter {
       _drawGoalMarker(canvas, center, radius, strokeWidth, goalValue!);
     }
 
-    _drawNeedle(canvas, center, radius - strokeWidth / 2 - 6);
+    _drawIndicator(canvas, center, radius, angle: _angleFor(value));
   }
 
   void _drawTicks(Canvas canvas, Offset center, double radius, double strokeWidth) {
@@ -148,18 +168,28 @@ class _GaugePainter extends CustomPainter {
     canvas.drawLine(inner, outer, markerPaint);
   }
 
-  void _drawNeedle(Canvas canvas, Offset center, double length) {
-    final angle = _angleFor(value);
-    final tip = center + Offset(math.cos(angle), math.sin(angle)) * length;
+  /// A puck that slides along the arc's own centerline, rather than a
+  /// needle reaching down to the pivot — keeps the indicator confined to
+  /// the track itself so it never crosses the calorie number underneath.
+  void _drawIndicator(Canvas canvas, Offset center, double radius, {required double angle}) {
+    final dir = Offset(math.cos(angle), math.sin(angle));
+    final pos = center + dir * radius;
 
-    final needlePaint = Paint()
-      ..color = const Color(0xFF2B2B2B)
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(center, tip, needlePaint);
+    final glowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.16)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    canvas.drawCircle(pos, 12, glowPaint);
 
-    canvas.drawCircle(center, 7, Paint()..color = const Color(0xFF2B2B2B));
-    canvas.drawCircle(center, 3.5, Paint()..color = Colors.white);
+    canvas.drawCircle(pos, 10.5, Paint()..color = Colors.white);
+    canvas.drawCircle(
+      pos,
+      10.5,
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.08)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1,
+    );
+    canvas.drawCircle(pos, 6, Paint()..color = const Color(0xFF2B2B2B));
   }
 
   @override
