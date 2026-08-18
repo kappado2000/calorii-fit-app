@@ -87,6 +87,7 @@ class _GaugePainter extends CustomPainter {
     Color(0xFFFCD535),
     Color(0xFF8BC53F),
     Color(0xFF2FA84F),
+    Color(0xFF1B6B34),
   ];
 
   double _angleFor(double v) {
@@ -146,7 +147,7 @@ class _GaugePainter extends CustomPainter {
     _drawTicks(canvas, center, radius, strokeWidth);
 
     if (goalValue != null) {
-      _drawGoalZone(canvas, rect, strokeWidth, goalValue!);
+      _drawGoalMarker(canvas, center, radius, strokeWidth, goalValue!);
     }
 
     _drawIndicator(canvas, center, radius, strokeWidth, angle: _angleFor(value));
@@ -191,30 +192,36 @@ class _GaugePainter extends CustomPainter {
     }
   }
 
-  /// The goal zone — a translucent white "frosted glass" band from the
-  /// minimum-deficit target to the top of the scale, matching the
-  /// reference gauge's white "Goal" highlight (ticks still show faintly
-  /// through it). No text label on the arc itself — the "Ținta: X kcal"
-  /// text in the card below the gauge already says this.
-  void _drawGoalZone(Canvas canvas, Rect rect, double strokeWidth, double goal) {
-    final startAngle = _angleFor(goal);
-    final sweep = (_startAngle + _sweepAngle) - startAngle;
-    if (sweep <= 0) return;
+  /// A thin marker at the minimum-deficit target — the scale itself is a
+  /// single continuous gradient (red -> dark green) with no separate
+  /// "goal zone" tint; this is just a slim white tick crossing the band so
+  /// the target position still reads at a glance. The "Ținta: X kcal" text
+  /// in the card below the gauge already spells out the number.
+  void _drawGoalMarker(Canvas canvas, Offset center, double radius, double strokeWidth, double goal) {
+    final angle = _angleFor(goal);
+    final dir = Offset(math.cos(angle), math.sin(angle));
+    final inner = center + dir * (radius - strokeWidth / 2 - 1);
+    final outer = center + dir * (radius + strokeWidth / 2 + 1);
 
-    final zonePaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.55)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
+    final glowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.25)
+      ..strokeWidth = 4.5
       ..strokeCap = StrokeCap.butt;
-    canvas.drawArc(rect, startAngle, sweep, false, zonePaint);
+    canvas.drawLine(inner, outer, glowPaint);
+
+    final markerPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.butt;
+    canvas.drawLine(inner, outer, markerPaint);
   }
 
   /// A knob that slides along the band's inner border, rather than a
   /// needle reaching down to the pivot — keeps the indicator confined to
   /// the track itself so it never crosses the calorie number underneath.
   /// Its pointed tip reaches into the colored band (not past its outer
-  /// edge). Dark-on-white (inverse of the white goal zone) so the two can
-  /// never be confused for each other on the arc.
+  /// edge). Dark-on-white (inverse of the white goal marker) so the two
+  /// can never be confused for each other on the arc.
   void _drawIndicator(Canvas canvas, Offset center, double radius, double strokeWidth, {required double angle}) {
     final dir = Offset(math.cos(angle), math.sin(angle));
     // Circle rides the band's inner border, with the point reaching into
