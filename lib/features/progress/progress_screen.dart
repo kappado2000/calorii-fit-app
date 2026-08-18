@@ -9,6 +9,7 @@ import '../../core/constants/micronutrient_reference.dart';
 import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
 import '../../domain/usecases/tdee_calculator.dart';
+import '../../shared_widgets/gradient_border_frame.dart';
 import '../profile/profile_providers.dart';
 import 'progress_providers.dart';
 
@@ -73,6 +74,13 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                     (sum, d) => sum + ((tdeeValue ?? 0) + (burnedHistory[d] ?? 0) - (history[d] ?? 0)),
                   );
                   final projectedKg = totalDeficit / kcalPerKgBodyFat;
+                  // How the whole period is doing, on average — same scale
+                  // used for a single day, just fed the period's average
+                  // daily deficit instead of one day's.
+                  final avgDeficit = days.isEmpty ? 0.0 : totalDeficit / days.length;
+                  final periodStatusColor = tdee != null
+                      ? deficitStatusColor(avgDeficit, tdee.dailyDeficit)
+                      : Theme.of(context).colorScheme.primary;
 
                   return SingleChildScrollView(
                     child: Column(
@@ -87,6 +95,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                         _ChartCard(
                           title: 'Aport caloric',
                           icon: Icons.restaurant_rounded,
+                          borderColor: periodStatusColor,
+                          thickGradientBorder: true,
                           child: _IntakeChart(
                             days: days,
                             history: history,
@@ -100,6 +110,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                         _ChartCard(
                           title: 'Deficit caloric zilnic',
                           icon: Icons.trending_down_rounded,
+                          borderColor: periodStatusColor,
+                          thickGradientBorder: true,
                           child: _DeficitChart(
                             days: days,
                             history: history,
@@ -142,7 +154,14 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 }
 
 class _ChartCard extends StatelessWidget {
-  const _ChartCard({required this.title, required this.icon, required this.child, this.fixedHeight = true});
+  const _ChartCard({
+    required this.title,
+    required this.icon,
+    required this.child,
+    this.fixedHeight = true,
+    required this.borderColor,
+    this.thickGradientBorder = false,
+  });
 
   final String title;
   final IconData icon;
@@ -152,9 +171,22 @@ class _ChartCard extends StatelessWidget {
   /// variable-length content like the macro/micronutrient bar lists.
   final bool fixedHeight;
 
+  final Color borderColor;
+
+  /// The two real charts (intake/deficit) get the same thick fade-to-card
+  /// gradient border as the daily gauge card, colored by how the whole
+  /// period is doing — the other cards just get a thin colored outline.
+  final bool thickGradientBorder;
+
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final card = Card(
+      shape: thickGradientBorder
+          ? null
+          : RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: borderColor, width: 1.5),
+            ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 20, 12),
         child: Column(
@@ -162,7 +194,7 @@ class _ChartCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
+                Icon(icon, size: 18, color: borderColor),
                 const SizedBox(width: 8),
                 Text(title, style: Theme.of(context).textTheme.titleMedium),
               ],
@@ -173,6 +205,8 @@ class _ChartCard extends StatelessWidget {
         ),
       ),
     );
+    if (!thickGradientBorder) return card;
+    return gradientBorderFrame(context, statusColor: borderColor, radius: 20, child: card);
   }
 }
 
@@ -197,6 +231,7 @@ class _PeriodStatsRow extends StatelessWidget {
             icon: Icons.local_dining_rounded,
             label: 'Total calorii',
             value: formatThousands(totalIntake.round()),
+            color: const Color(0xFFEF9B3D),
           ),
         ),
         const SizedBox(width: 10),
@@ -205,6 +240,7 @@ class _PeriodStatsRow extends StatelessWidget {
             icon: Icons.calendar_today_rounded,
             label: 'Medie/zi',
             value: formatThousands(avgIntake.round()),
+            color: const Color(0xFF5B6EE8),
           ),
         ),
         const SizedBox(width: 10),
@@ -213,6 +249,7 @@ class _PeriodStatsRow extends StatelessWidget {
             icon: Icons.monitor_weight_outlined,
             label: 'Scădere estimată',
             value: '${isLoss ? '-' : '+'}${projectedKg.abs().toStringAsFixed(1)} kg',
+            color: const Color(0xFF2FA84F),
           ),
         ),
       ],
@@ -221,22 +258,27 @@ class _PeriodStatsRow extends StatelessWidget {
 }
 
 class _StatTile extends StatelessWidget {
-  const _StatTile({required this.icon, required this.label, required this.value});
+  const _StatTile({required this.icon, required this.label, required this.value, required this.color});
 
   final IconData icon;
   final String label;
   final String value;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: color, width: 1.5),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 16, color: colorScheme.primary),
+            Icon(icon, size: 16, color: color),
             const SizedBox(height: 6),
             Text(
               value,
@@ -273,6 +315,7 @@ class _MacroBalanceCard extends StatelessWidget {
     return _ChartCard(
       title: 'Echilibru macronutrienți',
       icon: Icons.pie_chart_rounded,
+      borderColor: const Color(0xFF7C5CFC),
       fixedHeight: false,
       child: trackedKcal <= 0
           ? const Padding(
@@ -352,6 +395,7 @@ class _MicronutrientCard extends StatelessWidget {
     return _ChartCard(
       title: 'Micronutrienți (medie/zi)',
       icon: Icons.science_outlined,
+      borderColor: const Color(0xFF1FAE7E),
       fixedHeight: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

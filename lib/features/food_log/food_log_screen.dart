@@ -13,6 +13,7 @@ import '../../data/models/workout_entry.dart';
 import '../../domain/usecases/met_calorie_estimator.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../../shared_widgets/deficit_gauge.dart';
+import '../../shared_widgets/gradient_border_frame.dart';
 import '../activity_sync/activity_sync_screen.dart';
 import '../auth/auth_providers.dart';
 import '../camera_capture/camera_capture_screen.dart';
@@ -296,39 +297,6 @@ String _limitCaption(Goal? goal, double adjustedTarget) {
 }
 
 
-/// Wraps [child] in a border that fades from a dark shade of [statusColor]
-/// at the outer edge to the card's own background color at the inner edge
-/// — a true perpendicular gradient, which `BorderSide` can't do on its own,
-/// approximated with a handful of thin concentric rounded-rect layers (each
-/// a flat color, but close enough in number/step-size to read as smooth).
-Widget _gradientBorderFrame(
-  BuildContext context, {
-  required Color statusColor,
-  required Widget child,
-}) {
-  const steps = 6;
-  const stepThickness = 1.5;
-  const radius = 28.0;
-  final darkColor = Color.lerp(statusColor, Colors.black, 0.35)!;
-  final surfaceColor =
-      Theme.of(context).cardTheme.color ??
-      Theme.of(context).colorScheme.surface;
-
-  var framed = child;
-  for (var i = 0; i < steps; i++) {
-    final t = i / (steps - 1); // 0 = innermost ring (surface color) .. 1 = outermost ring (dark)
-    framed = Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
-        color: Color.lerp(surfaceColor, darkColor, t),
-      ),
-      padding: const EdgeInsets.all(stepThickness),
-      child: framed,
-    );
-  }
-  return framed;
-}
-
 class _DailyProgressCard extends StatelessWidget {
   const _DailyProgressCard({
     super.key,
@@ -402,7 +370,7 @@ class _DailyProgressCard extends StatelessWidget {
     final overBy = totalCalories - adjustedTarget;
     final cardBorderColor = deficitStatusColor(trueDeficit, tdee!.dailyDeficit);
 
-    return _gradientBorderFrame(
+    return gradientBorderFrame(
       context,
       statusColor: cardBorderColor,
       child: Card(
