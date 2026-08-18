@@ -17,7 +17,7 @@ BRAND_TOP = (255, 216, 92)      # lighter golden yellow, top-left
 BRAND_BOTTOM = (245, 166, 35)   # deeper amber, bottom-right
 APPLE_COLOR = (47, 158, 79)
 LEAF_COLOR = (47, 158, 79)
-PULSE_COLOR = (255, 158, 66)    # warm amber accent
+PULSE_COLOR = (255, 255, 255)   # white, for contrast against the green apple
 
 
 def lerp(a, b, t):
