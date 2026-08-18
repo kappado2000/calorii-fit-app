@@ -363,15 +363,16 @@ class _DailyProgressCard extends StatelessWidget {
               children: [
                 DeficitGauge(deficit: trueDeficit, goalDeficit: tdee!.dailyDeficit, width: 260),
                 Padding(
-                  padding: const EdgeInsets.only(top: 40),
+                  padding: const EdgeInsets.only(top: 62),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF2FA84F),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Row(

@@ -231,25 +231,39 @@ class _GaugePainter extends CustomPainter {
   void _drawIndicator(Canvas canvas, Offset center, double radius, {required double angle}) {
     final dir = Offset(math.cos(angle), math.sin(angle));
     final pos = center + dir * radius;
-    const bodyRadius = 12.0;
+    const bodyRadius = 11.0;
+    const pointLength = 15.0;
+    const pointHalfWidth = 6.5;
     final perp = Offset(-dir.dy, dir.dx);
-    final baseCenter = pos + dir * (bodyRadius * 0.5);
-    final tip = pos + dir * (bodyRadius * 0.5 + 8);
+    // Base of the point sits right at the circle's own edge (not buried
+    // inside it), so the whole point-length is visible as a clear spike —
+    // the earlier version had the tip only ~2px past the circle, which
+    // read as a plain circle, not a pointed knob.
+    final baseCenter = pos + dir * bodyRadius;
+    final tip = pos + dir * (bodyRadius + pointLength);
     final point = Path()
-      ..moveTo((baseCenter + perp * 6.5).dx, (baseCenter + perp * 6.5).dy)
+      ..moveTo((baseCenter + perp * pointHalfWidth).dx, (baseCenter + perp * pointHalfWidth).dy)
       ..lineTo(tip.dx, tip.dy)
-      ..lineTo((baseCenter - perp * 6.5).dx, (baseCenter - perp * 6.5).dy)
+      ..lineTo((baseCenter - perp * pointHalfWidth).dx, (baseCenter - perp * pointHalfWidth).dy)
       ..close();
 
     final glowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.16)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
-    canvas.drawCircle(pos, 15, glowPaint);
+    canvas.drawCircle(pos, 16, glowPaint);
 
     final darkPaint = Paint()..color = const Color(0xFF2B2B2B);
     canvas.drawPath(point, darkPaint);
     canvas.drawCircle(pos, bodyRadius, darkPaint);
-    canvas.drawCircle(pos, bodyRadius, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 2.5);
+
+    final whiteStroke = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(point, whiteStroke);
+    canvas.drawCircle(pos, bodyRadius, whiteStroke);
+
     canvas.drawCircle(pos, 4.5, Paint()..color = Colors.white);
   }
 

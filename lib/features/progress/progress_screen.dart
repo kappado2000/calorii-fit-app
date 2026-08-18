@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -429,14 +431,33 @@ class _IntakeChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final maxIntake = days.map((d) => history[d] ?? 0).fold<double>(0, (a, b) => a > b ? a : b);
-    final maxY = [maxIntake, target ?? 0, 100].reduce((a, b) => a > b ? a : b) * 1.2;
+    final rawMaxY = [maxIntake, target ?? 0, 100].reduce((a, b) => a > b ? a : b) * 1.25;
+    // A round, non-overlap-prone step (nearest 100/250/500 depending on
+    // magnitude) rather than an arbitrary maxY/4 — fl_chart otherwise
+    // picks its own tick spacing that can crowd or misalign with the grid.
+    final interval = _niceInterval(rawMaxY / 4);
+    final maxY = interval * 4;
+    final labelStyle = Theme.of(
+      context,
+    ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant, fontSize: 10.5);
 
     return BarChart(
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeOutCubic,
       BarChartData(
         maxY: maxY,
-        barTouchData: BarTouchData(enabled: true),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (_) => colorScheme.inverseSurface,
+            tooltipBorderRadius: BorderRadius.circular(10),
+            tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            getTooltipItem: (group, groupIndex, rod, rodIndex) => BarTooltipItem(
+              '${formatThousands(rod.toY.round())} kcal',
+              TextStyle(color: colorScheme.onInverseSurface, fontWeight: FontWeight.w700, fontSize: 12),
+            ),
+          ),
+        ),
         titlesData: FlTitlesData(
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -444,17 +465,18 @@ class _IntakeChart extends StatelessWidget {
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 40,
+              reservedSize: 42,
+              interval: interval,
               getTitlesWidget: (value, meta) =>
-                  Text(formatThousands(value.round()), style: Theme.of(context).textTheme.bodySmall),
+                  Text(formatThousands(value.round()), style: labelStyle),
             ),
           ),
         ),
         gridData: FlGridData(
           drawVerticalLine: false,
-          horizontalInterval: maxY / 4,
+          horizontalInterval: interval,
           getDrawingHorizontalLine: (value) =>
-              FlLine(color: colorScheme.outlineVariant.withValues(alpha: 0.3), strokeWidth: 1),
+              FlLine(color: colorScheme.outlineVariant.withValues(alpha: 0.25), strokeWidth: 1),
         ),
         borderData: FlBorderData(show: false),
         extraLinesData: target != null
@@ -462,9 +484,20 @@ class _IntakeChart extends StatelessWidget {
                 horizontalLines: [
                   HorizontalLine(
                     y: target!,
-                    color: colorScheme.tertiary,
+                    color: const Color(0xFF2FA84F),
                     strokeWidth: 2,
                     dashArray: [6, 4],
+                    label: HorizontalLineLabel(
+                      show: true,
+                      alignment: Alignment.topRight,
+                      padding: const EdgeInsets.only(bottom: 4, right: 4),
+                      style: const TextStyle(
+                        color: Color(0xFF2FA84F),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 10.5,
+                      ),
+                      labelResolver: (_) => 'Țintă',
+                    ),
                   ),
                 ],
               )
@@ -477,11 +510,16 @@ class _IntakeChart extends StatelessWidget {
                 BarChartRodData(
                   toY: history[days[i]] ?? 0,
                   width: _barWidth(days.length),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                  borderRadius: BorderRadius.circular(_barWidth(days.length) / 2),
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
-                    colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.6)],
+                    colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.55)],
+                  ),
+                  backDrawRodData: BackgroundBarChartRodData(
+                    show: true,
+                    toY: maxY,
+                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
                   ),
                 ),
               ],
@@ -508,23 +546,39 @@ class _DeficitChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final positiveColor = const Color(0xFF1FAE7E);
-    final negativeColor = colorScheme.error;
+    final positiveColor = const Color(0xFF2FA84F);
+    final negativeColor = const Color(0xFFE0503C);
 
     // Same "eat back exercise calories" model as the food log screen:
     // deficit = TDEE + exercise burned - intake.
     final deficits = days
         .map((d) => (tdee ?? 0) + (burnedHistory[d] ?? 0) - (history[d] ?? 0))
         .toList();
-    final maxAbs = deficits.map((v) => v.abs()).fold<double>(100, (a, b) => a > b ? a : b);
+    final rawMaxAbs = deficits.map((v) => v.abs()).fold<double>(100, (a, b) => a > b ? a : b) * 1.25;
+    final interval = _niceInterval(rawMaxAbs / 2);
+    final maxAbs = interval * 2;
+    final labelStyle = Theme.of(
+      context,
+    ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant, fontSize: 10.5);
 
     return BarChart(
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeOutCubic,
       BarChartData(
-        maxY: maxAbs * 1.2,
-        minY: -maxAbs * 1.2,
-        barTouchData: BarTouchData(enabled: true),
+        maxY: maxAbs,
+        minY: -maxAbs,
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (_) => colorScheme.inverseSurface,
+            tooltipBorderRadius: BorderRadius.circular(10),
+            tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            getTooltipItem: (group, groupIndex, rod, rodIndex) => BarTooltipItem(
+              formatSignedThousands(rod.toY.round()),
+              TextStyle(color: colorScheme.onInverseSurface, fontWeight: FontWeight.w700, fontSize: 12),
+            ),
+          ),
+        ),
         titlesData: FlTitlesData(
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -532,18 +586,23 @@ class _DeficitChart extends StatelessWidget {
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 40,
+              reservedSize: 42,
+              interval: interval,
               getTitlesWidget: (value, meta) =>
-                  Text(formatThousands(value.round()), style: Theme.of(context).textTheme.bodySmall),
+                  Text(formatThousands(value.round()), style: labelStyle),
             ),
           ),
         ),
         gridData: FlGridData(
           drawVerticalLine: false,
+          horizontalInterval: interval,
           getDrawingHorizontalLine: (value) =>
-              FlLine(color: colorScheme.outlineVariant.withValues(alpha: 0.3), strokeWidth: 1),
+              FlLine(color: colorScheme.outlineVariant.withValues(alpha: 0.25), strokeWidth: 1),
         ),
         borderData: FlBorderData(show: false),
+        extraLinesData: ExtraLinesData(
+          horizontalLines: [HorizontalLine(y: 0, color: colorScheme.outline.withValues(alpha: 0.5), strokeWidth: 1.5)],
+        ),
         barGroups: [
           for (var i = 0; i < days.length; i++)
             BarChartGroupData(
@@ -570,6 +629,18 @@ double _barWidth(int dayCount) {
   if (dayCount <= 7) return 18;
   if (dayCount <= 14) return 10;
   return 5;
+}
+
+/// Rounds a raw axis step up to a "nice" round number (steps of 1/2/5 at
+/// the appropriate magnitude) so the left-axis labels land on clean values
+/// like 250/500/1000 instead of an arbitrary fraction of maxY — the latter
+/// is what let labels overlap or land awkwardly close together before.
+double _niceInterval(double raw) {
+  if (raw <= 0) return 100;
+  final magnitude = math.pow(10, (math.log(raw) / math.ln10).floor()).toDouble();
+  final normalized = raw / magnitude;
+  final niceNormalized = normalized <= 1 ? 1 : (normalized <= 2 ? 2 : (normalized <= 5 ? 5 : 10));
+  return niceNormalized * magnitude;
 }
 
 SideTitles _bottomTitles(List<DateTime> days) {

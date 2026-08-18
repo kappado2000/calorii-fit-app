@@ -120,9 +120,19 @@ export const genericFoodsTable: GenericFoodItem[] = [
   { name: "Omletă cu cașcaval", kcalPer100g: 220, proteinPer100g: 14, carbsPer100g: 1.5, fatPer100g: 17.5 },
   { name: "Ou jumări / Scrob", kcalPer100g: 180, proteinPer100g: 12, carbsPer100g: 1.5, fatPer100g: 14 },
 
-  // --- Carne la grătar / cuptor ---
+  // --- Carne, toate metodele de preparare (grătar/cuptor/fiartă/prăjită)
+  // — completat pe cerere explicită: căutarea unei singure metode per tip
+  // de carne (ex. doar "la grătar") nu acoperea cum e gătită efectiv o
+  // masă. Valorile diferă pe metodă (fiertul scade grăsimea, prăjitul în
+  // ulei o crește), aceleași estimări rezonabile ca restul tabelului. ---
   { name: "Ceafă de porc la grătar", kcalPer100g: 280, proteinPer100g: 22, carbsPer100g: 0, fatPer100g: 21 },
+  { name: "Ceafă de porc la cuptor", kcalPer100g: 265, proteinPer100g: 23, carbsPer100g: 0, fatPer100g: 18 },
+  { name: "Ceafă de porc fiartă", kcalPer100g: 215, proteinPer100g: 24, carbsPer100g: 0, fatPer100g: 12 },
+  { name: "Ceafă de porc prăjită", kcalPer100g: 320, proteinPer100g: 21, carbsPer100g: 2, fatPer100g: 25 },
   { name: "Piept de porc la grătar", kcalPer100g: 260, proteinPer100g: 21, carbsPer100g: 0, fatPer100g: 19 },
+  { name: "Piept de porc la cuptor", kcalPer100g: 310, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 26 },
+  { name: "Piept de porc fiert", kcalPer100g: 250, proteinPer100g: 20, carbsPer100g: 0, fatPer100g: 19 },
+  { name: "Piept de porc prăjit", kcalPer100g: 330, proteinPer100g: 18, carbsPer100g: 1, fatPer100g: 29 },
   { name: "Cârnați la grătar", kcalPer100g: 300, proteinPer100g: 14, carbsPer100g: 3, fatPer100g: 26 },
   { name: "Mititei / Mici", kcalPer100g: 260, proteinPer100g: 18, carbsPer100g: 2, fatPer100g: 20 },
   {
@@ -133,7 +143,19 @@ export const genericFoodsTable: GenericFoodItem[] = [
     fatPer100g: 3.6,
     micronutrients: { calciumMg: 5, ironMg: 0.7, magnesiumMg: 25, potassiumMg: 220 },
   },
+  { name: "Piept de pui la cuptor", kcalPer100g: 170, proteinPer100g: 30, carbsPer100g: 0, fatPer100g: 4.5 },
+  { name: "Piept de pui fiert", kcalPer100g: 150, proteinPer100g: 29, carbsPer100g: 0, fatPer100g: 3 },
+  { name: "Piept de pui prăjit", kcalPer100g: 220, proteinPer100g: 27, carbsPer100g: 2, fatPer100g: 11 },
+  { name: "Pulpă de pui la grătar", kcalPer100g: 210, proteinPer100g: 26, carbsPer100g: 0, fatPer100g: 11 },
+  { name: "Pulpă de pui la cuptor", kcalPer100g: 220, proteinPer100g: 25, carbsPer100g: 0, fatPer100g: 13 },
+  { name: "Pulpă de pui fiartă", kcalPer100g: 180, proteinPer100g: 24, carbsPer100g: 0, fatPer100g: 8 },
+  { name: "Pulpă de pui prăjită", kcalPer100g: 260, proteinPer100g: 23, carbsPer100g: 2, fatPer100g: 17 },
   { name: "Pui la cuptor", kcalPer100g: 215, proteinPer100g: 27, carbsPer100g: 0, fatPer100g: 11 },
+  { name: "Mușchi de vită la grătar", kcalPer100g: 250, proteinPer100g: 26, carbsPer100g: 0, fatPer100g: 16 },
+  { name: "Mușchi de vită la cuptor", kcalPer100g: 220, proteinPer100g: 28, carbsPer100g: 0, fatPer100g: 11 },
+  { name: "Mușchi de vită prăjit", kcalPer100g: 290, proteinPer100g: 25, carbsPer100g: 1, fatPer100g: 20 },
+  { name: "Piept de curcan la grătar", kcalPer100g: 150, proteinPer100g: 29, carbsPer100g: 0, fatPer100g: 2.5 },
+  { name: "Piept de curcan la cuptor", kcalPer100g: 160, proteinPer100g: 28, carbsPer100g: 0, fatPer100g: 3.5 },
 
   // --- Ciorbe / supe ---
   { name: "Ciorbă de burtă", kcalPer100g: 90, proteinPer100g: 6, carbsPer100g: 4, fatPer100g: 6 },
@@ -580,6 +602,21 @@ export const genericFoodsTable: GenericFoodItem[] = [
     micronutrients: { vitaminDMcg: 0.2, calciumMg: 3, ironMg: 0.5, magnesiumMg: 9, potassiumMg: 318 },
   },
 
+  // --- Legume gătite (grătar/cuptor/prăjit) — cele mai des preparate
+  // așa, nu doar crude. ---
+  { name: "Vinete la grătar", kcalPer100g: 35, proteinPer100g: 1, carbsPer100g: 8, fatPer100g: 0.3 },
+  { name: "Vinete la cuptor", kcalPer100g: 40, proteinPer100g: 1.2, carbsPer100g: 9, fatPer100g: 0.4 },
+  { name: "Vinete prăjite", kcalPer100g: 150, proteinPer100g: 1.5, carbsPer100g: 10, fatPer100g: 12 },
+  { name: "Dovlecei la grătar", kcalPer100g: 25, proteinPer100g: 1.5, carbsPer100g: 4, fatPer100g: 0.4 },
+  { name: "Dovlecei prăjiți", kcalPer100g: 130, proteinPer100g: 1.8, carbsPer100g: 8, fatPer100g: 10 },
+  { name: "Ardei gras la grătar", kcalPer100g: 30, proteinPer100g: 1, carbsPer100g: 6, fatPer100g: 0.3 },
+  { name: "Ciuperci la grătar", kcalPer100g: 30, proteinPer100g: 3.2, carbsPer100g: 3.3, fatPer100g: 0.6 },
+  { name: "Ciuperci prăjite", kcalPer100g: 95, proteinPer100g: 3, carbsPer100g: 3.5, fatPer100g: 8.5 },
+  { name: "Conopidă la cuptor", kcalPer100g: 45, proteinPer100g: 2.2, carbsPer100g: 6, fatPer100g: 1.5 },
+  { name: "Broccoli la cuptor", kcalPer100g: 55, proteinPer100g: 3, carbsPer100g: 6, fatPer100g: 2 },
+  { name: "Broccoli fiert", kcalPer100g: 28, proteinPer100g: 2.4, carbsPer100g: 5, fatPer100g: 0.4 },
+  { name: "Conopidă fiartă", kcalPer100g: 23, proteinPer100g: 1.8, carbsPer100g: 4, fatPer100g: 0.3 },
+
   // --- A doua trecere prin Lista de mancaruri romanesti (Wikipedia) —
   // categoriile feluri principale/gustari/salate/sosuri/deserturi/street
   // food acoperite mai complet acum. Raman excluse doar preparatele cu
@@ -663,13 +700,24 @@ export const genericFoodsTable: GenericFoodItem[] = [
     fatPer100g: 13,
     micronutrients: { vitaminDMcg: 11, calciumMg: 9, ironMg: 0.34, magnesiumMg: 27, potassiumMg: 384 },
   },
+  { name: "Somon la grătar", kcalPer100g: 210, proteinPer100g: 22, carbsPer100g: 0, fatPer100g: 13 },
+  { name: "Somon la cuptor", kcalPer100g: 206, proteinPer100g: 21, carbsPer100g: 0, fatPer100g: 13 },
+  { name: "Somon prăjit", kcalPer100g: 250, proteinPer100g: 20, carbsPer100g: 1, fatPer100g: 18 },
   { name: "Ton", kcalPer100g: 132, proteinPer100g: 28, carbsPer100g: 0, fatPer100g: 1.3 },
   { name: "Păstrăv", kcalPer100g: 148, proteinPer100g: 20, carbsPer100g: 0, fatPer100g: 6.6 },
+  { name: "Păstrăv la grătar", kcalPer100g: 150, proteinPer100g: 21, carbsPer100g: 0, fatPer100g: 6.5 },
+  { name: "Păstrăv prăjit", kcalPer100g: 210, proteinPer100g: 19, carbsPer100g: 2, fatPer100g: 13 },
   { name: "Crap", kcalPer100g: 127, proteinPer100g: 17.8, carbsPer100g: 0, fatPer100g: 5.6 },
+  { name: "Crap la grătar", kcalPer100g: 160, proteinPer100g: 18, carbsPer100g: 0, fatPer100g: 9 },
+  { name: "Crap prăjit", kcalPer100g: 210, proteinPer100g: 17, carbsPer100g: 3, fatPer100g: 14 },
   { name: "Șalău", kcalPer100g: 92, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 1 },
+  { name: "Șalău la grătar", kcalPer100g: 100, proteinPer100g: 20, carbsPer100g: 0, fatPer100g: 1.5 },
   { name: "Cod / Merluciu", kcalPer100g: 82, proteinPer100g: 18, carbsPer100g: 0, fatPer100g: 0.7 },
+  { name: "Cod la cuptor", kcalPer100g: 90, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 1 },
+  { name: "Cod prăjit", kcalPer100g: 180, proteinPer100g: 17, carbsPer100g: 6, fatPer100g: 10 },
   { name: "Sardine", kcalPer100g: 208, proteinPer100g: 25, carbsPer100g: 0, fatPer100g: 11 },
   { name: "Macrou", kcalPer100g: 205, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 14 },
+  { name: "Macrou la grătar", kcalPer100g: 210, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 14 },
   { name: "Creveți", kcalPer100g: 99, proteinPer100g: 24, carbsPer100g: 0.2, fatPer100g: 0.3 },
   { name: "Calamar", kcalPer100g: 92, proteinPer100g: 15.6, carbsPer100g: 3.1, fatPer100g: 1.4 },
   { name: "Midii", kcalPer100g: 86, proteinPer100g: 12, carbsPer100g: 3.7, fatPer100g: 2.2 },
