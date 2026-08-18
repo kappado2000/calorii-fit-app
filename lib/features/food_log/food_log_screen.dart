@@ -439,13 +439,19 @@ class _DailyProgressCard extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: const Color(0xFF1B6B34),
-                                fontWeight: FontWeight.w600,
-                              ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1B6B34),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Row(

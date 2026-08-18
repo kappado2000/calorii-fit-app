@@ -138,7 +138,7 @@ class _GaugePainter extends CustomPainter {
     final borderPaint = Paint()
       ..color = const Color(0xFF5A5A5A)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.6
+      ..strokeWidth = 0.9
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius + strokeWidth / 2), _startAngle, _sweepAngle, false, borderPaint);
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius - strokeWidth / 2), _startAngle, _sweepAngle, false, borderPaint);
