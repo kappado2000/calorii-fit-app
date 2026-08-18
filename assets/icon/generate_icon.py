@@ -157,7 +157,7 @@ def build():
     # it and the body below it balance out to a visually centered glyph
     # overall (verified against the rendered bounding box, not guessed).
     cx, cy = SIZE / 2, SIZE / 2 + SIZE * 0.015
-    apple_scale = SIZE * 0.42
+    apple_scale = SIZE * 0.44
 
     apple_mask = Image.new("L", (SIZE, SIZE), 0)
     ImageDraw.Draw(apple_mask).polygon(apple_path(cx, cy, apple_scale), fill=255)

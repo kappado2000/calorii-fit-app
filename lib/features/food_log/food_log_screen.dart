@@ -407,9 +407,6 @@ class _DailyProgressCard extends StatelessWidget {
                     iconColor: appColors.protein,
                     label: 'Total arse',
                     value: totalBurnedToday.round(),
-                    caption: totalBurned > 0
-                        ? 'bazal ${formatThousands(tdee!.tdee.round())} + sport ${formatThousands(totalBurned.round())}'
-                        : 'doar din activitatea zilnică',
                   ),
                 ),
                 Expanded(
@@ -467,7 +464,6 @@ class _StatBlock extends StatelessWidget {
     required this.label,
     required this.value,
     this.target,
-    this.caption,
   });
 
   final IconData icon;
@@ -475,11 +471,6 @@ class _StatBlock extends StatelessWidget {
   final String label;
   final int value;
   final int? target;
-
-  /// A breakdown line shown below the number instead of a "/ target" pair
-  /// — used where a second raw number would be ambiguous (e.g. is it a
-  /// goal, or just a reference point?).
-  final String? caption;
 
   @override
   Widget build(BuildContext context) {
@@ -521,13 +512,6 @@ class _StatBlock extends StatelessWidget {
             ],
           ),
         ),
-        if (caption != null) ...[
-          const SizedBox(height: 2),
-          Text(
-            caption!,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
-          ),
-        ],
       ],
     );
   }

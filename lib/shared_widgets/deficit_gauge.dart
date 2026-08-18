@@ -31,7 +31,12 @@ class DeficitGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = width / 2 + 24;
+    // The extra 34px isn't decorative — the thick band pushes the "0" tick
+    // label above the semicircle's nominal top edge (radius + half the
+    // band width + label offset), so without this margin it gets clipped
+    // by the card around the gauge. The bottom anchor (size.height - 24 in
+    // the painter) stays put; this only grows the room above.
+    final height = width / 2 + 24 + 34;
     return SizedBox(
       width: width,
       height: height,
@@ -207,23 +212,35 @@ class _GaugePainter extends CustomPainter {
     canvas.restore();
   }
 
-  /// A puck that slides along the arc's own centerline, rather than a
+  /// A knob that slides along the arc's own centerline, rather than a
   /// needle reaching down to the pivot — keeps the indicator confined to
   /// the track itself so it never crosses the calorie number underneath.
-  /// Dark-on-white (inverse of the white goal marker) so the two can never
-  /// be confused for each other on the arc.
+  /// A slight point on the outward edge (not a plain circle) matching the
+  /// reference gauge's handle shape. Dark-on-white (inverse of the white
+  /// goal zone) so the two can never be confused for each other on the arc.
   void _drawIndicator(Canvas canvas, Offset center, double radius, {required double angle}) {
     final dir = Offset(math.cos(angle), math.sin(angle));
     final pos = center + dir * radius;
+    const bodyRadius = 12.0;
+    final perp = Offset(-dir.dy, dir.dx);
+    final baseCenter = pos + dir * (bodyRadius * 0.5);
+    final tip = pos + dir * (bodyRadius * 0.5 + 8);
+    final point = Path()
+      ..moveTo((baseCenter + perp * 6.5).dx, (baseCenter + perp * 6.5).dy)
+      ..lineTo(tip.dx, tip.dy)
+      ..lineTo((baseCenter - perp * 6.5).dx, (baseCenter - perp * 6.5).dy)
+      ..close();
 
     final glowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.16)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
     canvas.drawCircle(pos, 15, glowPaint);
 
-    canvas.drawCircle(pos, 13, Paint()..color = const Color(0xFF2B2B2B));
-    canvas.drawCircle(pos, 13, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 2.5);
-    canvas.drawCircle(pos, 5, Paint()..color = Colors.white);
+    final darkPaint = Paint()..color = const Color(0xFF2B2B2B);
+    canvas.drawPath(point, darkPaint);
+    canvas.drawCircle(pos, bodyRadius, darkPaint);
+    canvas.drawCircle(pos, bodyRadius, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 2.5);
+    canvas.drawCircle(pos, 4.5, Paint()..color = Colors.white);
   }
 
   @override
