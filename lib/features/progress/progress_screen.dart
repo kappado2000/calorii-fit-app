@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/micronutrient_reference.dart';
+import '../../core/utils/number_format.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../profile/profile_providers.dart';
 import 'progress_providers.dart';
@@ -185,7 +186,7 @@ class _PeriodStatsRow extends StatelessWidget {
           child: _StatTile(
             icon: Icons.local_dining_rounded,
             label: 'Total calorii',
-            value: '${totalIntake.round()}',
+            value: formatThousands(totalIntake.round()),
           ),
         ),
         const SizedBox(width: 10),
@@ -193,7 +194,7 @@ class _PeriodStatsRow extends StatelessWidget {
           child: _StatTile(
             icon: Icons.calendar_today_rounded,
             label: 'Medie/zi',
-            value: '${avgIntake.round()}',
+            value: formatThousands(avgIntake.round()),
           ),
         ),
         const SizedBox(width: 10),
@@ -445,7 +446,7 @@ class _IntakeChart extends StatelessWidget {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) =>
-                  Text(value.round().toString(), style: Theme.of(context).textTheme.bodySmall),
+                  Text(formatThousands(value.round()), style: Theme.of(context).textTheme.bodySmall),
             ),
           ),
         ),
@@ -533,7 +534,7 @@ class _DeficitChart extends StatelessWidget {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) =>
-                  Text(value.round().toString(), style: Theme.of(context).textTheme.bodySmall),
+                  Text(formatThousands(value.round()), style: Theme.of(context).textTheme.bodySmall),
             ),
           ),
         ),

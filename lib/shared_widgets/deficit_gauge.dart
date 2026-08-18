@@ -137,12 +137,29 @@ class _GaugePainter extends CustomPainter {
   }
 
   void _drawTicks(Canvas canvas, Offset center, double radius, double strokeWidth) {
-    final tickCount = 8;
-    final step = (maxValue - minValue) / tickCount;
-    final textStyle = TextStyle(color: labelColor, fontSize: 10);
+    // Minor ticks every 1/4 of a major step (matching the reference watch
+    // face's denser scale) — short, unlabeled, just for a sense of scale.
+    final majorCount = 8;
+    final majorStep = (maxValue - minValue) / majorCount;
+    final minorStep = majorStep / 4;
+    final minorPaint = Paint()
+      ..color = labelColor.withValues(alpha: 0.4)
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
 
-    for (var i = 0; i <= tickCount; i++) {
-      final v = minValue + step * i;
+    for (var i = 0; i <= majorCount * 4; i++) {
+      if (i % 4 == 0) continue; // majors are drawn (with labels) below
+      final v = minValue + minorStep * i;
+      final angle = _angleFor(v);
+      final dir = Offset(math.cos(angle), math.sin(angle));
+      final inner = center + dir * (radius + strokeWidth / 2 - 1);
+      final outer = center + dir * (radius + strokeWidth / 2 + 5);
+      canvas.drawLine(inner, outer, minorPaint);
+    }
+
+    final textStyle = TextStyle(color: labelColor, fontSize: 10);
+    for (var i = 0; i <= majorCount; i++) {
+      final v = minValue + majorStep * i;
       final angle = _angleFor(v);
       final outer = center + Offset(math.cos(angle), math.sin(angle)) * (radius + strokeWidth / 2 + 2);
       final labelPos = center + Offset(math.cos(angle), math.sin(angle)) * (radius + strokeWidth / 2 + 14);
@@ -156,21 +173,35 @@ class _GaugePainter extends CustomPainter {
     }
   }
 
+  /// The goal marker — a bright white pill straddling the track at the
+  /// minimum-deficit target, matching the reference gauge's white "Goal"
+  /// highlight, with a soft glow so it reads as the standout marker on the
+  /// otherwise flat-colored arc.
   void _drawGoalMarker(Canvas canvas, Offset center, double radius, double strokeWidth, double goal) {
     final angle = _angleFor(goal);
+    final dir = Offset(math.cos(angle), math.sin(angle));
+    final inner = center + dir * (radius - strokeWidth / 2 - 3);
+    final outer = center + dir * (radius + strokeWidth / 2 + 3);
+
+    final glowPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.6)
+      ..strokeWidth = 11
+      ..strokeCap = StrokeCap.butt
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+    canvas.drawLine(inner, outer, glowPaint);
+
     final markerPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.35)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-    final inner = center + Offset(math.cos(angle), math.sin(angle)) * (radius - strokeWidth / 2 - 2);
-    final outer = center + Offset(math.cos(angle), math.sin(angle)) * (radius + strokeWidth / 2 + 2);
+      ..color = Colors.white
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.butt;
     canvas.drawLine(inner, outer, markerPaint);
   }
 
   /// A puck that slides along the arc's own centerline, rather than a
   /// needle reaching down to the pivot — keeps the indicator confined to
   /// the track itself so it never crosses the calorie number underneath.
+  /// Dark-on-white (inverse of the white goal marker) so the two can never
+  /// be confused for each other on the arc.
   void _drawIndicator(Canvas canvas, Offset center, double radius, {required double angle}) {
     final dir = Offset(math.cos(angle), math.sin(angle));
     final pos = center + dir * radius;
@@ -180,16 +211,9 @@ class _GaugePainter extends CustomPainter {
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
     canvas.drawCircle(pos, 12, glowPaint);
 
-    canvas.drawCircle(pos, 10.5, Paint()..color = Colors.white);
-    canvas.drawCircle(
-      pos,
-      10.5,
-      Paint()
-        ..color = Colors.black.withValues(alpha: 0.08)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1,
-    );
-    canvas.drawCircle(pos, 6, Paint()..color = const Color(0xFF2B2B2B));
+    canvas.drawCircle(pos, 10.5, Paint()..color = const Color(0xFF2B2B2B));
+    canvas.drawCircle(pos, 10.5, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 2);
+    canvas.drawCircle(pos, 4, Paint()..color = Colors.white);
   }
 
   @override

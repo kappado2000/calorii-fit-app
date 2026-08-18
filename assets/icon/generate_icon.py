@@ -57,11 +57,14 @@ def apple_path(cx, cy, s):
     def pt(x, y):
         return (cx + x * s, cy + y * s)
 
-    # Right-half anchor points, bottom to top-center.
-    bottom = (0.0, 0.64)
-    right_low_c1, right_low_c2, right_mid = (0.34, 0.64), (0.62, 0.44), (0.60, 0.06)
-    right_mid_c1, right_mid_c2, right_shoulder = (0.62, -0.20), (0.50, -0.40), (0.28, -0.48)
-    right_shoulder_c1, right_shoulder_c2, top_dip = (0.15, -0.53), (0.07, -0.44), (0.0, -0.41)
+    # Right-half anchor points, bottom to top-center. Tapered (not a plain
+    # circle/ball): the bottom pulls in sharply from the widest point,
+    # which itself sits high (just above center) — the proportions that
+    # actually read as "apple" rather than "sphere".
+    bottom = (0.0, 0.72)
+    right_low_c1, right_low_c2, right_mid = (0.18, 0.72), (0.56, 0.48), (0.62, 0.00)
+    right_mid_c1, right_mid_c2, right_shoulder = (0.65, -0.26), (0.50, -0.43), (0.27, -0.49)
+    right_shoulder_c1, right_shoulder_c2, top_dip = (0.15, -0.54), (0.07, -0.45), (0.0, -0.42)
 
     def mirror(p):
         return (-p[0], p[1])
@@ -144,7 +147,7 @@ def build():
     # it and the body below it balance out to a visually centered glyph
     # overall (verified against the rendered bounding box, not guessed).
     cx, cy = SIZE / 2, SIZE / 2 + SIZE * 0.015
-    apple_scale = SIZE * 0.375
+    apple_scale = SIZE * 0.395
 
     apple_mask = Image.new("L", (SIZE, SIZE), 0)
     ImageDraw.Draw(apple_mask).polygon(apple_path(cx, cy, apple_scale), fill=255)

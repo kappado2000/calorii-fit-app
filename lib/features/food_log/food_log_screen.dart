@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/number_format.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
 import '../../data/models/user_profile.dart';
@@ -259,13 +260,25 @@ Color _colorForMeal(MealType mealType) {
 String _limitCaption(Goal? goal, double adjustedTarget) {
   switch (goal) {
     case Goal.lose:
-      return 'Nu depăși ${adjustedTarget.round()} kcal, ca să atingi ritmul de slăbit propus.';
+      return 'Nu depăși ${formatThousands(adjustedTarget.round())} kcal, ca să atingi ritmul de slăbit propus.';
     case Goal.gain:
-      return 'Ai nevoie de cel puțin ${adjustedTarget.round()} kcal pentru ritmul de creștere propus.';
+      return 'Ai nevoie de cel puțin ${formatThousands(adjustedTarget.round())} kcal pentru ritmul de creștere propus.';
     case Goal.maintain:
     case null:
-      return 'Rămâi în jurul a ${adjustedTarget.round()} kcal pentru menținere.';
+      return 'Rămâi în jurul a ${formatThousands(adjustedTarget.round())} kcal pentru menținere.';
   }
+}
+
+/// The halo around the gauge — green once the day's deficit target is met,
+/// amber while still in a (smaller) deficit, and red the moment the day
+/// crosses into surplus (trueDeficit < 0, i.e. consumed more than burned).
+Color _haloColorForDeficit(double trueDeficit, double goalDeficit) {
+  const red = Color(0xFFE0503C);
+  const amber = Color(0xFFE8A23C);
+  const green = Color(0xFF3FAE5C);
+  if (trueDeficit < 0) return red;
+  final t = goalDeficit > 0 ? (trueDeficit / goalDeficit).clamp(0.0, 1.0) : 1.0;
+  return Color.lerp(amber, green, t)!;
 }
 
 class _DailyProgressCard extends StatelessWidget {
@@ -308,7 +321,7 @@ class _DailyProgressCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${totalCalories.round()} kcal azi',
+                    '${formatThousands(totalCalories.round())} kcal azi',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70),
                   ),
                 ],
@@ -334,39 +347,55 @@ class _DailyProgressCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final isOverLimit = totalCalories > adjustedTarget;
     final overBy = totalCalories - adjustedTarget;
+    final haloColor = _haloColorForDeficit(trueDeficit, tdee!.dailyDeficit);
 
     return Card(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
         child: Column(
           children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                DeficitGauge(deficit: trueDeficit, goalDeficit: tdee!.dailyDeficit, width: 260),
-                Padding(
-                  padding: const EdgeInsets.only(top: 56),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Deficit caloric', style: Theme.of(context).textTheme.bodyMedium),
-                          const SizedBox(width: 4),
-                          Icon(Icons.info_outline_rounded, size: 15, color: colorScheme.onSurfaceVariant),
-                        ],
-                      ),
-                      Text(
-                        '${trueDeficit.round()}',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-                      ),
-                    ],
+            Container(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: haloColor, width: 2.5),
+                boxShadow: [BoxShadow(color: haloColor.withValues(alpha: 0.35), blurRadius: 22, spreadRadius: 1)],
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  DeficitGauge(deficit: trueDeficit, goalDeficit: tdee!.dailyDeficit, width: 260),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Obiectiv minim: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Deficit caloric', style: Theme.of(context).textTheme.bodyMedium),
+                            const SizedBox(width: 4),
+                            Icon(Icons.info_outline_rounded, size: 15, color: colorScheme.onSurfaceVariant),
+                          ],
+                        ),
+                        Text(
+                          formatSignedThousands(trueDeficit.round()),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 12),
             Row(
@@ -383,7 +412,7 @@ class _DailyProgressCard extends StatelessWidget {
                     label: 'Total arse',
                     value: totalBurnedToday.round(),
                     caption: totalBurned > 0
-                        ? 'bazal ${tdee!.tdee.round()} + sport ${totalBurned.round()}'
+                        ? 'bazal ${formatThousands(tdee!.tdee.round())} + sport ${formatThousands(totalBurned.round())}'
                         : 'doar din activitatea zilnică',
                   ),
                 ),
@@ -417,7 +446,7 @@ class _DailyProgressCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       isOverLimit
-                          ? 'Ai depășit limita cu ${overBy.round()} kcal (peste ${adjustedTarget.round()} kcal).'
+                          ? 'Ai depășit limita cu ${formatThousands(overBy.round())} kcal (peste ${formatThousands(adjustedTarget.round())} kcal).'
                           : _limitCaption(goal, adjustedTarget),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isOverLimit ? colorScheme.onErrorContainer : colorScheme.onSurfaceVariant,
@@ -486,9 +515,9 @@ class _StatBlock extends StatelessWidget {
           text: TextSpan(
             style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
             children: [
-              TextSpan(text: '$value'),
+              TextSpan(text: formatThousands(value)),
               TextSpan(
-                text: target != null ? ' / $target kcal' : ' kcal',
+                text: target != null ? ' / ${formatThousands(target!)} kcal' : ' kcal',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w400),
@@ -583,7 +612,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                         if (rangeLow != null && rangeHigh != null) ...[
                           const SizedBox(height: 2),
                           Text(
-                            'Valoare recomandată: ${rangeLow.round()}–${rangeHigh.round()} kcal',
+                            'Valoare recomandată: ${formatThousands(rangeLow.round())}–${formatThousands(rangeHigh.round())} kcal',
                             style: Theme.of(
                               context,
                             ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
@@ -593,7 +622,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                     ),
                   ),
                   Text(
-                    '${subtotal.round()} kcal',
+                    '${formatThousands(subtotal.round())} kcal',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: isOverRange ? warningColor : null,
@@ -642,7 +671,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                       title: Text(entry.foodName),
                       subtitle: Text('${_formatGrams(entry.grams)} g'),
                       trailing: Text(
-                        '${entry.calories.round()} kcal',
+                        '${formatThousands(entry.calories.round())} kcal',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                       ),
                     ),
@@ -690,7 +719,7 @@ class _WorkoutSection extends ConsumerWidget {
               leading: Icon(Icons.fitness_center_rounded, color: colorScheme.primary),
               title: Text('Activitate sportivă', style: Theme.of(context).textTheme.titleMedium),
               trailing: Text(
-                '${totalBurned.round()} kcal arse',
+                '${formatThousands(totalBurned.round())} kcal arse',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
@@ -702,7 +731,7 @@ class _WorkoutSection extends ConsumerWidget {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('${workout.caloriesBurned.round()} kcal'),
+                    Text('${formatThousands(workout.caloriesBurned.round())} kcal'),
                     IconButton(
                       icon: const Icon(Icons.close_rounded, size: 18),
                       onPressed: () =>
