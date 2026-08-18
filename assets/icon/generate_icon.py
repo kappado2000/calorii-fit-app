@@ -57,12 +57,17 @@ def apple_path(cx, cy, s):
     def pt(x, y):
         return (cx + x * s, cy + y * s)
 
-    # Right-half anchor points, bottom to top-center. Tapered (not a plain
+    # Bottom dimple: a small blunted notch rather than a sharp point — real
+    # apples have a slight indentation at the calyx (blossom) end, not a
+    # needle tip.
+    bottom_dip = (0.0, 0.685)
+    bottom_dip_c1, bottom_dip_c2, bottom_bump = (0.045, 0.70), (0.085, 0.715), (0.115, 0.72)
+
+    # Right-half anchor points, bump to top-center. Tapered (not a plain
     # circle/ball): the bottom pulls in sharply from the widest point,
     # which itself sits high (just above center) — the proportions that
     # actually read as "apple" rather than "sphere".
-    bottom = (0.0, 0.72)
-    right_low_c1, right_low_c2, right_mid = (0.18, 0.72), (0.56, 0.48), (0.62, 0.00)
+    right_low_c1, right_low_c2, right_mid = (0.24, 0.715), (0.56, 0.48), (0.62, 0.00)
     right_mid_c1, right_mid_c2, right_shoulder = (0.65, -0.26), (0.50, -0.43), (0.27, -0.49)
     right_shoulder_c1, right_shoulder_c2, top_dip = (0.15, -0.54), (0.07, -0.45), (0.0, -0.42)
 
@@ -70,8 +75,10 @@ def apple_path(cx, cy, s):
         return (-p[0], p[1])
 
     steps = 60
+    minor_steps = 30
     right_side = []
-    right_side += cubic_bezier(bottom, right_low_c1, right_low_c2, right_mid, steps)
+    right_side += cubic_bezier(bottom_dip, bottom_dip_c1, bottom_dip_c2, bottom_bump, minor_steps)
+    right_side += cubic_bezier(bottom_bump, right_low_c1, right_low_c2, right_mid, steps)
     right_side += cubic_bezier(right_mid, right_mid_c1, right_mid_c2, right_shoulder, steps)
     right_side += cubic_bezier(right_shoulder, right_shoulder_c1, right_shoulder_c2, top_dip, steps)
 
@@ -80,9 +87,12 @@ def apple_path(cx, cy, s):
         mirror(top_dip), mirror(right_shoulder_c2), mirror(right_shoulder_c1), mirror(right_shoulder), steps
     )
     left_side += cubic_bezier(mirror(right_shoulder), mirror(right_mid_c2), mirror(right_mid_c1), mirror(right_mid), steps)
-    left_side += cubic_bezier(mirror(right_mid), mirror(right_low_c2), mirror(right_low_c1), mirror(bottom), steps)
+    left_side += cubic_bezier(mirror(right_mid), mirror(right_low_c2), mirror(right_low_c1), mirror(bottom_bump), steps)
+    left_side += cubic_bezier(
+        mirror(bottom_bump), mirror(bottom_dip_c2), mirror(bottom_dip_c1), bottom_dip, minor_steps
+    )
 
-    path = [bottom] + right_side + left_side
+    path = [bottom_dip] + right_side + left_side
     return [pt(*p) for p in path]
 
 
@@ -147,7 +157,7 @@ def build():
     # it and the body below it balance out to a visually centered glyph
     # overall (verified against the rendered bounding box, not guessed).
     cx, cy = SIZE / 2, SIZE / 2 + SIZE * 0.015
-    apple_scale = SIZE * 0.395
+    apple_scale = SIZE * 0.42
 
     apple_mask = Image.new("L", (SIZE, SIZE), 0)
     ImageDraw.Draw(apple_mask).polygon(apple_path(cx, cy, apple_scale), fill=255)
