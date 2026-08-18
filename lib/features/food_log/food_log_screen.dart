@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
+import '../../data/models/user_profile.dart';
 import '../../data/models/workout_entry.dart';
 import '../../domain/usecases/met_calorie_estimator.dart';
 import '../../domain/usecases/tdee_calculator.dart';
@@ -21,17 +22,42 @@ import '../workout_log/workout_log_providers.dart';
 import 'add_food_entry_sheet.dart';
 import 'food_log_providers.dart';
 
-class FoodLogScreen extends ConsumerWidget {
+class FoodLogScreen extends ConsumerStatefulWidget {
   const FoodLogScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final today = normalizeDate(DateTime.now());
+  ConsumerState<FoodLogScreen> createState() => _FoodLogScreenState();
+}
+
+class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
+  DateTime _selectedDate = normalizeDate(DateTime.now());
+
+  void _shiftDay(int deltaDays) {
+    setState(() => _selectedDate = _selectedDate.add(Duration(days: deltaDays)));
+  }
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      helpText: 'Alege ziua',
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = normalizeDate(picked));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final today = _selectedDate;
     final entries = ref.watch(dailyLogProvider(today));
     final totalCalories = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
     final workouts = ref.watch(workoutLogProvider(today));
     final totalBurned = workouts.fold<double>(0, (sum, workout) => sum + workout.caloriesBurned);
     final tdee = ref.watch(tdeeResultProvider);
+    final goal = ref.watch(userProfileProvider).valueOrNull?.goal;
 
     return Scaffold(
       appBar: AppBar(
@@ -93,17 +119,50 @@ class FoodLogScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
         children: [
-          Text(
-            _formatDateRo(today),
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () => _shiftDay(-1),
+                icon: const Icon(Icons.chevron_left_rounded),
+                tooltip: 'Ziua anterioară',
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: _pickDate,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _dateLabelRo(today),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.expand_more_rounded,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () => _shiftDay(1),
+                icon: const Icon(Icons.chevron_right_rounded),
+                tooltip: 'Ziua următoare',
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 4),
           _DailyProgressCard(
+            key: ValueKey(today),
             totalCalories: totalCalories,
             totalBurned: totalBurned,
             tdee: tdee,
+            goal: goal,
           ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic),
           const SizedBox(height: 20),
           for (final (i, mealType) in MealType.values.indexed) ...[
@@ -146,6 +205,25 @@ const _romanianMonths = [
 
 String _formatDateRo(DateTime date) => '${date.day} ${_romanianMonths[date.month - 1]}';
 
+/// "Azi"/"Ieri"/"Mâine" when applicable (the common case), otherwise the
+/// plain date — used in the day-navigation header so it's obvious at a
+/// glance whether you're looking at today or a day you've navigated to.
+String _dateLabelRo(DateTime date) {
+  final today = normalizeDate(DateTime.now());
+  final diff = date.difference(today).inDays;
+  final formatted = _formatDateRo(date);
+  switch (diff) {
+    case 0:
+      return 'Azi, $formatted';
+    case -1:
+      return 'Ieri, $formatted';
+    case 1:
+      return 'Mâine, $formatted';
+    default:
+      return date.year == today.year ? formatted : '$formatted ${date.year}';
+  }
+}
+
 IconData _iconForMeal(MealType mealType) {
   switch (mealType) {
     case MealType.breakfast:
@@ -175,12 +253,34 @@ Color _colorForMeal(MealType mealType) {
   }
 }
 
+/// The calorie ceiling/floor derived from the goal set in onboarding (target
+/// kg/week) plus any exercise logged that day — phrased by goal direction so
+/// "don't exceed" only appears when the goal is actually to lose weight.
+String _limitCaption(Goal? goal, double adjustedTarget) {
+  switch (goal) {
+    case Goal.lose:
+      return 'Nu depăși ${adjustedTarget.round()} kcal, ca să atingi ritmul de slăbit propus.';
+    case Goal.gain:
+      return 'Ai nevoie de cel puțin ${adjustedTarget.round()} kcal pentru ritmul de creștere propus.';
+    case Goal.maintain:
+    case null:
+      return 'Rămâi în jurul a ${adjustedTarget.round()} kcal pentru menținere.';
+  }
+}
+
 class _DailyProgressCard extends StatelessWidget {
-  const _DailyProgressCard({required this.totalCalories, required this.totalBurned, required this.tdee});
+  const _DailyProgressCard({
+    super.key,
+    required this.totalCalories,
+    required this.totalBurned,
+    required this.tdee,
+    required this.goal,
+  });
 
   final double totalCalories;
   final double totalBurned;
   final TdeeResult? tdee;
+  final Goal? goal;
 
   @override
   Widget build(BuildContext context) {
@@ -232,6 +332,8 @@ class _DailyProgressCard extends StatelessWidget {
     final totalBurnedToday = tdee!.tdee + totalBurned;
     final trueDeficit = totalBurnedToday - totalCalories;
     final colorScheme = Theme.of(context).colorScheme;
+    final isOverLimit = totalCalories > adjustedTarget;
+    final overBy = totalCalories - adjustedTarget;
 
     return Card(
       child: Padding(
@@ -295,6 +397,36 @@ class _DailyProgressCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isOverLimit ? colorScheme.errorContainer : colorScheme.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    isOverLimit ? Icons.warning_rounded : Icons.flag_rounded,
+                    size: 18,
+                    color: isOverLimit ? colorScheme.onErrorContainer : colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      isOverLimit
+                          ? 'Ai depășit limita cu ${overBy.round()} kcal (peste ${adjustedTarget.round()} kcal).'
+                          : _limitCaption(goal, adjustedTarget),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: isOverLimit ? colorScheme.onErrorContainer : colorScheme.onSurfaceVariant,
+                        fontWeight: isOverLimit ? FontWeight.w700 : FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
