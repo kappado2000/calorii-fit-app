@@ -121,13 +121,13 @@ class _GaugePainter extends CustomPainter {
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
     canvas.drawArc(rect, _startAngle, _sweepAngle, false, glowPaint);
 
-    // A thin dark contour peeking out from behind the band — drawn slightly
-    // wider than the gradient arc so ~1.5px shows on each edge, giving the
+    // A fine grey contour peeking out from behind the band — drawn slightly
+    // wider than the gradient arc so ~1px shows on each edge, giving the
     // band a crisp, defined outline instead of just fading into the card.
     final borderPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.16)
+      ..color = const Color(0xFFB0B0B0)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth + 3
+      ..strokeWidth = strokeWidth + 2
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(rect, _startAngle, _sweepAngle, false, borderPaint);
 
@@ -145,10 +145,10 @@ class _GaugePainter extends CustomPainter {
     _drawTicks(canvas, center, radius, strokeWidth);
 
     if (goalValue != null) {
-      _drawGoalZone(canvas, rect, center, radius, strokeWidth, goalValue!);
+      _drawGoalZone(canvas, rect, strokeWidth, goalValue!);
     }
 
-    _drawIndicator(canvas, center, radius, angle: _angleFor(value));
+    _drawIndicator(canvas, center, radius, strokeWidth, angle: _angleFor(value));
   }
 
   void _drawTicks(Canvas canvas, Offset center, double radius, double strokeWidth) {
@@ -193,8 +193,9 @@ class _GaugePainter extends CustomPainter {
   /// The goal zone — a translucent white "frosted glass" band from the
   /// minimum-deficit target to the top of the scale, matching the
   /// reference gauge's white "Goal" highlight (ticks still show faintly
-  /// through it), with a small "Goal" label at its inner edge.
-  void _drawGoalZone(Canvas canvas, Rect rect, Offset center, double radius, double strokeWidth, double goal) {
+  /// through it). No text label on the arc itself — the "Ținta: X kcal"
+  /// text in the card below the gauge already says this.
+  void _drawGoalZone(Canvas canvas, Rect rect, double strokeWidth, double goal) {
     final startAngle = _angleFor(goal);
     final sweep = (_startAngle + _sweepAngle) - startAngle;
     if (sweep <= 0) return;
@@ -205,40 +206,25 @@ class _GaugePainter extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.butt;
     canvas.drawArc(rect, startAngle, sweep, false, zonePaint);
-
-    final labelAngle = startAngle + 0.12;
-    final labelPos = center + Offset(math.cos(labelAngle), math.sin(labelAngle)) * (radius - strokeWidth / 2 - 12);
-    final painter = TextPainter(
-      text: const TextSpan(
-        text: 'Ținta',
-        style: TextStyle(color: Color(0xFF2B2B2B), fontSize: 10, fontWeight: FontWeight.w700),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    canvas.save();
-    canvas.translate(labelPos.dx, labelPos.dy);
-    canvas.rotate(labelAngle - math.pi / 2);
-    painter.paint(canvas, Offset(-painter.width / 2, -painter.height / 2));
-    canvas.restore();
   }
 
-  /// A knob that slides along the arc's own centerline, rather than a
+  /// A knob that slides along the band's inner border, rather than a
   /// needle reaching down to the pivot — keeps the indicator confined to
   /// the track itself so it never crosses the calorie number underneath.
-  /// A slight point on the outward edge (not a plain circle) matching the
-  /// reference gauge's handle shape. Dark-on-white (inverse of the white
-  /// goal zone) so the two can never be confused for each other on the arc.
-  void _drawIndicator(Canvas canvas, Offset center, double radius, {required double angle}) {
+  /// Its pointed tip reaches into the colored band (not past its outer
+  /// edge). Dark-on-white (inverse of the white goal zone) so the two can
+  /// never be confused for each other on the arc.
+  void _drawIndicator(Canvas canvas, Offset center, double radius, double strokeWidth, {required double angle}) {
     final dir = Offset(math.cos(angle), math.sin(angle));
-    final pos = center + dir * radius;
-    const bodyRadius = 11.0;
-    const pointLength = 15.0;
-    const pointHalfWidth = 6.5;
+    // Circle rides the band's inner border, with the point reaching into
+    // the colored band itself (not past its outer edge) — both the circle
+    // and the arrow tip stay inside the scale, instead of poking out into
+    // the empty space beyond the arc.
+    final pos = center + dir * (radius - strokeWidth / 2);
+    const bodyRadius = 9.0;
+    const pointLength = 18.0;
+    const pointHalfWidth = 6.0;
     final perp = Offset(-dir.dy, dir.dx);
-    // Base of the point sits right at the circle's own edge (not buried
-    // inside it), so the whole point-length is visible as a clear spike —
-    // the earlier version had the tip only ~2px past the circle, which
-    // read as a plain circle, not a pointed knob.
     final baseCenter = pos + dir * bodyRadius;
     final tip = pos + dir * (bodyRadius + pointLength);
     final point = Path()

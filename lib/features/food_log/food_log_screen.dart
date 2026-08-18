@@ -370,7 +370,7 @@ class _DailyProgressCard extends StatelessWidget {
                       Text(
                         'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF2FA84F),
+                          color: const Color(0xFF1B6B34),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
