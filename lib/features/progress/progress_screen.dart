@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/micronutrient_reference.dart';
+import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../profile/profile_providers.dart';
@@ -86,7 +87,14 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                         _ChartCard(
                           title: 'Aport caloric',
                           icon: Icons.restaurant_rounded,
-                          child: _IntakeChart(days: days, history: history, target: target),
+                          child: _IntakeChart(
+                            days: days,
+                            history: history,
+                            target: target,
+                            burnedHistory: burnedHistory,
+                            tdeeValue: tdeeValue,
+                            goalDeficit: tdee?.dailyDeficit,
+                          ),
                         ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
                         const SizedBox(height: 16),
                         _ChartCard(
@@ -421,11 +429,25 @@ class _MicronutrientBar extends StatelessWidget {
 }
 
 class _IntakeChart extends StatelessWidget {
-  const _IntakeChart({required this.days, required this.history, required this.target});
+  const _IntakeChart({
+    required this.days,
+    required this.history,
+    required this.target,
+    required this.burnedHistory,
+    required this.tdeeValue,
+    required this.goalDeficit,
+  });
 
   final List<DateTime> days;
   final Map<DateTime, double> history;
   final double? target;
+
+  /// Needed (along with [tdeeValue] and [goalDeficit]) to color each bar by
+  /// how that day's actual deficit compared to the target — the same
+  /// "eat back exercise calories" model used everywhere else in the app.
+  final Map<DateTime, double> burnedHistory;
+  final double? tdeeValue;
+  final double? goalDeficit;
 
   @override
   Widget build(BuildContext context) {
@@ -511,11 +533,19 @@ class _IntakeChart extends StatelessWidget {
                   toY: history[days[i]] ?? 0,
                   width: _barWidth(days.length),
                   borderRadius: BorderRadius.circular(_barWidth(days.length) / 2),
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.55)],
-                  ),
+                  gradient: () {
+                    final dayColor = goalDeficit != null
+                        ? deficitStatusColor(
+                            (tdeeValue ?? 0) + (burnedHistory[days[i]] ?? 0) - (history[days[i]] ?? 0),
+                            goalDeficit!,
+                          )
+                        : colorScheme.primary;
+                    return LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [dayColor, dayColor.withValues(alpha: 0.55)],
+                    );
+                  }(),
                   backDrawRodData: BackgroundBarChartRodData(
                     show: true,
                     toY: maxY,

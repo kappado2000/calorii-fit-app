@@ -18,6 +18,11 @@ class AppTheme {
     // green tint on every card read as washed-out/off, a plain grey card
     // reads as intentional "raised surface" instead.
     final neutralCardColor = isDark ? const Color(0xFF25272B) : const Color(0xFFF1F2F4);
+    // Page background (everywhere that isn't a card) — a soft yellow in
+    // light mode, matching the app icon's palette. Dark mode keeps the
+    // normal dark surface; inverting that to yellow-on-dark isn't what was
+    // asked and would clash with dark mode's whole point.
+    final pageBackgroundColor = isDark ? colorScheme.surface : const Color(0xFFFFF6DF);
     final baseTextTheme = isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme;
     final textTheme = GoogleFonts.plusJakartaSansTextTheme(baseTextTheme).copyWith(
       headlineSmall: GoogleFonts.plusJakartaSans(
@@ -38,12 +43,12 @@ class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: colorScheme.surface,
+      scaffoldBackgroundColor: pageBackgroundColor,
       textTheme: textTheme,
       extensions: [isDark ? AppColors.dark() : AppColors.light()],
 
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: pageBackgroundColor,
         foregroundColor: colorScheme.onSurface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,

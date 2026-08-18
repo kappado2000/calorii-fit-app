@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
@@ -294,17 +295,6 @@ String _limitCaption(Goal? goal, double adjustedTarget) {
   }
 }
 
-/// The card's border color — green once the day's deficit target is met,
-/// amber while still in a (smaller) deficit, and red the moment the day
-/// crosses into surplus (trueDeficit < 0, i.e. consumed more than burned).
-Color _haloColorForDeficit(double trueDeficit, double goalDeficit) {
-  const red = Color(0xFFE0503C);
-  const amber = Color(0xFFE8A23C);
-  const green = Color(0xFF3FAE5C);
-  if (trueDeficit < 0) return red;
-  final t = goalDeficit > 0 ? (trueDeficit / goalDeficit).clamp(0.0, 1.0) : 1.0;
-  return Color.lerp(amber, green, t)!;
-}
 
 /// Wraps [child] in a border that fades from a dark shade of [statusColor]
 /// at the outer edge to the card's own background color at the inner edge
@@ -410,10 +400,7 @@ class _DailyProgressCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final isOverLimit = totalCalories > adjustedTarget;
     final overBy = totalCalories - adjustedTarget;
-    final cardBorderColor = _haloColorForDeficit(
-      trueDeficit,
-      tdee!.dailyDeficit,
-    );
+    final cardBorderColor = deficitStatusColor(trueDeficit, tdee!.dailyDeficit);
 
     return _gradientBorderFrame(
       context,
