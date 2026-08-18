@@ -718,10 +718,43 @@ export const genericFoodsTable: GenericFoodItem[] = [
   { name: "Sardine", kcalPer100g: 208, proteinPer100g: 25, carbsPer100g: 0, fatPer100g: 11 },
   { name: "Macrou", kcalPer100g: 205, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 14 },
   { name: "Macrou la grătar", kcalPer100g: 210, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 14 },
+
+  // --- Pești de apă dulce (Dunăre/lac/râu) lipsă din trecerea anterioară,
+  // în special somnul, semnalat explicit ca absent. ---
+  { name: "Somn", kcalPer100g: 105, proteinPer100g: 16, carbsPer100g: 0, fatPer100g: 4.3 },
+  { name: "Somn la grătar", kcalPer100g: 130, proteinPer100g: 18, carbsPer100g: 0, fatPer100g: 6 },
+  { name: "Somn la cuptor", kcalPer100g: 125, proteinPer100g: 18, carbsPer100g: 0, fatPer100g: 5.5 },
+  { name: "Somn prăjit", kcalPer100g: 220, proteinPer100g: 15, carbsPer100g: 5, fatPer100g: 15 },
+  { name: "Știucă", kcalPer100g: 88, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 0.7 },
+  { name: "Biban", kcalPer100g: 91, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 1 },
+  { name: "Caras", kcalPer100g: 87, proteinPer100g: 17, carbsPer100g: 0, fatPer100g: 1.8 },
+  { name: "Anghilă", kcalPer100g: 184, proteinPer100g: 18, carbsPer100g: 0, fatPer100g: 12 },
+
+  // --- Pești de apă sărată suplimentari. ---
+  { name: "Hering / Scrumbie", kcalPer100g: 158, proteinPer100g: 18, carbsPer100g: 0, fatPer100g: 9 },
+  { name: "Dorada", kcalPer100g: 96, proteinPer100g: 18, carbsPer100g: 0, fatPer100g: 3 },
+  { name: "Dorada la grătar", kcalPer100g: 100, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 3 },
+  { name: "Lup de mare", kcalPer100g: 97, proteinPer100g: 18.4, carbsPer100g: 0, fatPer100g: 2.5 },
+  { name: "Lup de mare la grătar", kcalPer100g: 100, proteinPer100g: 19, carbsPer100g: 0, fatPer100g: 2.7 },
+  { name: "Pangasius", kcalPer100g: 90, proteinPer100g: 15, carbsPer100g: 0, fatPer100g: 3.5 },
+  { name: "Halibut", kcalPer100g: 111, proteinPer100g: 21, carbsPer100g: 0, fatPer100g: 2.3 },
+  { name: "Limbă de mare / Cambulă", kcalPer100g: 91, proteinPer100g: 18.8, carbsPer100g: 0, fatPer100g: 1.2 },
+  { name: "Sepie", kcalPer100g: 79, proteinPer100g: 16.2, carbsPer100g: 0.8, fatPer100g: 0.7 },
+
   { name: "Creveți", kcalPer100g: 99, proteinPer100g: 24, carbsPer100g: 0.2, fatPer100g: 0.3 },
   { name: "Calamar", kcalPer100g: 92, proteinPer100g: 15.6, carbsPer100g: 3.1, fatPer100g: 1.4 },
   { name: "Midii", kcalPer100g: 86, proteinPer100g: 12, carbsPer100g: 3.7, fatPer100g: 2.2 },
   { name: "Scoici", kcalPer100g: 77, proteinPer100g: 13, carbsPer100g: 3, fatPer100g: 0.9 },
   { name: "Icre negre / Caviar", kcalPer100g: 264, proteinPer100g: 25, carbsPer100g: 4, fatPer100g: 18 },
   { name: "Fructe de mare (mix)", kcalPer100g: 100, proteinPer100g: 18, carbsPer100g: 3, fatPer100g: 1.5 },
+
+  // --- Restul sortimentelor de carne (miel, vițel, oaie/berbec) — carnea
+  // de porc/pui/vită era deja acoperită mai sus. ---
+  { name: "Pulpă de miel la cuptor", kcalPer100g: 240, proteinPer100g: 25, carbsPer100g: 0, fatPer100g: 16 },
+  { name: "Cotlet de miel la grătar", kcalPer100g: 280, proteinPer100g: 24, carbsPer100g: 0, fatPer100g: 20 },
+  { name: "Miel fript", kcalPer100g: 250, proteinPer100g: 25, carbsPer100g: 0, fatPer100g: 17 },
+  { name: "Mușchi de vițel la grătar", kcalPer100g: 172, proteinPer100g: 27, carbsPer100g: 0, fatPer100g: 6.5 },
+  { name: "Escalop de vițel", kcalPer100g: 195, proteinPer100g: 26, carbsPer100g: 2, fatPer100g: 9 },
+  { name: "Carne de oaie fiartă", kcalPer100g: 200, proteinPer100g: 24, carbsPer100g: 0, fatPer100g: 11 },
+  { name: "Carne de berbec la grătar", kcalPer100g: 260, proteinPer100g: 23, carbsPer100g: 0, fatPer100g: 19 },
 ];
