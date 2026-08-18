@@ -94,7 +94,7 @@ class _GaugePainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height - 24);
     final radius = math.min(size.width / 2, size.height - 24) - 12;
     final rect = Rect.fromCircle(center: center, radius: radius);
-    const strokeWidth = 16.0;
+    const strokeWidth = 28.0;
 
     final trackPaint = Paint()
       ..color = trackColor.withValues(alpha: 0.5)
@@ -130,7 +130,7 @@ class _GaugePainter extends CustomPainter {
     _drawTicks(canvas, center, radius, strokeWidth);
 
     if (goalValue != null) {
-      _drawGoalMarker(canvas, center, radius, strokeWidth, goalValue!);
+      _drawGoalZone(canvas, rect, center, radius, strokeWidth, goalValue!);
     }
 
     _drawIndicator(canvas, center, radius, angle: _angleFor(value));
@@ -173,28 +173,36 @@ class _GaugePainter extends CustomPainter {
     }
   }
 
-  /// The goal marker — a bright white pill straddling the track at the
-  /// minimum-deficit target, matching the reference gauge's white "Goal"
-  /// highlight, with a soft glow so it reads as the standout marker on the
-  /// otherwise flat-colored arc.
-  void _drawGoalMarker(Canvas canvas, Offset center, double radius, double strokeWidth, double goal) {
-    final angle = _angleFor(goal);
-    final dir = Offset(math.cos(angle), math.sin(angle));
-    final inner = center + dir * (radius - strokeWidth / 2 - 3);
-    final outer = center + dir * (radius + strokeWidth / 2 + 3);
+  /// The goal zone — a translucent white "frosted glass" band from the
+  /// minimum-deficit target to the top of the scale, matching the
+  /// reference gauge's white "Goal" highlight (ticks still show faintly
+  /// through it), with a small "Goal" label at its inner edge.
+  void _drawGoalZone(Canvas canvas, Rect rect, Offset center, double radius, double strokeWidth, double goal) {
+    final startAngle = _angleFor(goal);
+    final sweep = (_startAngle + _sweepAngle) - startAngle;
+    if (sweep <= 0) return;
 
-    final glowPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.6)
-      ..strokeWidth = 11
-      ..strokeCap = StrokeCap.butt
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
-    canvas.drawLine(inner, outer, glowPaint);
-
-    final markerPaint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 7
+    final zonePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.55)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.butt;
-    canvas.drawLine(inner, outer, markerPaint);
+    canvas.drawArc(rect, startAngle, sweep, false, zonePaint);
+
+    final labelAngle = startAngle + 0.12;
+    final labelPos = center + Offset(math.cos(labelAngle), math.sin(labelAngle)) * (radius - strokeWidth / 2 - 12);
+    final painter = TextPainter(
+      text: const TextSpan(
+        text: 'Ținta',
+        style: TextStyle(color: Color(0xFF2B2B2B), fontSize: 10, fontWeight: FontWeight.w700),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    canvas.save();
+    canvas.translate(labelPos.dx, labelPos.dy);
+    canvas.rotate(labelAngle - math.pi / 2);
+    painter.paint(canvas, Offset(-painter.width / 2, -painter.height / 2));
+    canvas.restore();
   }
 
   /// A puck that slides along the arc's own centerline, rather than a
@@ -209,11 +217,11 @@ class _GaugePainter extends CustomPainter {
     final glowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.16)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
-    canvas.drawCircle(pos, 12, glowPaint);
+    canvas.drawCircle(pos, 15, glowPaint);
 
-    canvas.drawCircle(pos, 10.5, Paint()..color = const Color(0xFF2B2B2B));
-    canvas.drawCircle(pos, 10.5, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 2);
-    canvas.drawCircle(pos, 4, Paint()..color = Colors.white);
+    canvas.drawCircle(pos, 13, Paint()..color = const Color(0xFF2B2B2B));
+    canvas.drawCircle(pos, 13, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 2.5);
+    canvas.drawCircle(pos, 5, Paint()..color = Colors.white);
   }
 
   @override

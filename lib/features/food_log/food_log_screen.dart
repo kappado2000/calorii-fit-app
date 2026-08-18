@@ -269,7 +269,7 @@ String _limitCaption(Goal? goal, double adjustedTarget) {
   }
 }
 
-/// The halo around the gauge — green once the day's deficit target is met,
+/// The card's border color — green once the day's deficit target is met,
 /// amber while still in a (smaller) deficit, and red the moment the day
 /// crosses into surplus (trueDeficit < 0, i.e. consumed more than burned).
 Color _haloColorForDeficit(double trueDeficit, double goalDeficit) {
@@ -347,55 +347,51 @@ class _DailyProgressCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final isOverLimit = totalCalories > adjustedTarget;
     final overBy = totalCalories - adjustedTarget;
-    final haloColor = _haloColorForDeficit(trueDeficit, tdee!.dailyDeficit);
+    final cardBorderColor = _haloColorForDeficit(trueDeficit, tdee!.dailyDeficit);
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+        side: BorderSide(color: cardBorderColor, width: 2.5),
+      ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(color: haloColor, width: 2.5),
-                boxShadow: [BoxShadow(color: haloColor.withValues(alpha: 0.35), blurRadius: 22, spreadRadius: 1)],
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  DeficitGauge(deficit: trueDeficit, goalDeficit: tdee!.dailyDeficit, width: 260),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 40),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Obiectiv minim: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Deficit caloric', style: Theme.of(context).textTheme.bodyMedium),
-                            const SizedBox(width: 4),
-                            Icon(Icons.info_outline_rounded, size: 15, color: colorScheme.onSurfaceVariant),
-                          ],
-                        ),
-                        Text(
-                          formatSignedThousands(trueDeficit.round()),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-                        ),
-                      ],
-                    ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                DeficitGauge(deficit: trueDeficit, goalDeficit: tdee!.dailyDeficit, width: 260),
+                Padding(
+                  padding: const EdgeInsets.only(top: 40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Deficit caloric', style: Theme.of(context).textTheme.bodyMedium),
+                          const SizedBox(width: 4),
+                          Icon(Icons.info_outline_rounded, size: 15, color: colorScheme.onSurfaceVariant),
+                        ],
+                      ),
+                      Text(
+                        formatThousands(trueDeficit.round()),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             Row(
