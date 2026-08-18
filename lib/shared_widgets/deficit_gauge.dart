@@ -121,16 +121,6 @@ class _GaugePainter extends CustomPainter {
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
     canvas.drawArc(rect, _startAngle, _sweepAngle, false, glowPaint);
 
-    // A fine grey contour peeking out from behind the band — drawn slightly
-    // wider than the gradient arc so ~1px shows on each edge, giving the
-    // band a crisp, defined outline instead of just fading into the card.
-    final borderPaint = Paint()
-      ..color = const Color(0xFFB0B0B0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth + 2
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(rect, _startAngle, _sweepAngle, false, borderPaint);
-
     final arcPaint = Paint()
       ..shader = SweepGradient(
         startAngle: _startAngle,
@@ -141,6 +131,17 @@ class _GaugePainter extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(rect, _startAngle, _sweepAngle, false, arcPaint);
+
+    // A fine dark-grey contour traced right on the band's own inner and
+    // outer edges, drawn on top of the gradient so it reads crisply
+    // instead of being softened by the glow layer underneath.
+    final borderPaint = Paint()
+      ..color = const Color(0xFF5A5A5A)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius + strokeWidth / 2), _startAngle, _sweepAngle, false, borderPaint);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius - strokeWidth / 2), _startAngle, _sweepAngle, false, borderPaint);
 
     _drawTicks(canvas, center, radius, strokeWidth);
 
