@@ -13,8 +13,8 @@ class DeficitGauge extends StatelessWidget {
     super.key,
     required this.deficit,
     this.goalDeficit,
-    this.minValue = -800,
-    this.maxValue = 800,
+    this.minValue = -1500,
+    this.maxValue = 1500,
     this.width = 280,
   });
 
@@ -137,18 +137,20 @@ class _GaugePainter extends CustomPainter {
   }
 
   void _drawTicks(Canvas canvas, Offset center, double radius, double strokeWidth) {
-    // Minor ticks every 1/4 of a major step (matching the reference watch
-    // face's denser scale) — short, unlabeled, just for a sense of scale.
-    final majorCount = 8;
+    // 6 major divisions over -1500..1500 gives clean 500-kcal labels;
+    // minor ticks split each major segment into 5 (every 100 kcal) —
+    // short, unlabeled, just for a sense of scale.
+    final majorCount = 6;
+    final minorPerMajor = 5;
     final majorStep = (maxValue - minValue) / majorCount;
-    final minorStep = majorStep / 4;
+    final minorStep = majorStep / minorPerMajor;
     final minorPaint = Paint()
       ..color = labelColor.withValues(alpha: 0.4)
       ..strokeWidth = 1.5
       ..strokeCap = StrokeCap.round;
 
-    for (var i = 0; i <= majorCount * 4; i++) {
-      if (i % 4 == 0) continue; // majors are drawn (with labels) below
+    for (var i = 0; i <= majorCount * minorPerMajor; i++) {
+      if (i % minorPerMajor == 0) continue; // majors are drawn (with labels) below
       final v = minValue + minorStep * i;
       final angle = _angleFor(v);
       final dir = Offset(math.cos(angle), math.sin(angle));
