@@ -82,11 +82,11 @@ class _GaugePainter extends CustomPainter {
   static const _sweepAngle = math.pi; // sweeps over the top to pointing right
 
   static const _gaugeColors = [
-    Color(0xFFEF6F63),
-    Color(0xFFF3AE5D),
-    Color(0xFFF0D869),
-    Color(0xFFA3D677),
-    Color(0xFF4CB674),
+    Color(0xFFE8392E),
+    Color(0xFFF6862B),
+    Color(0xFFFCD535),
+    Color(0xFF8BC53F),
+    Color(0xFF2FA84F),
   ];
 
   double _angleFor(double v) {
@@ -120,6 +120,16 @@ class _GaugePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
     canvas.drawArc(rect, _startAngle, _sweepAngle, false, glowPaint);
+
+    // A thin dark contour peeking out from behind the band — drawn slightly
+    // wider than the gradient arc so ~1.5px shows on each edge, giving the
+    // band a crisp, defined outline instead of just fading into the card.
+    final borderPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.16)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth + 3
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(rect, _startAngle, _sweepAngle, false, borderPaint);
 
     final arcPaint = Paint()
       ..shader = SweepGradient(
