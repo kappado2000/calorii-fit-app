@@ -13,10 +13,10 @@ from PIL import Image, ImageDraw, ImageFilter, ImageChops
 SCALE = 4
 SIZE = 1024 * SCALE
 
-BRAND_TOP = (34, 176, 122)      # lighter green, top-left
-BRAND_BOTTOM = (13, 110, 74)    # deeper green, bottom-right
-APPLE_COLOR = (255, 255, 255)
-LEAF_COLOR = (255, 255, 255)
+BRAND_TOP = (255, 216, 92)      # lighter golden yellow, top-left
+BRAND_BOTTOM = (245, 166, 35)   # deeper amber, bottom-right
+APPLE_COLOR = (47, 158, 79)
+LEAF_COLOR = (47, 158, 79)
 PULSE_COLOR = (255, 158, 66)    # warm amber accent
 
 
@@ -156,7 +156,7 @@ def build():
     # The apple body sits a touch above dead-center so the stem+leaf above
     # it and the body below it balance out to a visually centered glyph
     # overall (verified against the rendered bounding box, not guessed).
-    cx, cy = SIZE / 2, SIZE / 2 + SIZE * 0.015
+    cx, cy = SIZE / 2, SIZE / 2 - SIZE * 0.02
     apple_scale = SIZE * 0.44
 
     apple_mask = Image.new("L", (SIZE, SIZE), 0)
