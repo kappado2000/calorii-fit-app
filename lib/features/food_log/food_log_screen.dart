@@ -34,7 +34,9 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
   DateTime _selectedDate = normalizeDate(DateTime.now());
 
   void _shiftDay(int deltaDays) {
-    setState(() => _selectedDate = _selectedDate.add(Duration(days: deltaDays)));
+    setState(
+      () => _selectedDate = _selectedDate.add(Duration(days: deltaDays)),
+    );
   }
 
   Future<void> _pickDate() async {
@@ -54,9 +56,15 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
   Widget build(BuildContext context) {
     final today = _selectedDate;
     final entries = ref.watch(dailyLogProvider(today));
-    final totalCalories = entries.fold<double>(0, (sum, entry) => sum + entry.calories);
+    final totalCalories = entries.fold<double>(
+      0,
+      (sum, entry) => sum + entry.calories,
+    );
     final workouts = ref.watch(workoutLogProvider(today));
-    final totalBurned = workouts.fold<double>(0, (sum, workout) => sum + workout.caloriesBurned);
+    final totalBurned = workouts.fold<double>(
+      0,
+      (sum, workout) => sum + workout.caloriesBurned,
+    );
     final tdee = ref.watch(tdeeResultProvider);
     final goal = ref.watch(userProfileProvider).valueOrNull?.goal;
 
@@ -67,15 +75,16 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
           IconButton(
             tooltip: 'Progres',
             icon: const Icon(Icons.show_chart_rounded),
-            onPressed: () =>
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProgressScreen())),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const ProgressScreen())),
           ),
           IconButton(
             tooltip: 'Activitate & sincronizare',
             icon: const Icon(Icons.watch_outlined),
-            onPressed: () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const ActivitySyncScreen())),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ActivitySyncScreen()),
+            ),
           ),
           PopupMenuButton<VoidCallback>(
             icon: const Icon(Icons.more_vert_rounded),
@@ -90,9 +99,11 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 ),
               ),
               PopupMenuItem(
-                value: () => Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => const DeviceCapabilityScreen())),
+                value: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const DeviceCapabilityScreen(),
+                  ),
+                ),
                 child: const ListTile(
                   leading: Icon(Icons.phone_iphone_rounded),
                   title: Text('Verifică capabilitate device'),
@@ -112,8 +123,9 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () =>
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CameraCaptureScreen())),
+        onPressed: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const CameraCaptureScreen())),
         icon: const Icon(Icons.camera_alt_rounded),
         label: const Text('Fotografiază'),
       ),
@@ -132,13 +144,17 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 borderRadius: BorderRadius.circular(12),
                 onTap: _pickDate,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         _dateLabelRo(today),
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                        style: Theme.of(context).textTheme.titleSmall
+                            ?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(width: 4),
                       Icon(
@@ -159,18 +175,23 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
           ),
           const SizedBox(height: 4),
           _DailyProgressCard(
-            key: ValueKey(today),
-            totalCalories: totalCalories,
-            totalBurned: totalBurned,
-            tdee: tdee,
-            goal: goal,
-          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic),
+                key: ValueKey(today),
+                totalCalories: totalCalories,
+                totalBurned: totalBurned,
+                tdee: tdee,
+                goal: goal,
+              )
+              .animate()
+              .fadeIn(duration: 400.ms)
+              .slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic),
           const SizedBox(height: 20),
           for (final (i, mealType) in MealType.values.indexed) ...[
             _MealSection(
                   mealType: mealType,
                   date: today,
-                  entries: entries.where((entry) => entry.mealType == mealType).toList(),
+                  entries: entries
+                      .where((entry) => entry.mealType == mealType)
+                      .toList(),
                   dailyTarget: tdee?.calorieTarget,
                 )
                 .animate(delay: (80 * i).ms)
@@ -179,10 +200,13 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
             const SizedBox(height: 12),
           ],
           _WorkoutSection(
-            date: today,
-            workouts: workouts,
-            totalBurned: totalBurned,
-          ).animate(delay: 320.ms).fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
+                date: today,
+                workouts: workouts,
+                totalBurned: totalBurned,
+              )
+              .animate(delay: 320.ms)
+              .fadeIn(duration: 350.ms)
+              .slideY(begin: 0.08, end: 0),
         ],
       ),
     );
@@ -204,7 +228,8 @@ const _romanianMonths = [
   'decembrie',
 ];
 
-String _formatDateRo(DateTime date) => '${date.day} ${_romanianMonths[date.month - 1]}';
+String _formatDateRo(DateTime date) =>
+    '${date.day} ${_romanianMonths[date.month - 1]}';
 
 /// "Azi"/"Ieri"/"Mâine" when applicable (the common case), otherwise the
 /// plain date — used in the day-navigation header so it's obvious at a
@@ -281,6 +306,39 @@ Color _haloColorForDeficit(double trueDeficit, double goalDeficit) {
   return Color.lerp(amber, green, t)!;
 }
 
+/// Wraps [child] in a border that fades from a dark shade of [statusColor]
+/// at the outer edge to the card's own background color at the inner edge
+/// — a true perpendicular gradient, which `BorderSide` can't do on its own,
+/// approximated with a handful of thin concentric rounded-rect layers (each
+/// a flat color, but close enough in number/step-size to read as smooth).
+Widget _gradientBorderFrame(
+  BuildContext context, {
+  required Color statusColor,
+  required Widget child,
+}) {
+  const steps = 6;
+  const stepThickness = 1.5;
+  const radius = 28.0;
+  final darkColor = Color.lerp(statusColor, Colors.black, 0.35)!;
+  final surfaceColor =
+      Theme.of(context).cardTheme.color ??
+      Theme.of(context).colorScheme.surface;
+
+  var framed = child;
+  for (var i = 0; i < steps; i++) {
+    final t = i / (steps - 1); // 0 = innermost ring (surface color) .. 1 = outermost ring (dark)
+    framed = Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        color: Color.lerp(surfaceColor, darkColor, t),
+      ),
+      padding: const EdgeInsets.all(stepThickness),
+      child: framed,
+    );
+  }
+  return framed;
+}
+
 class _DailyProgressCard extends StatelessWidget {
   const _DailyProgressCard({
     super.key,
@@ -315,20 +373,25 @@ class _DailyProgressCard extends StatelessWidget {
                 children: [
                   Text(
                     'Configurează-ți obiectivul',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${formatThousands(totalCalories.round())} kcal azi',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                    style: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(color: Colors.white70),
                   ),
                 ],
               ),
             ),
             FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: Colors.white, foregroundColor: appColors.protein),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: appColors.protein,
+              ),
               onPressed: () => context.push('/onboarding'),
               child: const Text('Setează'),
             ),
@@ -347,111 +410,139 @@ class _DailyProgressCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final isOverLimit = totalCalories > adjustedTarget;
     final overBy = totalCalories - adjustedTarget;
-    final cardBorderColor = _haloColorForDeficit(trueDeficit, tdee!.dailyDeficit);
+    final cardBorderColor = _haloColorForDeficit(
+      trueDeficit,
+      tdee!.dailyDeficit,
+    );
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(28),
-        side: BorderSide(color: cardBorderColor, width: 2.5),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                DeficitGauge(deficit: trueDeficit, goalDeficit: tdee!.dailyDeficit, width: 260),
-                Padding(
-                  padding: const EdgeInsets.only(top: 62),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF1B6B34),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Deficit caloric', style: Theme.of(context).textTheme.bodyMedium),
-                          const SizedBox(width: 4),
-                          Icon(Icons.info_outline_rounded, size: 15, color: colorScheme.onSurfaceVariant),
-                        ],
-                      ),
-                      Text(
-                        formatThousands(trueDeficit.round()),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _StatBlock(
-                    // The headline number is the full daily burn — bazal
-                    // metabolism + activity-level baseline (tdee.tdee)
-                    // plus any logged exercise — not just logged workouts,
-                    // since most calories burned in a day come from simply
-                    // being alive and moving around, not from a sport.
-                    icon: Icons.local_fire_department_rounded,
-                    iconColor: appColors.protein,
-                    label: 'Total arse',
-                    value: totalBurnedToday.round(),
-                  ),
-                ),
-                Expanded(
-                  child: _StatBlock(
-                    icon: Icons.shopping_basket_rounded,
-                    iconColor: const Color(0xFF1FAE7E),
-                    label: 'Total consumate',
-                    value: totalCalories.round(),
-                    target: adjustedTarget.round(),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: isOverLimit ? colorScheme.errorContainer : colorScheme.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
+    return _gradientBorderFrame(
+      context,
+      statusColor: cardBorderColor,
+      child: Card(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(28)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          child: Column(
+            children: [
+              Stack(
+                alignment: Alignment.center,
                 children: [
-                  Icon(
-                    isOverLimit ? Icons.warning_rounded : Icons.flag_rounded,
-                    size: 18,
-                    color: isOverLimit ? colorScheme.onErrorContainer : colorScheme.onSurfaceVariant,
+                  DeficitGauge(
+                    deficit: trueDeficit,
+                    goalDeficit: tdee!.dailyDeficit,
+                    width: 260,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      isOverLimit
-                          ? 'Ai depășit limita cu ${formatThousands(overBy.round())} kcal (peste ${formatThousands(adjustedTarget.round())} kcal).'
-                          : _limitCaption(goal, adjustedTarget),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isOverLimit ? colorScheme.onErrorContainer : colorScheme.onSurfaceVariant,
-                        fontWeight: isOverLimit ? FontWeight.w700 : FontWeight.w400,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 62),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: const Color(0xFF1B6B34),
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Deficit caloric',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.info_outline_rounded,
+                              size: 15,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          formatThousands(trueDeficit.round()),
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _StatBlock(
+                      // The headline number is the full daily burn — bazal
+                      // metabolism + activity-level baseline (tdee.tdee)
+                      // plus any logged exercise — not just logged workouts,
+                      // since most calories burned in a day come from simply
+                      // being alive and moving around, not from a sport.
+                      icon: Icons.local_fire_department_rounded,
+                      iconColor: appColors.protein,
+                      label: 'Total arse',
+                      value: totalBurnedToday.round(),
+                    ),
+                  ),
+                  Expanded(
+                    child: _StatBlock(
+                      icon: Icons.shopping_basket_rounded,
+                      iconColor: const Color(0xFF1FAE7E),
+                      label: 'Total consumate',
+                      value: totalCalories.round(),
+                      target: adjustedTarget.round(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: isOverLimit
+                      ? colorScheme.errorContainer
+                      : colorScheme.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      isOverLimit ? Icons.warning_rounded : Icons.flag_rounded,
+                      size: 18,
+                      color: isOverLimit
+                          ? colorScheme.onErrorContainer
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        isOverLimit
+                            ? 'Ai depășit limita cu ${formatThousands(overBy.round())} kcal (peste ${formatThousands(adjustedTarget.round())} kcal).'
+                            : _limitCaption(goal, adjustedTarget),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: isOverLimit
+                              ? colorScheme.onErrorContainer
+                              : colorScheme.onSurfaceVariant,
+                          fontWeight: isOverLimit
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -484,7 +575,10 @@ class _StatBlock extends StatelessWidget {
             Container(
               width: 28,
               height: 28,
-              decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.15), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
               alignment: Alignment.center,
               child: Icon(icon, size: 15, color: iconColor),
             ),
@@ -501,14 +595,18 @@ class _StatBlock extends StatelessWidget {
         const SizedBox(height: 4),
         RichText(
           text: TextSpan(
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.w800),
             children: [
               TextSpan(text: formatThousands(value)),
               TextSpan(
-                text: target != null ? ' / ${formatThousands(target!)} kcal' : ' kcal',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w400),
+                text: target != null
+                    ? ' / ${formatThousands(target!)} kcal'
+                    : ' kcal',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ],
           ),
@@ -540,8 +638,13 @@ class _MealSectionState extends ConsumerState<_MealSection> {
 
   @override
   Widget build(BuildContext context) {
-    final subtotal = widget.entries.fold<double>(0, (sum, entry) => sum + entry.calories);
-    final mealTarget = widget.dailyTarget != null ? widget.dailyTarget! * widget.mealType.dailyShare : null;
+    final subtotal = widget.entries.fold<double>(
+      0,
+      (sum, entry) => sum + entry.calories,
+    );
+    final mealTarget = widget.dailyTarget != null
+        ? widget.dailyTarget! * widget.mealType.dailyShare
+        : null;
     // A ±15% band around the meal target, matching how mainstream trackers
     // present a "recommended range" rather than a single number no one ever
     // hits exactly.
@@ -577,16 +680,25 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                             Container(
                               width: 32,
                               height: 32,
-                              decoration: BoxDecoration(color: mealColor, shape: BoxShape.circle),
+                              decoration: BoxDecoration(
+                                color: mealColor,
+                                shape: BoxShape.circle,
+                              ),
                               alignment: Alignment.center,
-                              child: Icon(_iconForMeal(widget.mealType), size: 17, color: Colors.white),
+                              child: Icon(
+                                _iconForMeal(widget.mealType),
+                                size: 17,
+                                color: Colors.white,
+                              ),
                             ),
                             const SizedBox(width: 10),
                             Text(
                               widget.mealType.label,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleMedium?.copyWith(color: mealColor, fontWeight: FontWeight.w700),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    color: mealColor,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                             ),
                           ],
                         ),
@@ -594,9 +706,8 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                           const SizedBox(height: 2),
                           Text(
                             'Valoare recomandată: ${formatThousands(rangeLow.round())}–${formatThousands(rangeHigh.round())} kcal',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ],
@@ -612,7 +723,10 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                   AnimatedRotation(
                     turns: _expanded ? 0.25 : 0,
                     duration: const Duration(milliseconds: 200),
-                    child: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurfaceVariant),
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -620,7 +734,9 @@ class _MealSectionState extends ConsumerState<_MealSection> {
           ),
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 200),
-            crossFadeState: _expanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            crossFadeState: _expanded
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
             firstChild: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -633,10 +749,14 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                       color: colorScheme.errorContainer,
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: 20),
-                      child: Icon(Icons.delete_outline_rounded, color: colorScheme.onErrorContainer),
+                      child: Icon(
+                        Icons.delete_outline_rounded,
+                        color: colorScheme.onErrorContainer,
+                      ),
                     ),
-                    onDismissed: (_) =>
-                        ref.read(dailyLogProvider(widget.date).notifier).removeEntry(entry.id),
+                    onDismissed: (_) => ref
+                        .read(dailyLogProvider(widget.date).notifier)
+                        .removeEntry(entry.id),
                     child: ListTile(
                       dense: true,
                       leading: Container(
@@ -647,21 +767,32 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
-                        child: Icon(Icons.restaurant_rounded, size: 16, color: colorScheme.onSurfaceVariant),
+                        child: Icon(
+                          Icons.restaurant_rounded,
+                          size: 16,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                       title: Text(entry.foodName),
                       subtitle: Text('${_formatGrams(entry.grams)} g'),
                       trailing: Text(
                         '${formatThousands(entry.calories.round())} kcal',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   child: TextButton.icon(
-                    onPressed: () =>
-                        AddFoodEntrySheet.show(context, mealType: widget.mealType, date: widget.date),
+                    onPressed: () => AddFoodEntrySheet.show(
+                      context,
+                      mealType: widget.mealType,
+                      date: widget.date,
+                    ),
                     icon: const Icon(Icons.add_rounded),
                     label: const Text('Adaugă aliment'),
                   ),
@@ -676,12 +807,18 @@ class _MealSectionState extends ConsumerState<_MealSection> {
   }
 
   String _formatGrams(double grams) {
-    return grams == grams.roundToDouble() ? grams.toStringAsFixed(0) : grams.toString();
+    return grams == grams.roundToDouble()
+        ? grams.toStringAsFixed(0)
+        : grams.toString();
   }
 }
 
 class _WorkoutSection extends ConsumerWidget {
-  const _WorkoutSection({required this.date, required this.workouts, required this.totalBurned});
+  const _WorkoutSection({
+    required this.date,
+    required this.workouts,
+    required this.totalBurned,
+  });
 
   final DateTime date;
   final List<WorkoutEntry> workouts;
@@ -697,11 +834,18 @@ class _WorkoutSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ListTile(
-              leading: Icon(Icons.fitness_center_rounded, color: colorScheme.primary),
-              title: Text('Activitate sportivă', style: Theme.of(context).textTheme.titleMedium),
+              leading: Icon(
+                Icons.fitness_center_rounded,
+                color: colorScheme.primary,
+              ),
+              title: Text(
+                'Activitate sportivă',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               trailing: Text(
                 '${formatThousands(totalBurned.round())} kcal arse',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
             for (final workout in workouts)
@@ -712,11 +856,14 @@ class _WorkoutSection extends ConsumerWidget {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('${formatThousands(workout.caloriesBurned.round())} kcal'),
+                    Text(
+                      '${formatThousands(workout.caloriesBurned.round())} kcal',
+                    ),
                     IconButton(
                       icon: const Icon(Icons.close_rounded, size: 18),
-                      onPressed: () =>
-                          ref.read(workoutLogProvider(date).notifier).removeWorkout(workout.id),
+                      onPressed: () => ref
+                          .read(workoutLogProvider(date).notifier)
+                          .removeWorkout(workout.id),
                     ),
                   ],
                 ),
