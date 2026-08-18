@@ -65,6 +65,25 @@ export const genericFoodsTable: GenericFoodItem[] = [
   { name: "Coniac / Brandy", kcalPer100g: 240, proteinPer100g: 0, carbsPer100g: 0, fatPer100g: 0 },
   { name: "Lichior", kcalPer100g: 300, proteinPer100g: 0, carbsPer100g: 30, fatPer100g: 0 },
 
+  // --- Cafea (preparate de cafenea/de acasă) — la fel ca băuturile
+  // alcoolice, sunt structural absente din OFF (nu vin ambalate cu cod de
+  // bare), deci "cappuccino"/"cafea cu lapte" nu întorceau rezultate utile. ---
+  { name: "Espresso", kcalPer100g: 2, proteinPer100g: 0.1, carbsPer100g: 0, fatPer100g: 0 },
+  { name: "Ristretto", kcalPer100g: 3, proteinPer100g: 0.1, carbsPer100g: 0, fatPer100g: 0 },
+  { name: "Americano", kcalPer100g: 2, proteinPer100g: 0.1, carbsPer100g: 0.3, fatPer100g: 0 },
+  { name: "Cafea neagră (filtru)", kcalPer100g: 1, proteinPer100g: 0.1, carbsPer100g: 0, fatPer100g: 0 },
+  { name: "Cafea turcească", kcalPer100g: 2, proteinPer100g: 0.1, carbsPer100g: 0.3, fatPer100g: 0 },
+  { name: "Cafea decofeinizată", kcalPer100g: 1, proteinPer100g: 0.1, carbsPer100g: 0, fatPer100g: 0 },
+  { name: "Cafea cu lapte", kcalPer100g: 38, proteinPer100g: 1.9, carbsPer100g: 3, fatPer100g: 1.9 },
+  { name: "Cappuccino", kcalPer100g: 40, proteinPer100g: 2, carbsPer100g: 3.4, fatPer100g: 1.9 },
+  { name: "Latte / Cafea latte", kcalPer100g: 42, proteinPer100g: 2.1, carbsPer100g: 3.9, fatPer100g: 1.8 },
+  { name: "Flat white", kcalPer100g: 45, proteinPer100g: 2.3, carbsPer100g: 4, fatPer100g: 2 },
+  { name: "Macchiato", kcalPer100g: 8, proteinPer100g: 0.4, carbsPer100g: 0.4, fatPer100g: 0.4 },
+  { name: "Mocha", kcalPer100g: 65, proteinPer100g: 2, carbsPer100g: 9, fatPer100g: 2.5 },
+  { name: "Frappé", kcalPer100g: 35, proteinPer100g: 0.5, carbsPer100g: 7, fatPer100g: 0.3 },
+  { name: "Cafea cu frișcă", kcalPer100g: 90, proteinPer100g: 1, carbsPer100g: 3, fatPer100g: 8.5 },
+  { name: "Cafea rece (Ice coffee)", kcalPer100g: 30, proteinPer100g: 1.5, carbsPer100g: 3, fatPer100g: 1.3 },
+
   // --- Eggs (standardized preparations) ---
   {
     name: "Ou fiert",
