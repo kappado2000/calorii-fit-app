@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -56,13 +53,22 @@ class DefaultFirebaseOptions {
     projectId: 'calorii-fit-app',
     storageBucket: 'calorii-fit-app.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDRORfmLRcBPQFlW6DX5hOeRDduxBAdXiA',
     appId: '1:665086885932:ios:d6ac1abeeb52f337499189',
     messagingSenderId: '665086885932',
     projectId: 'calorii-fit-app',
     storageBucket: 'calorii-fit-app.firebasestorage.app',
+    androidClientId: '665086885932-unrqnv8scjlgame498ok95kpqr41mr41.apps.googleusercontent.com',
+    iosClientId: '665086885932-r6qsq0vko2c4ki3uga8tv2l4tp70p551.apps.googleusercontent.com',
     iosBundleId: 'com.kappa.calorieapp.calorieApp',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCCJhNpuCwB-VB413qSGP0qDQl0SCiUhik',
+    appId: '1:665086885932:web:5ffdbf59f89046e2499189',
+    messagingSenderId: '665086885932',
+    projectId: 'calorii-fit-app',
+    authDomain: 'calorii-fit-app.firebaseapp.com',
+    storageBucket: 'calorii-fit-app.firebasestorage.app',
   );
 }
