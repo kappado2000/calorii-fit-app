@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/constants/micronutrient_reference.dart';
+import '../../core/firebase/firestore_provider.dart';
 import '../../data/datasources/remote/cloud_functions/search_foods_api_client.dart';
 import '../../data/datasources/remote/firestore/custom_foods_firestore_datasource.dart';
 import '../../data/datasources/remote/firestore/food_log_firestore_datasource.dart';
@@ -13,6 +13,8 @@ import '../../data/models/food_log_entry.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
 import '../auth/uid_provider.dart';
+
+export '../../core/firebase/firestore_provider.dart';
 
 const _uuid = Uuid();
 
@@ -32,10 +34,6 @@ List<CustomFood> foodsRankedForMeal(List<CustomFood> foods, MealType mealType) {
   });
   return sorted;
 }
-
-/// Overridable in tests (e.g. with FakeFirebaseFirestore) rather than
-/// reaching for FirebaseFirestore.instance directly in the providers below.
-final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
 /// Overridable in tests with a fake client instead of hitting the network.
 final searchFoodsApiClientProvider = Provider<SearchFoodsApiClient>((ref) {

@@ -19,6 +19,7 @@ import '../../shared_widgets/deficit_gauge.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import '../activity_sync/activity_sync_screen.dart';
 import '../auth/auth_providers.dart';
+import '../auth/delete_account_dialog.dart';
 import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
 import '../profile/profile_providers.dart';
@@ -120,6 +121,17 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 child: const ListTile(
                   leading: Icon(Icons.logout_rounded),
                   title: Text('Deconectare'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: () => DeleteAccountDialog.show(context),
+                child: ListTile(
+                  leading: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.error),
+                  title: Text(
+                    'Șterge cont definitiv',
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

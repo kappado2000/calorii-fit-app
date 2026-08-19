@@ -60,6 +60,7 @@ class UserProfile {
     required this.goal,
     required this.targetRateKgPerWeek,
     required this.programStartDate,
+    this.disclaimerAcceptedAt,
   });
 
   final double heightCm;
@@ -76,6 +77,12 @@ class UserProfile {
   /// for "since the weight-loss program started" charts.
   final DateTime programStartDate;
 
+  /// When the user acknowledged the "this isn't medical advice" disclaimer
+  /// shown once during first-time onboarding — null for profiles created
+  /// before that step existed. Kept as a timestamp (not a bool) so there's
+  /// a real record of when consent was given, not just that it was.
+  final DateTime? disclaimerAcceptedAt;
+
   Map<String, dynamic> toJson() => {
     'heightCm': heightCm,
     'weightKg': weightKg,
@@ -85,6 +92,7 @@ class UserProfile {
     'goal': goal.name,
     'targetRateKgPerWeek': targetRateKgPerWeek,
     'programStartDate': programStartDate.toIso8601String(),
+    'disclaimerAcceptedAt': disclaimerAcceptedAt?.toIso8601String(),
   };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -100,6 +108,9 @@ class UserProfile {
       goal: Goal.values.firstWhere((g) => g.name == json['goal'], orElse: () => Goal.maintain),
       targetRateKgPerWeek: (json['targetRateKgPerWeek'] as num).toDouble(),
       programStartDate: DateTime.parse(json['programStartDate'] as String),
+      disclaimerAcceptedAt: json['disclaimerAcceptedAt'] != null
+          ? DateTime.parse(json['disclaimerAcceptedAt'] as String)
+          : null,
     );
   }
 }

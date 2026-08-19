@@ -25,8 +25,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Sex _sex = Sex.female;
   ActivityLevel _activityLevel = ActivityLevel.sedentary;
   Goal _goal = Goal.lose;
+  bool _disclaimerAccepted = false;
+  DateTime? _existingDisclaimerAcceptedAt;
 
-  static const _totalPages = 4;
+  /// The disclaimer step only shows for first-time setup — re-showing it
+  /// every time someone edits their weight or goal would be friction for
+  /// no benefit, since consent was already recorded once.
+  bool _isFirstTimeSetup = true;
+
+  int get _totalPages => _isFirstTimeSetup ? 5 : 4;
 
   @override
   void initState() {
@@ -38,6 +45,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     // does), so the cached stream value is available synchronously here.
     final existing = ref.read(userProfileProvider).valueOrNull;
     if (existing != null) {
+      _isFirstTimeSetup = false;
       _ageController.text = existing.age.toString();
       _heightController.text = _formatNumber(existing.heightCm);
       _weightController.text = _formatNumber(existing.weightKg);
@@ -46,6 +54,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       _activityLevel = existing.activityLevel;
       _goal = existing.goal;
       _existingProgramStartDate = existing.programStartDate;
+      _existingDisclaimerAcceptedAt = existing.disclaimerAcceptedAt;
     }
   }
 
@@ -78,6 +87,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       case 3:
         if (_goal == Goal.maintain) return true;
         return double.tryParse(_targetRateController.text.replaceAll(',', '.')) != null;
+      case 4:
+        return _disclaimerAccepted;
       default:
         return true;
     }
@@ -110,6 +121,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ? 0
           : double.parse(_targetRateController.text.replaceAll(',', '.')),
       programStartDate: _existingProgramStartDate ?? DateTime.now(),
+      disclaimerAcceptedAt: _existingDisclaimerAcceptedAt ?? DateTime.now(),
     );
     await ref.read(profileControllerProvider).saveProfile(profile);
     // The router no longer auto-redirects away from /onboarding once a
@@ -180,6 +192,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   onGoalChanged: (goal) => setState(() => _goal = goal),
                   onTextChanged: () => setState(() {}),
                 ),
+                if (_isFirstTimeSetup)
+                  _DisclaimerStep(
+                    accepted: _disclaimerAccepted,
+                    onChanged: (value) => setState(() => _disclaimerAccepted = value),
+                  ),
               ],
             ),
           ),
@@ -396,6 +413,59 @@ class _GoalStep extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
+      ],
+    );
+  }
+}
+
+/// Shown once, on first-time setup only — App Store/Google Play review
+/// expects a clear "this isn't medical advice" acknowledgment for any app
+/// that computes calorie/weight-loss targets, and it's good practice
+/// regardless of store policy.
+class _DisclaimerStep extends StatelessWidget {
+  const _DisclaimerStep({required this.accepted, required this.onChanged});
+
+  final bool accepted;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return _StepScaffold(
+      title: 'Înainte să începi',
+      icon: Icons.health_and_safety_outlined,
+      children: [
+        Text(
+          'Calorii Fit estimează necesarul caloric și ritmul de slăbit pe baza unor '
+          'formule general acceptate (Mifflin-St Jeor), nu pe baza unei evaluări '
+          'medicale individuale. Nu înlocuiește sfatul unui medic sau nutriționist, '
+          'mai ales dacă ai o afecțiune medicală, ești însărcinată sau alăptezi.',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 24),
+        InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () => onChanged(!accepted),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Checkbox(value: accepted, onChanged: (value) => onChanged(value ?? false)),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    'Am înțeles și sunt de acord să folosesc aplicația în cunoștință de cauză.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
