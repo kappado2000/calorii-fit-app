@@ -46,6 +46,62 @@ void main() {
     expect(foods.first.kcalPer100g, 130);
   });
 
+  test('rememberProduct with a mealType bumps that meal\'s use count', () async {
+    final container = _buildContainer();
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final notifier = container.read(customFoodsProvider.notifier);
+
+    await notifier.rememberProduct(name: 'Ovăz', kcalPer100g: 380, mealType: MealType.breakfast);
+    await pumpEventQueue();
+    var food = container.read(customFoodsProvider).first;
+    expect(food.mealTypeUseCounts[MealType.breakfast.name], 1);
+    expect(food.mealTypeUseCounts[MealType.dinner.name], isNull);
+
+    // Logged again for breakfast, then once for dinner too (e.g. a leftover
+    // bowl) — each meal's own count moves independently.
+    await notifier.rememberProduct(name: 'Ovăz', kcalPer100g: 380, mealType: MealType.breakfast);
+    await notifier.rememberProduct(name: 'Ovăz', kcalPer100g: 380, mealType: MealType.dinner);
+    await pumpEventQueue();
+    food = container.read(customFoodsProvider).first;
+    expect(food.mealTypeUseCounts[MealType.breakfast.name], 2);
+    expect(food.mealTypeUseCounts[MealType.dinner.name], 1);
+  });
+
+  test('incrementMealTypeUsage bumps an existing food\'s count without touching its other fields', () async {
+    final container = _buildContainer();
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final notifier = container.read(customFoodsProvider.notifier);
+
+    final saved = await notifier.rememberProduct(name: 'Banană', kcalPer100g: 89, gramsUsed: 120);
+    await pumpEventQueue();
+
+    await notifier.incrementMealTypeUsage(saved.id, MealType.snack);
+    await notifier.incrementMealTypeUsage(saved.id, MealType.snack);
+    await pumpEventQueue();
+
+    final food = container.read(customFoodsProvider).first;
+    expect(food.mealTypeUseCounts[MealType.snack.name], 2);
+    expect(food.lastGramsUsed, 120); // untouched
+    expect(food.kcalPer100g, 89); // untouched
+  });
+
+  test('foodsRankedForMeal sorts by that meal\'s own use count, without hiding zero-count foods', () {
+    const foods = [
+      CustomFood(id: '1', name: 'A', kcalPer100g: 100, mealTypeUseCounts: {'breakfast': 1, 'dinner': 5}),
+      CustomFood(id: '2', name: 'B', kcalPer100g: 100, mealTypeUseCounts: {'breakfast': 3}),
+      CustomFood(id: '3', name: 'C', kcalPer100g: 100), // never logged for any meal
+    ];
+
+    final forBreakfast = foodsRankedForMeal(foods, MealType.breakfast);
+    expect(forBreakfast.map((f) => f.id), ['2', '1', '3']); // 3 > 1 > 0(unset)
+
+    final forDinner = foodsRankedForMeal(foods, MealType.dinner);
+    expect(forDinner.first.id, '1'); // the only one with a dinner count wins the top spot
+    expect(forDinner.map((f) => f.id).toSet(), {'1', '2', '3'}); // nothing dropped
+  });
+
   test('rememberProduct persists across a fresh provider read (same backing store)', () async {
     final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
     final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: true);

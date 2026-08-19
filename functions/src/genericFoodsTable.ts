@@ -218,7 +218,7 @@ export const genericFoodsTable: GenericFoodItem[] = [
   // Adaugate pentru ca produsele procesate/ambalate domina rezultatele OFF
   // pentru multe dintre ele (ex. "banana" scotea chipsuri, nu fructul). ---
   {
-    name: "Măr",
+    name: "Măr (mere)",
     kcalPer100g: 52,
     proteinPer100g: 0.3,
     carbsPer100g: 14,
@@ -242,7 +242,7 @@ export const genericFoodsTable: GenericFoodItem[] = [
     micronutrients: { vitaminCMg: 53.2, calciumMg: 40, ironMg: 0.1, magnesiumMg: 10, potassiumMg: 181 },
   },
   {
-    name: "Pară",
+    name: "Pară (pere)",
     kcalPer100g: 57,
     proteinPer100g: 0.4,
     carbsPer100g: 15,
@@ -306,7 +306,7 @@ export const genericFoodsTable: GenericFoodItem[] = [
     micronutrients: { vitaminCMg: 9.5, calciumMg: 6, ironMg: 0.17, magnesiumMg: 7, potassiumMg: 157 },
   },
   {
-    name: "Cireșe",
+    name: "Cireșe (cireașă)",
     kcalPer100g: 63,
     proteinPer100g: 1.1,
     carbsPer100g: 16,
@@ -522,7 +522,7 @@ export const genericFoodsTable: GenericFoodItem[] = [
     micronutrients: { vitaminCMg: 127.7, calciumMg: 7, ironMg: 0.34, magnesiumMg: 10, potassiumMg: 175 },
   },
   {
-    name: "Vinete",
+    name: "Vinete (vânătă)",
     kcalPer100g: 25,
     proteinPer100g: 1,
     carbsPer100g: 6,

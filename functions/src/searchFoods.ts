@@ -153,11 +153,38 @@ function foldDiacritics(value: string): string {
 }
 
 /**
+ * Two words match if identical, if one is a genuine prefix of the other
+ * (handles "morcov"/"morcovi", compound-name lookups like "ciuperci"
+ * inside "ciuperci champignon"), or — for words of 5+ characters — if
+ * they're identical except for their very last character. That last rule
+ * is deliberately narrow (5-char floor, 1-char tolerance only) because
+ * it's specifically covering the common Romanian singular/plural pattern
+ * where only the final vowel changes ("roșie"/"roșii" ->
+ * "rosi_"/"rosi_", "castravete"/"castraveți" -> "castravet_"/"castravet_")
+ * — confirmed live: searching "roșie" or "castravete" (singular) found
+ * nothing, because the curated table stores the plural form. A looser
+ * (4-char, 1-char) tolerance was tried first but produced a real false
+ * positive: "somn" (catfish) fuzzy-matched "somon" (salmon) at a shared
+ * 3-character prefix. Truly irregular plurals (măr/mere, pară/pere,
+ * vinete/vânătă, cireșe/cireașă) share no useful prefix at all and are
+ * handled instead with an explicit alias in the item's stored name.
+ */
+function wordsFuzzyMatch(a: string, b: string): boolean {
+  if (a === b) return true;
+  if (a.length >= 3 && b.length >= 3 && (a.startsWith(b) || b.startsWith(a))) return true;
+  const minLen = Math.min(a.length, b.length);
+  if (minLen < 5) return false;
+  return a.slice(0, minLen - 1) === b.slice(0, minLen - 1);
+}
+
+/**
  * Matches the curated staples table (see genericFoodsTable.ts) — every
- * word in the query must appear somewhere in the item's name, diacritic- and
- * case-insensitive, so "vin alb" or "vin rosu" (no diacritics typed) both
- * match correctly. These are guaranteed-relevant, guaranteed-complete
- * entries, so matches are always shown ahead of external results.
+ * word in the query must fuzzy-match some word in the item's name
+ * (diacritic- and case-insensitive), so "vin alb"/"vin rosu" (no
+ * diacritics typed) and singular/plural variants ("roșie" finding
+ * "Roșii") both match correctly. These are guaranteed-relevant,
+ * guaranteed-complete entries, so matches are always shown ahead of
+ * external results.
  */
 function matchGenericFoodItems(query: string): FoodProductResult[] {
   const queryWords = foldDiacritics(query).split(/\s+/).filter(Boolean);
@@ -165,8 +192,8 @@ function matchGenericFoodItems(query: string): FoodProductResult[] {
 
   return genericFoodsTable
     .filter((item) => {
-      const normalizedName = foldDiacritics(item.name);
-      return queryWords.every((word) => normalizedName.includes(word));
+      const itemWords = foldDiacritics(item.name).split(/[^a-z0-9]+/).filter(Boolean);
+      return queryWords.every((word) => itemWords.some((itemWord) => wordsFuzzyMatch(word, itemWord)));
     })
     .map((item) => ({
       barcode: null,

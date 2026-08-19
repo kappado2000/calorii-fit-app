@@ -18,6 +18,7 @@ class CustomFood {
     this.fatPer100g,
     this.lastGramsUsed,
     this.micronutrients,
+    this.mealTypeUseCounts = const {},
   });
 
   final String id;
@@ -29,6 +30,12 @@ class CustomFood {
   final double? lastGramsUsed;
   final MicronutrientProfile? micronutrients;
 
+  /// How many times this food has been logged for each meal type (keyed by
+  /// `MealType.name`) — powers the "frequently used" checklist shown
+  /// directly on each meal's card, ranked to that meal specifically (a food
+  /// eaten often at breakfast shouldn't crowd the dinner card).
+  final Map<String, int> mealTypeUseCounts;
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
@@ -38,10 +45,12 @@ class CustomFood {
     'fatPer100g': fatPer100g,
     'lastGramsUsed': lastGramsUsed,
     'micronutrients': micronutrients?.toJson(),
+    'mealTypeUseCounts': mealTypeUseCounts,
   };
 
   factory CustomFood.fromJson(Map<String, dynamic> json) {
     final micronutrientsJson = json['micronutrients'] as Map<String, dynamic>?;
+    final rawCounts = json['mealTypeUseCounts'] as Map<String, dynamic>?;
     return CustomFood(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -51,6 +60,9 @@ class CustomFood {
       fatPer100g: (json['fatPer100g'] as num?)?.toDouble(),
       lastGramsUsed: (json['lastGramsUsed'] as num?)?.toDouble(),
       micronutrients: micronutrientsJson == null ? null : MicronutrientProfile.fromJson(micronutrientsJson),
+      mealTypeUseCounts: rawCounts == null
+          ? const {}
+          : rawCounts.map((key, value) => MapEntry(key, (value as num).toInt())),
     );
   }
 }

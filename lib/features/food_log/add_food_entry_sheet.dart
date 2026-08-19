@@ -102,6 +102,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
             fatPer100g: food.fatPer100g,
             micronutrients: food.micronutrients,
           );
+      await ref.read(customFoodsProvider.notifier).incrementMealTypeUsage(food.id, widget.mealType);
     }
     if (mounted) Navigator.of(context).pop();
   }
@@ -147,6 +148,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
           fatPer100g: fatPer100g,
           gramsUsed: grams,
           micronutrients: micronutrients,
+          mealType: widget.mealType,
         );
     await ref
         .read(dailyLogProvider(widget.date).notifier)
@@ -173,7 +175,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(foodSearchProvider);
-    final frequentFoods = ref.watch(customFoodsProvider);
+    final frequentFoods = foodsRankedForMeal(ref.watch(customFoodsProvider), widget.mealType);
     final query = _queryController.text.trim();
     final showResultsList = _selectedProduct == null && !_manualMode && query.length >= 2;
     final showQuickAdd = _selectedProduct == null && !_manualMode && query.isEmpty && frequentFoods.isNotEmpty;

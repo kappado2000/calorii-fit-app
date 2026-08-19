@@ -18,6 +18,21 @@ const _uuid = Uuid();
 
 DateTime normalizeDate(DateTime date) => DateTime(date.year, date.month, date.day);
 
+/// Remembered foods ranked for a specific meal — most-used-at-this-meal
+/// first, but never hiding foods with no recorded meal-specific history
+/// (a food remembered before this ranking existed, or logged so far only
+/// via the manual/search flow, still has a use count of 0 and would
+/// otherwise vanish from every meal's checklist).
+List<CustomFood> foodsRankedForMeal(List<CustomFood> foods, MealType mealType) {
+  final sorted = [...foods];
+  sorted.sort((a, b) {
+    final countA = a.mealTypeUseCounts[mealType.name] ?? 0;
+    final countB = b.mealTypeUseCounts[mealType.name] ?? 0;
+    return countB.compareTo(countA);
+  });
+  return sorted;
+}
+
 /// Overridable in tests (e.g. with FakeFirebaseFirestore) rather than
 /// reaching for FirebaseFirestore.instance directly in the providers below.
 final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
@@ -40,7 +55,9 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
   /// Remembers a product for reuse next time — if a product with the same
   /// name (case-insensitive) already exists, it's updated in place rather
   /// than creating a duplicate entry. [gramsUsed], when given, becomes the
-  /// portion the quick-add checklist pre-fills next time.
+  /// portion the quick-add checklist pre-fills next time. [mealType], when
+  /// given, bumps that meal's use count so this food ranks higher on that
+  /// meal's own "frequently used" checklist.
   Future<CustomFood> rememberProduct({
     required String name,
     required double kcalPer100g,
@@ -49,6 +66,7 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
     double? fatPer100g,
     double? gramsUsed,
     MicronutrientProfile? micronutrients,
+    MealType? mealType,
   }) async {
     final trimmedName = name.trim();
     final existing = state
@@ -63,9 +81,39 @@ class CustomFoodsNotifier extends StateNotifier<List<CustomFood>> {
       fatPer100g: fatPer100g,
       lastGramsUsed: gramsUsed ?? existing?.lastGramsUsed,
       micronutrients: micronutrients ?? existing?.micronutrients,
+      mealTypeUseCounts: mealType == null
+          ? (existing?.mealTypeUseCounts ?? const {})
+          : _bumpedCounts(existing?.mealTypeUseCounts, mealType),
     );
     await _dataSource.upsert(food);
     return food;
+  }
+
+  /// Bumps a meal's use count for a food that's already remembered — used
+  /// by the quick-add paths (meal-card checklist, in-sheet checklist),
+  /// which don't otherwise call [rememberProduct] since the food's data
+  /// isn't changing, only how often it's logged for that meal.
+  Future<void> incrementMealTypeUsage(String foodId, MealType mealType) async {
+    final food = state.where((f) => f.id == foodId).firstOrNull;
+    if (food == null) return;
+    final updated = CustomFood(
+      id: food.id,
+      name: food.name,
+      kcalPer100g: food.kcalPer100g,
+      proteinPer100g: food.proteinPer100g,
+      carbsPer100g: food.carbsPer100g,
+      fatPer100g: food.fatPer100g,
+      lastGramsUsed: food.lastGramsUsed,
+      micronutrients: food.micronutrients,
+      mealTypeUseCounts: _bumpedCounts(food.mealTypeUseCounts, mealType),
+    );
+    await _dataSource.upsert(updated);
+  }
+
+  Map<String, int> _bumpedCounts(Map<String, int>? counts, MealType mealType) {
+    final updated = Map<String, int>.from(counts ?? const {});
+    updated[mealType.name] = (updated[mealType.name] ?? 0) + 1;
+    return updated;
   }
 
   Future<void> deleteProduct(String id) => _dataSource.delete(id);

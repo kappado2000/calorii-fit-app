@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
+import '../../data/models/custom_food.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
 import '../../data/models/user_profile.dart';
@@ -596,6 +597,51 @@ class _MealSection extends ConsumerStatefulWidget {
 
 class _MealSectionState extends ConsumerState<_MealSection> {
   bool _expanded = true;
+  final Set<String> _quickSelectedIds = {};
+  final Map<String, double> _quickGrams = {};
+
+  void _toggleQuickSelect(CustomFood food) {
+    setState(() {
+      if (!_quickSelectedIds.remove(food.id)) {
+        _quickSelectedIds.add(food.id);
+        _quickGrams.putIfAbsent(food.id, () => food.lastGramsUsed ?? 100);
+      }
+    });
+  }
+
+  void _adjustQuickGrams(String foodId, double delta) {
+    setState(() {
+      final current = _quickGrams[foodId] ?? 100;
+      _quickGrams[foodId] = (current + delta).clamp(10, 2000);
+    });
+  }
+
+  /// Adds every checked frequent food at once, each at its own (possibly
+  /// adjusted) portion, then bumps this meal's use count for each so the
+  /// ranking keeps reflecting what's actually eaten here.
+  Future<void> _addSelectedQuickFoods(List<CustomFood> frequentFoods) async {
+    final selected = frequentFoods.where((food) => _quickSelectedIds.contains(food.id)).toList();
+    for (final food in selected) {
+      final grams = _quickGrams[food.id] ?? food.lastGramsUsed ?? 100;
+      await ref
+          .read(dailyLogProvider(widget.date).notifier)
+          .addEntry(
+            mealType: widget.mealType,
+            foodName: food.name,
+            grams: grams,
+            kcalPer100g: food.kcalPer100g,
+            proteinPer100g: food.proteinPer100g,
+            carbsPer100g: food.carbsPer100g,
+            fatPer100g: food.fatPer100g,
+            micronutrients: food.micronutrients,
+          );
+      await ref.read(customFoodsProvider.notifier).incrementMealTypeUsage(food.id, widget.mealType);
+    }
+    setState(() {
+      _quickSelectedIds.clear();
+      _quickGrams.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -615,6 +661,13 @@ class _MealSectionState extends ConsumerState<_MealSection> {
     final colorScheme = Theme.of(context).colorScheme;
     final warningColor = context.appColors.protein;
     final mealColor = _colorForMeal(widget.mealType);
+    // Only foods actually logged for THIS meal before — a food eaten often
+    // at breakfast shouldn't show up on the dinner card. Capped to 5 so the
+    // card stays glanceable instead of turning into a full food list.
+    final frequentFoods = foodsRankedForMeal(ref.watch(customFoodsProvider), widget.mealType)
+        .where((food) => (food.mealTypeUseCounts[widget.mealType.name] ?? 0) > 0)
+        .take(5)
+        .toList();
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -702,6 +755,37 @@ class _MealSectionState extends ConsumerState<_MealSection> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Divider(height: 1),
+                if (frequentFoods.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+                    child: Text(
+                      'Folosite des',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: mealColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  for (final food in frequentFoods)
+                    _QuickAddRow(
+                      food: food,
+                      selected: _quickSelectedIds.contains(food.id),
+                      grams: _quickGrams[food.id] ?? food.lastGramsUsed ?? 100,
+                      accentColor: mealColor,
+                      onToggle: () => _toggleQuickSelect(food),
+                      onAdjustGrams: (delta) => _adjustQuickGrams(food.id, delta),
+                    ),
+                  if (_quickSelectedIds.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+                      child: FilledButton.tonalIcon(
+                        onPressed: () => _addSelectedQuickFoods(frequentFoods),
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text('Adaugă (${_quickSelectedIds.length})'),
+                      ),
+                    ),
+                  const Divider(height: 1),
+                ],
                 for (final entry in widget.entries)
                   Dismissible(
                     key: ValueKey(entry.id),
@@ -771,6 +855,77 @@ class _MealSectionState extends ConsumerState<_MealSection> {
     return grams == grams.roundToDouble()
         ? grams.toStringAsFixed(0)
         : grams.toString();
+  }
+}
+
+/// One row in a meal card's "Folosite des" checklist — checking it reveals
+/// a compact +/- stepper so the portion can be adjusted before adding,
+/// without leaving the card or opening the full add-food sheet.
+class _QuickAddRow extends StatelessWidget {
+  const _QuickAddRow({
+    required this.food,
+    required this.selected,
+    required this.grams,
+    required this.accentColor,
+    required this.onToggle,
+    required this.onAdjustGrams,
+  });
+
+  final CustomFood food;
+  final bool selected;
+  final double grams;
+  final Color accentColor;
+  final VoidCallback onToggle;
+  final ValueChanged<double> onAdjustGrams;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final kcal = (food.kcalPer100g * grams / 100).round();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      child: Row(
+        children: [
+          Checkbox(value: selected, activeColor: accentColor, onChanged: (_) => onToggle()),
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onToggle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(food.name, style: Theme.of(context).textTheme.bodyMedium, overflow: TextOverflow.ellipsis),
+                  Text(
+                    '$kcal kcal',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (selected) ...[
+            IconButton(
+              icon: const Icon(Icons.remove_circle_outline_rounded, size: 20),
+              visualDensity: VisualDensity.compact,
+              onPressed: () => onAdjustGrams(-10),
+            ),
+            SizedBox(
+              width: 44,
+              child: Text(
+                '${grams.round()}g',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline_rounded, size: 20),
+              visualDensity: VisualDensity.compact,
+              onPressed: () => onAdjustGrams(10),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
 
