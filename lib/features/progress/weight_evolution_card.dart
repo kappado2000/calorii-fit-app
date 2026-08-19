@@ -96,11 +96,24 @@ class _WeightLineChart extends StatelessWidget {
               FlLine(color: colorScheme.outlineVariant.withValues(alpha: 0.25), strokeWidth: 1),
         ),
         borderData: FlBorderData(show: false),
-        titlesData: const FlTitlesData(
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 38)),
+        titlesData: FlTitlesData(
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              interval: _niceWeightInterval((maxWeight + padding) - (minWeight - padding)),
+              getTitlesWidget: (value, meta) => Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Text(
+                  value.round().toString(),
+                  style: TextStyle(fontSize: 10.5, color: colorScheme.onSurfaceVariant),
+                ),
+              ),
+            ),
+          ),
         ),
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
@@ -129,5 +142,16 @@ class _WeightLineChart extends StatelessWidget {
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeOutCubic,
     );
+  }
+
+  /// A round step (1/2/5/10 kg) for the axis labels, roughly quartering
+  /// the visible range — avoids fl_chart's default of crowded, decimal
+  /// tick values on a narrow weight range.
+  double _niceWeightInterval(double range) {
+    final rawStep = range / 4;
+    for (final step in [1, 2, 5, 10, 20]) {
+      if (rawStep <= step) return step.toDouble();
+    }
+    return 50;
   }
 }

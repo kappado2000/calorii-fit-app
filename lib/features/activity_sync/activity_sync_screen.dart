@@ -11,6 +11,12 @@ import 'weight_entry_dialog.dart';
 class ActivitySyncScreen extends ConsumerWidget {
   const ActivitySyncScreen({super.key});
 
+  static const _borderColor = Color(0xFF2FA84F);
+  static const _cardShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(16)),
+    side: BorderSide(color: _borderColor, width: 1),
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(activitySyncControllerProvider);
@@ -23,6 +29,7 @@ class ActivitySyncScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Card(
+            shape: _cardShape,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -59,6 +66,7 @@ class ActivitySyncScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           Card(
+            shape: _cardShape,
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               leading: Container(
@@ -98,6 +106,8 @@ class ActivitySyncScreen extends ConsumerWidget {
             )
           else
             Card(
+              shape: _cardShape,
+              clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
                   for (final entry in weightEntries.reversed.take(10))

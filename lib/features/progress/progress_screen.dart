@@ -37,113 +37,113 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Progres')),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const WeeklySummaryCard(),
-            const SizedBox(height: 16),
-            const WeightEvolutionCard(),
-            const SizedBox(height: 16),
-            if (profile != null) AdaptiveTdeeCard(profile: profile),
-            SegmentedButton<ProgressPeriod>(
-              segments: ProgressPeriod.values
-                  .map((p) => ButtonSegment(value: p, label: Text(p.label)))
-                  .toList(),
-              selected: {_period},
-              onSelectionChanged: (selection) => setState(() => _period = selection.first),
+        children: [
+          const WeeklySummaryCard(),
+          const SizedBox(height: 16),
+          const WeightEvolutionCard(),
+          const SizedBox(height: 16),
+          if (profile != null) AdaptiveTdeeCard(profile: profile),
+          SegmentedButton<ProgressPeriod>(
+            segments: ProgressPeriod.values
+                .map((p) => ButtonSegment(value: p, label: Text(p.label)))
+                .toList(),
+            selected: {_period},
+            onSelectionChanged: (selection) => setState(() => _period = selection.first),
+          ),
+          const SizedBox(height: 20),
+          historyAsync.when(
+            loading: () => const Padding(
+              padding: EdgeInsets.all(32),
+              child: Center(child: CircularProgressIndicator()),
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: historyAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stackTrace) => Center(child: Text('Eroare: $error')),
-                data: (history) {
-                  if (profile == null) {
-                    return const Center(
-                      child: Text('Setează-ți mai întâi profilul și obiectivul din meniu.'),
+            error: (error, stackTrace) => Padding(
+              padding: const EdgeInsets.all(32),
+              child: Center(child: Text('Eroare: $error')),
+            ),
+            data: (history) {
+              if (profile == null) {
+                return const Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Center(child: Text('Setează-ți mai întâi profilul și obiectivul din meniu.')),
+                );
+              }
+              final start = _period == ProgressPeriod.sinceProgramStart
+                  ? _normalize(profile.programStartDate)
+                  : _normalize(DateTime.now()).subtract(
+                      Duration(days: _period == ProgressPeriod.last7Days ? 6 : 29),
                     );
-                  }
-                  final start = _period == ProgressPeriod.sinceProgramStart
-                      ? _normalize(profile.programStartDate)
-                      : _normalize(DateTime.now()).subtract(
-                          Duration(days: _period == ProgressPeriod.last7Days ? 6 : 29),
-                        );
-                  final end = _normalize(DateTime.now());
-                  final days = _dateRange(start, end);
-                  final target = tdee?.calorieTarget;
-                  final tdeeValue = tdee?.tdee;
+              final end = _normalize(DateTime.now());
+              final days = _dateRange(start, end);
+              final target = tdee?.calorieTarget;
+              final tdeeValue = tdee?.tdee;
 
-                  final totalIntake = days.fold<double>(0, (sum, d) => sum + (history[d] ?? 0));
-                  final avgIntake = days.isEmpty ? 0.0 : totalIntake / days.length;
-                  final totalDeficit = days.fold<double>(
-                    0,
-                    (sum, d) => sum + ((tdeeValue ?? 0) + (burnedHistory[d] ?? 0) - (history[d] ?? 0)),
-                  );
-                  final projectedKg = totalDeficit / kcalPerKgBodyFat;
-                  // How the whole period is doing, on average — same scale
-                  // used for a single day, just fed the period's average
-                  // daily deficit instead of one day's.
-                  final avgDeficit = days.isEmpty ? 0.0 : totalDeficit / days.length;
-                  final periodStatusColor = tdee != null
-                      ? deficitStatusColor(avgDeficit, tdee.dailyDeficit)
-                      : Theme.of(context).colorScheme.primary;
+              final totalIntake = days.fold<double>(0, (sum, d) => sum + (history[d] ?? 0));
+              final avgIntake = days.isEmpty ? 0.0 : totalIntake / days.length;
+              final totalDeficit = days.fold<double>(
+                0,
+                (sum, d) => sum + ((tdeeValue ?? 0) + (burnedHistory[d] ?? 0) - (history[d] ?? 0)),
+              );
+              final projectedKg = totalDeficit / kcalPerKgBodyFat;
+              // How the whole period is doing, on average — same scale
+              // used for a single day, just fed the period's average
+              // daily deficit instead of one day's.
+              final avgDeficit = days.isEmpty ? 0.0 : totalDeficit / days.length;
+              final periodStatusColor = tdee != null
+                  ? deficitStatusColor(avgDeficit, tdee.dailyDeficit)
+                  : Theme.of(context).colorScheme.primary;
 
-                  return SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _PeriodStatsRow(
-                          totalIntake: totalIntake,
-                          avgIntake: avgIntake,
-                          projectedKg: projectedKg,
-                        ).animate().fadeIn(duration: 300.ms),
-                        const SizedBox(height: 16),
-                        _ChartCard(
-                          title: 'Aport caloric',
-                          icon: Icons.restaurant_rounded,
-                          borderColor: periodStatusColor,
-                          thickGradientBorder: true,
-                          child: _IntakeChart(
-                            days: days,
-                            history: history,
-                            target: target,
-                            burnedHistory: burnedHistory,
-                            tdeeValue: tdeeValue,
-                            goalDeficit: tdee?.dailyDeficit,
-                          ),
-                        ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
-                        const SizedBox(height: 16),
-                        _ChartCard(
-                          title: 'Deficit caloric zilnic',
-                          icon: Icons.trending_down_rounded,
-                          borderColor: periodStatusColor,
-                          thickGradientBorder: true,
-                          child: _DeficitChart(
-                            days: days,
-                            history: history,
-                            burnedHistory: burnedHistory,
-                            tdee: tdeeValue,
-                          ),
-                        ).animate(delay: 100.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
-                        const SizedBox(height: 16),
-                        _MacroBalanceCard(
-                          summary: nutritionSummary,
-                        ).animate(delay: 150.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
-                        const SizedBox(height: 16),
-                        _MicronutrientCard(
-                          summary: nutritionSummary,
-                          dayCount: days.length,
-                        ).animate(delay: 200.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
-                      ],
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _PeriodStatsRow(
+                    totalIntake: totalIntake,
+                    avgIntake: avgIntake,
+                    projectedKg: projectedKg,
+                  ).animate().fadeIn(duration: 300.ms),
+                  const SizedBox(height: 16),
+                  _ChartCard(
+                    title: 'Aport caloric',
+                    icon: Icons.restaurant_rounded,
+                    borderColor: periodStatusColor,
+                    thickGradientBorder: true,
+                    child: _IntakeChart(
+                      days: days,
+                      history: history,
+                      target: target,
+                      burnedHistory: burnedHistory,
+                      tdeeValue: tdeeValue,
+                      goalDeficit: tdee?.dailyDeficit,
                     ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+                  ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
+                  const SizedBox(height: 16),
+                  _ChartCard(
+                    title: 'Deficit caloric zilnic',
+                    icon: Icons.trending_down_rounded,
+                    borderColor: periodStatusColor,
+                    thickGradientBorder: true,
+                    child: _DeficitChart(
+                      days: days,
+                      history: history,
+                      burnedHistory: burnedHistory,
+                      tdee: tdeeValue,
+                    ),
+                  ).animate(delay: 100.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
+                  const SizedBox(height: 16),
+                  _MacroBalanceCard(
+                    summary: nutritionSummary,
+                  ).animate(delay: 150.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
+                  const SizedBox(height: 16),
+                  _MicronutrientCard(
+                    summary: nutritionSummary,
+                    dayCount: days.length,
+                  ).animate(delay: 200.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
