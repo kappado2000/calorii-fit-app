@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/meal_type.dart';
 import '../camera_capture/camera_capture_state.dart';
 import '../food_log/food_log_providers.dart';
+import '../how_it_works/how_it_works_screen.dart';
 
 /// Mandatory confirmation/correction step before anything is saved — every
 /// serious competitor (Cal AI, BiteSnap, SnapCalorie) converges on this
@@ -82,7 +83,18 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Confirmă alimentele')),
+      appBar: AppBar(
+        title: const Text('Confirmă alimentele'),
+        actions: [
+          IconButton(
+            tooltip: 'Cum calculăm caloriile?',
+            icon: const Icon(Icons.info_outline_rounded),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const HowItWorksScreen()),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           if (widget.result.mixedPlateDetected) const _MixedPlateBanner(),
