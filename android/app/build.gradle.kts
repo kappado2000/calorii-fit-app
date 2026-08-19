@@ -18,6 +18,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // flutter_local_notifications' AAR metadata requires this to be
+        // enabled, regardless of minSdk.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
@@ -50,6 +53,17 @@ kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
+}
+
+dependencies {
+    // camera_android_camerax's camera-core 1.5.3 references
+    // androidx.concurrent.futures.CallbackToFutureAdapter in a type
+    // annotation on a compiled class, but doesn't pull the artifact onto
+    // the compile classpath itself here — without this, compileDebugJavaWithJavac
+    // fails with "class file for androidx.concurrent.futures.CallbackToFutureAdapter
+    // not found", even though nothing in this app references it directly.
+    implementation("androidx.concurrent:concurrent-futures:1.2.0")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
 flutter {
