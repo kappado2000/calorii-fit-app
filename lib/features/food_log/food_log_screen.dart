@@ -26,6 +26,7 @@ import '../hydration/hydration_card.dart';
 import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
 import '../recipes/recipes_screen.dart';
+import '../reminders/reminder_settings_dialog.dart';
 import '../streaks/streak_badge.dart';
 import '../workout_log/add_workout_sheet.dart';
 import '../workout_log/workout_log_providers.dart';
@@ -127,6 +128,14 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 child: const ListTile(
                   leading: Icon(Icons.menu_book_rounded),
                   title: Text('Rețetele mele'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: () => ReminderSettingsDialog.show(context),
+                child: const ListTile(
+                  leading: Icon(Icons.notifications_active_outlined),
+                  title: Text('Memento zilnic'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
