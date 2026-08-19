@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -940,7 +942,7 @@ class _WorkoutSection extends ConsumerWidget {
   final List<WorkoutEntry> workouts;
   final double totalBurned;
 
-  static const _cardColor = Color(0xFFC99A2E);
+  static const _cardColor = Color(0xFFEFCA76);
   static const _borderColor = Color(0xFF6B4423);
 
   @override
@@ -1009,23 +1011,118 @@ class _WorkoutSection extends ConsumerWidget {
                 ],
               ),
             ),
-            Positioned(
+            const Positioned(
               top: 8,
               left: 8,
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: const BoxDecoration(color: _borderColor, shape: BoxShape.circle),
-                alignment: Alignment.center,
-                child: const Icon(Icons.fitness_center_rounded, color: Colors.white, size: 17)
-                    .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                    .moveY(duration: 650.ms, begin: 3, end: -3, curve: Curves.easeInOut)
-                    .rotate(duration: 650.ms, begin: -0.05, end: 0.05, curve: Curves.easeInOut),
-              ),
+              child: _WeightlifterBadge(),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+/// A circular badge with a small hand-drawn (CustomPainter) figure of a
+/// person lifting a dumbbell overhead, one arm swinging continuously
+/// between "racked" and "locked out" — a literal lifting motion, not just
+/// a static dumbbell glyph.
+class _WeightlifterBadge extends StatefulWidget {
+  const _WeightlifterBadge();
+
+  @override
+  State<_WeightlifterBadge> createState() => _WeightlifterBadgeState();
+}
+
+class _WeightlifterBadgeState extends State<_WeightlifterBadge> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: const BoxDecoration(color: _WorkoutSection._borderColor, shape: BoxShape.circle),
+      alignment: Alignment.center,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) => CustomPaint(
+          size: const Size(20, 20),
+          painter: _WeightlifterPainter(lift: Curves.easeInOut.transform(_controller.value)),
+        ),
+      ),
+    );
+  }
+}
+
+class _WeightlifterPainter extends CustomPainter {
+  _WeightlifterPainter({required this.lift});
+
+  /// 0 = arm racked down at the shoulder, 1 = arm locked out overhead.
+  final double lift;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final linePaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+    final fillPaint = Paint()..color = Colors.white;
+
+    final cx = size.width * 0.46;
+
+    // Head.
+    final headCenter = Offset(cx, size.height * 0.16);
+    canvas.drawCircle(headCenter, size.width * 0.13, fillPaint);
+
+    // Torso.
+    final shoulder = Offset(cx, size.height * 0.34);
+    final hip = Offset(cx, size.height * 0.64);
+    canvas.drawLine(shoulder, hip, linePaint);
+
+    // Legs, a slight stance for balance.
+    canvas.drawLine(hip, Offset(hip.dx - size.width * 0.18, size.height * 0.98), linePaint);
+    canvas.drawLine(hip, Offset(hip.dx + size.width * 0.14, size.height * 0.98), linePaint);
+
+    // Bracing arm, static, opposite the lifting side.
+    canvas.drawLine(shoulder, Offset(shoulder.dx - size.width * 0.2, size.height * 0.5), linePaint);
+
+    // Lifting arm: sweeps from racked (near the shoulder) to overhead lockout.
+    final angle = _lerp(2.0, -1.55, lift); // radians; down-ish -> up-and-back
+    final armLength = size.width * 0.4;
+    final hand = shoulder + Offset(math.cos(angle), math.sin(angle)) * armLength;
+    canvas.drawLine(shoulder, hand, linePaint);
+
+    // The dumbbell: a short bar through the hand, perpendicular to the
+    // forearm, with a plate at each end.
+    final forearm = hand - shoulder;
+    final forearmLength = forearm.distance == 0 ? 1.0 : forearm.distance;
+    final unit = forearm / forearmLength;
+    final perp = Offset(-unit.dy, unit.dx);
+    final barHalf = size.width * 0.16;
+    final plate1 = hand + perp * barHalf;
+    final plate2 = hand - perp * barHalf;
+    canvas.drawLine(plate1, plate2, linePaint..strokeWidth = 1.6);
+    canvas.drawCircle(plate1, size.width * 0.075, fillPaint);
+    canvas.drawCircle(plate2, size.width * 0.075, fillPaint);
+  }
+
+  double _lerp(double a, double b, double t) => a + (b - a) * t;
+
+  @override
+  bool shouldRepaint(covariant _WeightlifterPainter oldDelegate) => oldDelegate.lift != lift;
 }
