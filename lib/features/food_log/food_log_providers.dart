@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/constants/micronutrient_reference.dart';
 import '../../core/firebase/firestore_provider.dart';
+import '../../data/datasources/remote/cloud_functions/lookup_barcode_api_client.dart';
 import '../../data/datasources/remote/cloud_functions/search_foods_api_client.dart';
 import '../../data/datasources/remote/firestore/custom_foods_firestore_datasource.dart';
 import '../../data/datasources/remote/firestore/food_log_firestore_datasource.dart';
@@ -38,6 +39,13 @@ List<CustomFood> foodsRankedForMeal(List<CustomFood> foods, MealType mealType) {
 /// Overridable in tests with a fake client instead of hitting the network.
 final searchFoodsApiClientProvider = Provider<SearchFoodsApiClient>((ref) {
   final client = SearchFoodsApiClient();
+  ref.onDispose(client.dispose);
+  return client;
+});
+
+/// Overridable in tests with a fake client instead of hitting the network.
+final lookupBarcodeApiClientProvider = Provider<LookupBarcodeApiClient>((ref) {
+  final client = LookupBarcodeApiClient();
   ref.onDispose(client.dispose);
   return client;
 });

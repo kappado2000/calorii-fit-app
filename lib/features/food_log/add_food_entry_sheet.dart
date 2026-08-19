@@ -5,6 +5,7 @@ import '../../core/constants/micronutrient_reference.dart';
 import '../../data/models/custom_food.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
+import '../barcode_scan/barcode_scan_screen.dart';
 import 'food_log_providers.dart';
 
 /// Bottom sheet for logging a product. The user types a name, the app
@@ -111,6 +112,11 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
     setState(() => _manualMode = true);
   }
 
+  Future<void> _scanBarcode() async {
+    final product = await BarcodeScanScreen.show(context);
+    if (product != null) _selectProduct(product);
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
@@ -203,7 +209,11 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                 hintText: 'ex. Iaurt grecesc',
                 suffixIcon: _selectedProduct != null
                     ? IconButton(icon: const Icon(Icons.close), onPressed: _clearSelection)
-                    : const Icon(Icons.search),
+                    : IconButton(
+                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                        tooltip: 'Scanează codul de bare',
+                        onPressed: _scanBarcode,
+                      ),
               ),
               onChanged: (value) {
                 ref.read(foodSearchProvider.notifier).search(value);

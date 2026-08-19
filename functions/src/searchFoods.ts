@@ -1,32 +1,10 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
-import { getFirestore } from "firebase-admin/firestore";
 import { getApps, initializeApp } from "firebase-admin/app";
 import { genericFoodsTable } from "./genericFoodsTable";
+import { FoodProductResult, kcalPer100g, extractMicronutrients, cacheProducts, numberOrNull } from "./foodProduct";
 
 if (getApps().length === 0) {
   initializeApp();
-}
-
-/** Mirrors MicronutrientProfile on the Dart side. */
-interface MicronutrientsResult {
-  vitaminCMg: number | null;
-  vitaminDMcg: number | null;
-  calciumMg: number | null;
-  ironMg: number | null;
-  magnesiumMg: number | null;
-  potassiumMg: number | null;
-}
-
-interface FoodProductResult {
-  barcode: string | null;
-  name: string;
-  brand: string | null;
-  kcalPer100g: number;
-  proteinPer100g: number | null;
-  carbsPer100g: number | null;
-  fatPer100g: number | null;
-  imageUrl: string | null;
-  micronutrients: MicronutrientsResult | null;
 }
 
 interface SearchFoodsRequest {
@@ -95,41 +73,6 @@ function toResult(hit: OffHit): FoodProductResult | null {
     imageUrl: null,
     micronutrients: extractMicronutrients(nutriments),
   };
-}
-
-/**
- * Pulls the six tracked micronutrients from OFF's nutriments object when
- * present — coverage is sparse (most contributors scan macros, not the
- * full vitamin/mineral panel), so this returns null fields rather than
- * fabricating a number, same as every other optional nutrient here.
- */
-function extractMicronutrients(
-  nutriments: Record<string, number | string | undefined>,
-): MicronutrientsResult | null {
-  const result: MicronutrientsResult = {
-    vitaminCMg: numberOrNull(nutriments["vitamin-c_100g"]),
-    vitaminDMcg: numberOrNull(nutriments["vitamin-d_100g"]),
-    calciumMg: numberOrNull(nutriments["calcium_100g"]),
-    ironMg: numberOrNull(nutriments["iron_100g"]),
-    magnesiumMg: numberOrNull(nutriments["magnesium_100g"]),
-    potassiumMg: numberOrNull(nutriments["potassium_100g"]),
-  };
-  const hasAnyValue = Object.values(result).some((v) => v !== null);
-  return hasAnyValue ? result : null;
-}
-
-/** Falls back to computing kcal from kJ — many hits only carry the kJ field. */
-function kcalPer100g(nutriments: Record<string, number | string | undefined>): number | null {
-  const kcal = numberOrNull(nutriments["energy-kcal_100g"]);
-  if (kcal !== null) return kcal;
-  const kj = numberOrNull(nutriments["energy-kj_100g"]);
-  return kj !== null ? kj / 4.184 : null;
-}
-
-function numberOrNull(value: number | string | undefined): number | null {
-  if (value === undefined || value === null) return null;
-  const num = typeof value === "number" ? value : Number(value);
-  return Number.isFinite(num) ? num : null;
 }
 
 /**
@@ -223,25 +166,6 @@ function rerankByNamePrefix(products: FoodProductResult[], query: string): FoodP
   const prefixMatches = products.filter(startsWithQuery);
   const rest = products.filter((p) => !startsWithQuery(p));
   return [...prefixMatches, ...rest];
-}
-
-/**
- * Best-effort write-through cache keyed by barcode (see firestore.rules —
- * clients can read foodsCache but never write it). Search results without a
- * barcode simply aren't cached; that's fine, the search call itself is what
- * we're trying to make cheap on repeat, and repeat searches still hit OFF
- * (there's no good cache key for a free-text query), but any barcode-bearing
- * product becomes instantly available to a future barcode-scan feature.
- */
-async function cacheProducts(products: FoodProductResult[]): Promise<void> {
-  const withBarcode = products.filter((p) => p.barcode);
-  if (withBarcode.length === 0) return;
-  const db = getFirestore();
-  const batch = db.batch();
-  for (const product of withBarcode) {
-    batch.set(db.collection("foodsCache").doc(product.barcode as string), product, { merge: true });
-  }
-  await batch.commit();
 }
 
 export const searchFoods = onCall<SearchFoodsRequest>(

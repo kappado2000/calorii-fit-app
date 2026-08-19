@@ -9,4 +9,7 @@ class AppConfig {
 
   static const String searchFoodsUrl =
       'https://europe-west1-calorii-fit-app.cloudfunctions.net/searchFoods';
+
+  static const String lookupBarcodeUrl =
+      'https://europe-west1-calorii-fit-app.cloudfunctions.net/lookupBarcode';
 }
