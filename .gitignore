@@ -63,3 +63,4 @@ packages/**/build/
 packages/**/.dart_tool/
 packages/**/.flutter-plugins-dependencies
 packages/**/.flutter-plugins
+builds/
