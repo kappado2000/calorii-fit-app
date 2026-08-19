@@ -13,6 +13,15 @@ class OnboardingScreen extends ConsumerStatefulWidget {
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
+/// App store policy (Google explicitly bars weight-loss advertising to
+/// minors; Apple treats diet/weight content as sensitive for younger
+/// users too) plus the app's own disclaimer both assume an adult-ish
+/// audience capable of consenting to a calorie deficit — set higher than
+/// the generic COPPA 13, since this is specifically a weight-management
+/// app, not a general-purpose utility.
+const _minimumAge = 16;
+const _maximumAge = 120;
+
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _pageController = PageController();
   int _page = 0;
@@ -80,7 +89,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   bool get _canGoNext {
     switch (_page) {
       case 0:
-        return int.tryParse(_ageController.text) != null;
+        final age = int.tryParse(_ageController.text);
+        return age != null && age >= _minimumAge && age <= _maximumAge;
       case 1:
         return double.tryParse(_heightController.text.replaceAll(',', '.')) != null &&
             double.tryParse(_weightController.text.replaceAll(',', '.')) != null;
@@ -278,6 +288,15 @@ class _AgeSexStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final age = int.tryParse(ageController.text);
+    final ageError = age == null
+        ? null
+        : age < _minimumAge
+        ? 'Aplicația e destinată persoanelor de la $_minimumAge ani în sus.'
+        : age > _maximumAge
+        ? 'Valoare invalidă.'
+        : null;
+
     return _StepScaffold(
       title: 'Câțiva ani și sexul biologic',
       icon: Icons.cake_rounded,
@@ -285,7 +304,7 @@ class _AgeSexStep extends StatelessWidget {
         TextField(
           controller: ageController,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(labelText: 'Vârstă', suffixText: 'ani'),
+          decoration: InputDecoration(labelText: 'Vârstă', suffixText: 'ani', errorText: ageError),
           onChanged: (_) => onTextChanged(),
         ),
         const SizedBox(height: 20),
