@@ -26,6 +26,7 @@ import '../hydration/hydration_card.dart';
 import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
 import '../recipes/recipes_screen.dart';
+import '../streaks/streak_badge.dart';
 import '../workout_log/add_workout_sheet.dart';
 import '../workout_log/workout_log_providers.dart';
 import 'add_food_entry_sheet.dart';
@@ -80,6 +81,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
       appBar: AppBar(
         title: Text('Calorii Fit'),
         actions: [
+          const StreakBadge(),
           IconButton(
             tooltip: 'Progres',
             icon: const Icon(Icons.show_chart_rounded),
