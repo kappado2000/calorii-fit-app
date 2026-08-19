@@ -1,3 +1,4 @@
+import '../../data/models/user_profile.dart';
 import '../../data/models/weight_entry.dart';
 
 /// The actual measured weight change over the diet, as opposed to the
@@ -24,48 +25,38 @@ class WeightEvolutionSummary {
   double get differenceKg => latestWeightKg - startWeightKg;
 }
 
-/// [entries] must be oldest-first (as weightEntriesProvider already
-/// provides). Anchors the "start" of the diet on the first entry logged
-/// on or after [programStartDate] when one exists; falls back to
-/// [onboardingWeightKg] (the profile's own starting weight) anchored at
-/// [programStartDate] when no entry has been logged since the program
-/// began yet; falls back further to the very first entry ever logged when
-/// there's no program start date to anchor on at all (profile still
-/// loading). Returns null only when there's no weight data whatsoever.
-WeightEvolutionSummary? computeWeightEvolution({
-  required List<WeightEntry> entries,
-  DateTime? programStartDate,
-  double? onboardingWeightKg,
-}) {
+/// [entries] must already be sorted oldest-first (as
+/// [effectiveWeightEntries] and weightEntriesProvider both provide).
+/// Returns null only when there's no weight data at all.
+WeightEvolutionSummary? computeWeightEvolution(List<WeightEntry> entries) {
   if (entries.isEmpty) return null;
-  final latest = entries.last;
-
-  if (programStartDate != null) {
-    for (final entry in entries) {
-      if (!entry.date.isBefore(programStartDate)) {
-        return WeightEvolutionSummary(
-          startWeightKg: entry.weightKg,
-          latestWeightKg: latest.weightKg,
-          startDate: entry.date,
-          latestDate: latest.date,
-        );
-      }
-    }
-    if (onboardingWeightKg != null) {
-      return WeightEvolutionSummary(
-        startWeightKg: onboardingWeightKg,
-        latestWeightKg: latest.weightKg,
-        startDate: programStartDate,
-        latestDate: latest.date,
-      );
-    }
-  }
-
-  final first = entries.first;
   return WeightEvolutionSummary(
-    startWeightKg: first.weightKg,
-    latestWeightKg: latest.weightKg,
-    startDate: first.date,
-    latestDate: latest.date,
+    startWeightKg: entries.first.weightKg,
+    latestWeightKg: entries.last.weightKg,
+    startDate: entries.first.date,
+    latestDate: entries.last.date,
   );
+}
+
+/// The onboarding weight *is*, conceptually, the diet's first weigh-in —
+/// it just isn't stored as a real WeightEntry document (see
+/// onboarding_screen.dart, which now seeds one for every *new* profile,
+/// but profiles created before that existed have no such entry). This
+/// treats it as a virtual entry dated at the program's start, so the
+/// weight chart/analysis has a real starting point even for a user who
+/// has logged only one real weigh-in since — but only until a real entry
+/// exists at or before that date, since a genuine log is always more
+/// trustworthy than the profile's possibly-stale weightKg field.
+List<WeightEntry> effectiveWeightEntries(List<WeightEntry> entries, UserProfile? profile) {
+  if (profile == null) return entries;
+  final hasEntryAtOrBeforeStart = entries.any((e) => !e.date.isAfter(profile.programStartDate));
+  if (hasEntryAtOrBeforeStart) return entries;
+
+  final onboardingEntry = WeightEntry(
+    id: '_onboarding',
+    date: profile.programStartDate,
+    weightKg: profile.weightKg,
+    source: WeightSource.manual,
+  );
+  return [onboardingEntry, ...entries]..sort((a, b) => a.date.compareTo(b.date));
 }

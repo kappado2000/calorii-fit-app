@@ -123,7 +123,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       programStartDate: _existingProgramStartDate ?? DateTime.now(),
       disclaimerAcceptedAt: _existingDisclaimerAcceptedAt ?? DateTime.now(),
     );
-    await ref.read(profileControllerProvider).saveProfile(profile);
+    final controller = ref.read(profileControllerProvider);
+    await controller.saveProfile(profile);
+    // Seeds the weight-evolution chart/analysis with a real starting
+    // point — without this, a user who has logged only one real weigh-in
+    // has nothing to compare it against until a second one exists, even
+    // though the onboarding weight *is* conceptually the diet's starting
+    // weight. Only on first-time setup: editing an existing profile's
+    // weight later (a correction, not a new weigh-in) shouldn't silently
+    // insert a duplicate history entry.
+    if (_isFirstTimeSetup) {
+      await controller.logWeight(profile.weightKg, date: profile.programStartDate);
+    }
     // The router no longer auto-redirects away from /onboarding once a
     // profile exists (that's what makes deliberate editing reachable at
     // all — see app_router.dart) — so returning to the food log after a

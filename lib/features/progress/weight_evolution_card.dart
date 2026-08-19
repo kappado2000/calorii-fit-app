@@ -18,15 +18,12 @@ class WeightEvolutionCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entries = ref.watch(weightEntriesProvider).valueOrNull ?? const [];
+    final rawEntries = ref.watch(weightEntriesProvider).valueOrNull ?? const [];
     final profile = ref.watch(userProfileProvider).valueOrNull;
+    final entries = effectiveWeightEntries(rawEntries, profile);
     if (entries.length < 2) return const SizedBox.shrink();
 
-    final summary = computeWeightEvolution(
-      entries: entries,
-      programStartDate: profile?.programStartDate,
-      onboardingWeightKg: profile?.weightKg,
-    )!;
+    final summary = computeWeightEvolution(entries)!;
 
     final colorScheme = Theme.of(context).colorScheme;
     final isLoss = summary.differenceKg <= 0;
