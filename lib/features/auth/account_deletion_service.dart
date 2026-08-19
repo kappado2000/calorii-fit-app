@@ -7,7 +7,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// rule, so nothing here is enforced server-side; this list is the actual
 /// source of truth for what "delete my data" means. Kept in sync manually
 /// with the datasource files under data/datasources/remote/firestore/.
-const _userSubcollections = ['customFoods', 'foodLogs', 'weightEntries', 'workouts', 'hydrationEntries'];
+const _userSubcollections = [
+  'customFoods',
+  'foodLogs',
+  'weightEntries',
+  'workouts',
+  'hydrationEntries',
+  'recipes',
+];
 
 /// Deletes a signed-in user's account and every byte of their data —
 /// required by both the App Store and Google Play for any app that lets

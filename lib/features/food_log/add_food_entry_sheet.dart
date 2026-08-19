@@ -6,6 +6,7 @@ import '../../data/models/custom_food.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
 import '../barcode_scan/barcode_scan_screen.dart';
+import '../recipes/recipes_screen.dart';
 import 'food_log_providers.dart';
 
 /// Bottom sheet for logging a product. The user types a name, the app
@@ -117,6 +118,13 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
     if (product != null) _selectProduct(product);
   }
 
+  Future<void> _openRecipes() async {
+    final logged = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => RecipesScreen(mealType: widget.mealType, date: widget.date)),
+    );
+    if (logged == true && mounted) Navigator.of(context).pop();
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
@@ -222,6 +230,16 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
               validator: (value) =>
                   (value == null || value.trim().isEmpty) ? 'Introdu denumirea produsului' : null,
             ),
+            if (_selectedProduct == null && !_manualMode) ...[
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: _openRecipes,
+                  icon: const Icon(Icons.menu_book_rounded, size: 18),
+                  label: const Text('Rețetele mele'),
+                ),
+              ),
+            ],
             if (showQuickAdd) ...[
               const SizedBox(height: 16),
               Text('Înregistrate frecvent', style: Theme.of(context).textTheme.titleMedium),

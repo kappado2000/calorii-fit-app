@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../data/models/meal_type.dart';
+import '../../data/models/recipe.dart';
+import 'recipe_editor_screen.dart';
+import 'recipes_providers.dart';
+
+/// Lists saved recipes. When opened with [mealType]/[date] set (from
+/// AddFoodEntrySheet, mid-logging a meal), tapping a recipe logs it
+/// straight to that meal and pops. Opened from the app bar's general
+/// "Rețetele mele" menu (mealType/date null), it's a pure management
+/// screen — tapping a recipe instead opens a small meal-type picker
+/// first, since there's no meal already in context to log into.
+class RecipesScreen extends ConsumerWidget {
+  const RecipesScreen({super.key, this.mealType, this.date});
+
+  final MealType? mealType;
+  final DateTime? date;
+
+  bool get _isLoggingMode => mealType != null && date != null;
+
+  Future<void> _handleTap(BuildContext context, WidgetRef ref, Recipe recipe) async {
+    if (_isLoggingMode) {
+      await ref.read(recipesProvider.notifier).logServings(recipe, mealType: mealType!, date: date!);
+      if (context.mounted) Navigator.of(context).pop(true);
+      return;
+    }
+    final chosen = await showModalBottomSheet<MealType>(
+      context: context,
+      builder: (_) => _MealTypePickerSheet(recipeName: recipe.name),
+    );
+    if (chosen != null && context.mounted) {
+      await ref.read(recipesProvider.notifier).logServings(recipe, mealType: chosen, date: DateTime.now());
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${recipe.name} a fost adăugată azi.')));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recipes = ref.watch(recipesProvider);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(_isLoggingMode ? 'Alege o rețetă' : 'Rețetele mele')),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RecipeEditorScreen())),
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Rețetă nouă'),
+      ),
+      body: recipes.isEmpty
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  'Nu ai nicio rețetă salvată încă. Adaugă una din butonul de mai jos.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+              itemCount: recipes.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final recipe = recipes[index];
+                return Card(
+                  child: ListTile(
+                    onTap: () => _handleTap(context, ref, recipe),
+                    title: Text(recipe.name),
+                    subtitle: Text(
+                      '${recipe.servings} porții · ${(recipe.kcalPer100g * recipe.perServingGrams / 100).round()} kcal/porție',
+                    ),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => RecipeEditorScreen(existing: recipe)),
+                          );
+                        } else if (value == 'delete') {
+                          ref.read(recipesProvider.notifier).deleteRecipe(recipe.id);
+                        }
+                      },
+                      itemBuilder: (context) => const [
+                        PopupMenuItem(value: 'edit', child: Text('Editează')),
+                        PopupMenuItem(value: 'delete', child: Text('Șterge')),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+
+class _MealTypePickerSheet extends StatelessWidget {
+  const _MealTypePickerSheet({required this.recipeName});
+
+  final String recipeName;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text('Adaugă „$recipeName" la:', style: Theme.of(context).textTheme.titleMedium),
+          ),
+          for (final mealType in MealType.values)
+            ListTile(title: Text(mealType.label), onTap: () => Navigator.of(context).pop(mealType)),
+        ],
+      ),
+    );
+  }
+}

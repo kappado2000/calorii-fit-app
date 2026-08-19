@@ -25,6 +25,7 @@ import '../device_capability/device_capability_screen.dart';
 import '../hydration/hydration_card.dart';
 import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
+import '../recipes/recipes_screen.dart';
 import '../workout_log/add_workout_sheet.dart';
 import '../workout_log/workout_log_providers.dart';
 import 'add_food_entry_sheet.dart';
@@ -114,6 +115,16 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 child: const ListTile(
                   leading: Icon(Icons.phone_iphone_rounded),
                   title: Text('Verifică capabilitate device'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const RecipesScreen()),
+                ),
+                child: const ListTile(
+                  leading: Icon(Icons.menu_book_rounded),
+                  title: Text('Rețetele mele'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
