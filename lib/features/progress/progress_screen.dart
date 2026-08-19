@@ -11,6 +11,7 @@ import '../../core/utils/number_format.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import '../profile/profile_providers.dart';
+import 'adaptive_tdee_card.dart';
 import 'progress_providers.dart';
 import 'weekly_summary_card.dart';
 
@@ -42,6 +43,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           children: [
             const WeeklySummaryCard(),
             const SizedBox(height: 16),
+            if (profile != null) AdaptiveTdeeCard(profile: profile),
             SegmentedButton<ProgressPeriod>(
               segments: ProgressPeriod.values
                   .map((p) => ButtonSegment(value: p, label: Text(p.label)))

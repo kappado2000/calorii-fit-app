@@ -61,6 +61,7 @@ class UserProfile {
     required this.targetRateKgPerWeek,
     required this.programStartDate,
     this.disclaimerAcceptedAt,
+    this.useAdaptiveTdee = false,
   });
 
   final double heightCm;
@@ -83,6 +84,27 @@ class UserProfile {
   /// a real record of when consent was given, not just that it was.
   final DateTime? disclaimerAcceptedAt;
 
+  /// Opt-in: when true and enough weight/log history exists, the daily
+  /// calorie target is derived from the user's actual logged energy
+  /// balance (see AdaptiveTdeeCalculator) instead of the static
+  /// Mifflin-St Jeor formula alone. Defaults false — a brand-new profile
+  /// has no history to adapt from anyway, and switching the target's
+  /// basis should be a deliberate choice, not a silent default.
+  final bool useAdaptiveTdee;
+
+  UserProfile copyWithUseAdaptiveTdee(bool value) => UserProfile(
+    heightCm: heightCm,
+    weightKg: weightKg,
+    age: age,
+    sex: sex,
+    activityLevel: activityLevel,
+    goal: goal,
+    targetRateKgPerWeek: targetRateKgPerWeek,
+    programStartDate: programStartDate,
+    disclaimerAcceptedAt: disclaimerAcceptedAt,
+    useAdaptiveTdee: value,
+  );
+
   Map<String, dynamic> toJson() => {
     'heightCm': heightCm,
     'weightKg': weightKg,
@@ -93,6 +115,7 @@ class UserProfile {
     'targetRateKgPerWeek': targetRateKgPerWeek,
     'programStartDate': programStartDate.toIso8601String(),
     'disclaimerAcceptedAt': disclaimerAcceptedAt?.toIso8601String(),
+    'useAdaptiveTdee': useAdaptiveTdee,
   };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -111,6 +134,7 @@ class UserProfile {
       disclaimerAcceptedAt: json['disclaimerAcceptedAt'] != null
           ? DateTime.parse(json['disclaimerAcceptedAt'] as String)
           : null,
+      useAdaptiveTdee: json['useAdaptiveTdee'] as bool? ?? false,
     );
   }
 }

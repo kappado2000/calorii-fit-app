@@ -1,16 +1,42 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/datasources/remote/firestore/food_log_firestore_datasource.dart';
 import '../../data/datasources/remote/firestore/user_profile_firestore_datasource.dart';
 import '../../data/datasources/remote/firestore/weight_entries_firestore_datasource.dart';
 import '../../data/models/user_profile.dart';
 import '../../data/models/weight_entry.dart';
+import '../../domain/usecases/adaptive_tdee_calculator.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../auth/uid_provider.dart';
 import '../food_log/food_log_providers.dart';
 
+const _adaptiveTdeeWindowDays = 21;
+
 final userProfileProvider = StreamProvider<UserProfile?>((ref) {
   final uid = ref.watch(currentUidProvider);
   return UserProfileFirestoreDataSource(ref.watch(firestoreProvider), uid).watch();
+});
+
+/// The last [_adaptiveTdeeWindowDays] of daily intake totals — kept
+/// separate from progress_providers.dart's period-based history since
+/// this window (21 days) doesn't match either of that screen's periods.
+final _adaptiveTdeeIntakeHistoryProvider = StreamProvider<Map<DateTime, double>>((ref) {
+  final uid = ref.watch(currentUidProvider);
+  final today = normalizeDate(DateTime.now());
+  final start = today.subtract(const Duration(days: _adaptiveTdeeWindowDays - 1));
+  return FoodLogFirestoreDataSource(ref.watch(firestoreProvider), uid).watchDailyTotalsForRange(start, today);
+});
+
+/// The raw adaptive estimate, independent of whether the user has opted
+/// in (profile.useAdaptiveTdee) — computed whenever there's enough data,
+/// so a "here's what we'd use" status card can show before the user
+/// flips the toggle, not just after.
+final adaptiveTdeeEstimateProvider = Provider<AdaptiveTdeeResult?>((ref) {
+  final weightEntries = ref.watch(weightEntriesProvider).valueOrNull ?? const [];
+  final intake = ref.watch(_adaptiveTdeeIntakeHistoryProvider).valueOrNull ?? const {};
+  return const AdaptiveTdeeCalculator(
+    windowDays: _adaptiveTdeeWindowDays,
+  ).calculate(weightEntries: weightEntries, dailyIntake: intake, asOf: DateTime.now());
 });
 
 /// Null while the profile hasn't loaded yet or doesn't exist — screens that
@@ -19,7 +45,21 @@ final userProfileProvider = StreamProvider<UserProfile?>((ref) {
 final tdeeResultProvider = Provider<TdeeResult?>((ref) {
   final profile = ref.watch(userProfileProvider).valueOrNull;
   if (profile == null) return null;
-  return const TdeeCalculator().calculate(profile);
+  const calculator = TdeeCalculator();
+  final staticResult = calculator.calculate(profile);
+  if (!profile.useAdaptiveTdee) return staticResult;
+
+  final adaptive = ref.watch(adaptiveTdeeEstimateProvider);
+  if (adaptive == null) return staticResult;
+
+  // Distrust an adaptive estimate too far from the population-average
+  // formula — more likely sparse/noisy data than a genuinely unusual
+  // metabolism, and a wildly different number would erode trust in the
+  // feature rather than build it.
+  final ratio = adaptive.estimatedTdee / staticResult.tdee;
+  if (ratio < 0.6 || ratio > 1.4) return staticResult;
+
+  return calculator.withTdeeOverride(adaptive.estimatedTdee, profile);
 });
 
 final weightEntriesProvider = StreamProvider<List<WeightEntry>>((ref) {
