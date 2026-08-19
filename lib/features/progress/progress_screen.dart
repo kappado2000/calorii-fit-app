@@ -12,6 +12,7 @@ import '../../domain/usecases/tdee_calculator.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import '../profile/profile_providers.dart';
 import 'progress_providers.dart';
+import 'weekly_summary_card.dart';
 
 class ProgressScreen extends ConsumerStatefulWidget {
   const ProgressScreen({super.key});
@@ -39,6 +40,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const WeeklySummaryCard(),
+            const SizedBox(height: 16),
             SegmentedButton<ProgressPeriod>(
               segments: ProgressPeriod.values
                   .map((p) => ButtonSegment(value: p, label: Text(p.label)))
