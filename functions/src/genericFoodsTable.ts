@@ -663,6 +663,40 @@ export const genericFoodsTable: GenericFoodItem[] = [
   { name: "Șaorma", kcalPer100g: 220, proteinPer100g: 12, carbsPer100g: 20, fatPer100g: 10 },
   { name: "Scovergi", kcalPer100g: 320, proteinPer100g: 6, carbsPer100g: 38, fatPer100g: 15 },
 
+  // --- Prăjituri de comerț (cofetărie/supermarket) — semnalat explicit ca
+  // lipsă ("prăjitură cu mere" negăsită). ---
+  { name: "Prăjitură cu mere", kcalPer100g: 220, proteinPer100g: 4, carbsPer100g: 32, fatPer100g: 8 },
+  { name: "Chec", kcalPer100g: 350, proteinPer100g: 6, carbsPer100g: 45, fatPer100g: 16 },
+  { name: "Cozonac", kcalPer100g: 360, proteinPer100g: 8, carbsPer100g: 48, fatPer100g: 15 },
+  { name: "Ecler", kcalPer100g: 300, proteinPer100g: 5, carbsPer100g: 30, fatPer100g: 18 },
+  { name: "Tort de ciocolată", kcalPer100g: 400, proteinPer100g: 5, carbsPer100g: 45, fatPer100g: 22 },
+  { name: "Tort de fructe", kcalPer100g: 280, proteinPer100g: 4, carbsPer100g: 38, fatPer100g: 12 },
+  { name: "Cheesecake", kcalPer100g: 320, proteinPer100g: 6, carbsPer100g: 28, fatPer100g: 21 },
+  { name: "Negresă", kcalPer100g: 400, proteinPer100g: 5, carbsPer100g: 45, fatPer100g: 22 },
+  { name: "Ruladă cu nucă", kcalPer100g: 380, proteinPer100g: 7, carbsPer100g: 40, fatPer100g: 21 },
+  { name: "Ruladă cu dulceață", kcalPer100g: 330, proteinPer100g: 5, carbsPer100g: 50, fatPer100g: 12 },
+  { name: "Ștrudel cu mere", kcalPer100g: 250, proteinPer100g: 4, carbsPer100g: 35, fatPer100g: 10 },
+  { name: "Cornuleț cu gem", kcalPer100g: 380, proteinPer100g: 6, carbsPer100g: 48, fatPer100g: 18 },
+  { name: "Baclava", kcalPer100g: 430, proteinPer100g: 6, carbsPer100g: 40, fatPer100g: 28 },
+  { name: "Foietaj cu brânză dulce", kcalPer100g: 320, proteinPer100g: 7, carbsPer100g: 30, fatPer100g: 19 },
+
+  // --- Mezeluri uscate/afumate (salam, fuet) — lipseau alături de
+  // preparatele de carne la grătar/cuptor adăugate anterior. ---
+  { name: "Salam de Sibiu", kcalPer100g: 450, proteinPer100g: 22, carbsPer100g: 1, fatPer100g: 40 },
+  { name: "Salam italian", kcalPer100g: 400, proteinPer100g: 22, carbsPer100g: 2, fatPer100g: 34 },
+  { name: "Fuet", kcalPer100g: 420, proteinPer100g: 24, carbsPer100g: 1, fatPer100g: 36 },
+  { name: "Cabanos", kcalPer100g: 320, proteinPer100g: 16, carbsPer100g: 2, fatPer100g: 28 },
+  { name: "Parizer", kcalPer100g: 280, proteinPer100g: 12, carbsPer100g: 3, fatPer100g: 25 },
+  { name: "Cârnați uscați", kcalPer100g: 380, proteinPer100g: 20, carbsPer100g: 2, fatPer100g: 32 },
+
+  // --- Înghețată. ---
+  { name: "Înghețată de vanilie", kcalPer100g: 207, proteinPer100g: 3.5, carbsPer100g: 24, fatPer100g: 11 },
+  { name: "Înghețată de ciocolată", kcalPer100g: 216, proteinPer100g: 3.8, carbsPer100g: 28, fatPer100g: 11 },
+  { name: "Înghețată de căpșuni", kcalPer100g: 180, proteinPer100g: 3, carbsPer100g: 25, fatPer100g: 8 },
+  { name: "Înghețată de fistic", kcalPer100g: 220, proteinPer100g: 4, carbsPer100g: 22, fatPer100g: 13 },
+  { name: "Înghețată de fructe / Sorbet", kcalPer100g: 130, proteinPer100g: 0.5, carbsPer100g: 30, fatPer100g: 0.5 },
+  { name: "Gelato", kcalPer100g: 180, proteinPer100g: 4, carbsPer100g: 24, fatPer100g: 8 },
+
   // --- Bucătărie mediteraneană (greacă, italiană, orientală) — aceeași
   // logică: valori medii uzuale, nu masuratori de laborator pentru o
   // reteta anume. ---
