@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/home_widget/home_widget_sync_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
@@ -77,6 +78,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
     );
     final tdee = ref.watch(tdeeResultProvider);
     final goal = ref.watch(userProfileProvider).valueOrNull?.goal;
+    ref.watch(homeWidgetSyncProvider);
 
     return Scaffold(
       appBar: AppBar(
