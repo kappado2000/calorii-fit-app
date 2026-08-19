@@ -39,14 +39,32 @@ final adaptiveTdeeEstimateProvider = Provider<AdaptiveTdeeResult?>((ref) {
   ).calculate(weightEntries: weightEntries, dailyIntake: intake, asOf: DateTime.now());
 });
 
+final weightEntriesProvider = StreamProvider<List<WeightEntry>>((ref) {
+  final uid = ref.watch(currentUidProvider);
+  return WeightEntriesFirestoreDataSource(ref.watch(firestoreProvider), uid).watchAll();
+});
+
 /// Null while the profile hasn't loaded yet or doesn't exist — screens that
 /// need it should gate on `userProfileProvider` directly for loading/error
 /// states; this is a convenience for "do I have a computed target right now".
+///
+/// BMR/TDEE is based on the most recently logged weight, not the static
+/// weight captured once at onboarding — a diet moves body weight over
+/// time, and the calorie budget should track that, not the day the
+/// profile was created. Every earlier weight entry still feeds the
+/// weight-trend chart/adaptive TDEE below; only the single latest one
+/// substitutes into the formula here. Falls back to the onboarding
+/// weight when no entries have been logged yet.
 final tdeeResultProvider = Provider<TdeeResult?>((ref) {
   final profile = ref.watch(userProfileProvider).valueOrNull;
   if (profile == null) return null;
+  final weightEntries = ref.watch(weightEntriesProvider).valueOrNull ?? const [];
+  final effectiveProfile = weightEntries.isEmpty
+      ? profile
+      : profile.copyWithWeightKg(weightEntries.last.weightKg);
+
   const calculator = TdeeCalculator();
-  final staticResult = calculator.calculate(profile);
+  final staticResult = calculator.calculate(effectiveProfile);
   if (!profile.useAdaptiveTdee) return staticResult;
 
   final adaptive = ref.watch(adaptiveTdeeEstimateProvider);
@@ -59,12 +77,7 @@ final tdeeResultProvider = Provider<TdeeResult?>((ref) {
   final ratio = adaptive.estimatedTdee / staticResult.tdee;
   if (ratio < 0.6 || ratio > 1.4) return staticResult;
 
-  return calculator.withTdeeOverride(adaptive.estimatedTdee, profile);
-});
-
-final weightEntriesProvider = StreamProvider<List<WeightEntry>>((ref) {
-  final uid = ref.watch(currentUidProvider);
-  return WeightEntriesFirestoreDataSource(ref.watch(firestoreProvider), uid).watchAll();
+  return calculator.withTdeeOverride(adaptive.estimatedTdee, effectiveProfile);
 });
 
 class ProfileController {
@@ -78,6 +91,12 @@ class ProfileController {
   Future<void> logWeight(double weightKg, {DateTime? date, WeightSource source = WeightSource.manual}) {
     return _weightDataSource.add(date ?? DateTime.now(), weightKg, source);
   }
+
+  Future<void> updateWeight(String id, {required DateTime date, required double weightKg}) {
+    return _weightDataSource.update(id, date: date, weightKg: weightKg);
+  }
+
+  Future<void> deleteWeight(String id) => _weightDataSource.delete(id);
 }
 
 final profileControllerProvider = Provider<ProfileController>((ref) {

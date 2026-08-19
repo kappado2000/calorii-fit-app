@@ -23,11 +23,22 @@ class WeightEntriesFirestoreDataSource {
     );
   }
 
+  /// [date] keeps its full time-of-day (not truncated to midnight) — the
+  /// user can log a weigh-in whenever they want during the day, and
+  /// multiple entries on the same calendar day need their times to stay
+  /// meaningfully ordered.
   Future<void> add(DateTime date, double weightKg, WeightSource source) {
     return _collection.add({
-      'date': Timestamp.fromDate(DateTime(date.year, date.month, date.day)),
+      'date': Timestamp.fromDate(date),
       'weightKg': weightKg,
       'source': source.name,
+    });
+  }
+
+  Future<void> update(String id, {required DateTime date, required double weightKg}) {
+    return _collection.doc(id).update({
+      'date': Timestamp.fromDate(date),
+      'weightKg': weightKg,
     });
   }
 

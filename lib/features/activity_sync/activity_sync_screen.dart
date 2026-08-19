@@ -6,6 +6,7 @@ import '../bluetooth_scale/bluetooth_scale_screen.dart';
 import '../profile/profile_providers.dart';
 import 'activity_sync_providers.dart';
 import 'activity_sync_state.dart';
+import 'weight_entry_dialog.dart';
 
 class ActivitySyncScreen extends ConsumerWidget {
   const ActivitySyncScreen({super.key});
@@ -76,8 +77,17 @@ class ActivitySyncScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Text('Istoric greutate', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Istoric greutate', style: Theme.of(context).textTheme.titleMedium),
+              TextButton.icon(
+                onPressed: () => WeightEntryDialog.show(context),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Adaugă'),
+              ),
+            ],
+          ),
           if (weightEntries.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -91,15 +101,29 @@ class ActivitySyncScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   for (final entry in weightEntries.reversed.take(10))
-                    ListTile(
-                      dense: true,
-                      leading: Icon(Icons.monitor_weight_outlined, color: colorScheme.primary, size: 20),
-                      title: Text(
-                        '${entry.weightKg.toStringAsFixed(1)} kg',
-                        style: const TextStyle(fontWeight: FontWeight.w700),
+                    Dismissible(
+                      key: ValueKey(entry.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        color: colorScheme.errorContainer,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Icon(Icons.delete_outline_rounded, color: colorScheme.onErrorContainer),
                       ),
-                      subtitle: Text('${entry.date.day}.${entry.date.month}.${entry.date.year}'),
-                      trailing: Text(_sourceLabel(entry.source), style: Theme.of(context).textTheme.bodySmall),
+                      onDismissed: (_) => ref.read(profileControllerProvider).deleteWeight(entry.id),
+                      child: ListTile(
+                        dense: true,
+                        leading: Icon(Icons.monitor_weight_outlined, color: colorScheme.primary, size: 20),
+                        title: Text(
+                          '${entry.weightKg.toStringAsFixed(1)} kg',
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        subtitle: Text(_formatDateTime(entry.date)),
+                        trailing: Text(_sourceLabel(entry.source), style: Theme.of(context).textTheme.bodySmall),
+                        onTap: entry.source == WeightSource.manual
+                            ? () => WeightEntryDialog.show(context, existing: entry)
+                            : null,
+                      ),
                     ),
                 ],
               ),
@@ -107,6 +131,14 @@ class ActivitySyncScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  String _formatDateTime(DateTime dt) {
+    final d = dt.day.toString().padLeft(2, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    final h = dt.hour.toString().padLeft(2, '0');
+    final min = dt.minute.toString().padLeft(2, '0');
+    return '$d.$m.${dt.year}, $h:$min';
   }
 
   Widget _buildSyncBody(BuildContext context, WidgetRef ref, ActivitySyncState state) {

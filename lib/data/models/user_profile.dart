@@ -105,6 +105,21 @@ class UserProfile {
     useAdaptiveTdee: value,
   );
 
+  /// Not persisted — used to feed a more recent logged weight into a TDEE
+  /// calculation without mutating the stored profile (see tdeeResultProvider).
+  UserProfile copyWithWeightKg(double value) => UserProfile(
+    heightCm: heightCm,
+    weightKg: value,
+    age: age,
+    sex: sex,
+    activityLevel: activityLevel,
+    goal: goal,
+    targetRateKgPerWeek: targetRateKgPerWeek,
+    programStartDate: programStartDate,
+    disclaimerAcceptedAt: disclaimerAcceptedAt,
+    useAdaptiveTdee: useAdaptiveTdee,
+  );
+
   Map<String, dynamic> toJson() => {
     'heightCm': heightCm,
     'weightKg': weightKg,

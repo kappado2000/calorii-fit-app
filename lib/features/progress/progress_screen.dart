@@ -14,6 +14,7 @@ import '../profile/profile_providers.dart';
 import 'adaptive_tdee_card.dart';
 import 'progress_providers.dart';
 import 'weekly_summary_card.dart';
+import 'weight_evolution_card.dart';
 
 class ProgressScreen extends ConsumerStatefulWidget {
   const ProgressScreen({super.key});
@@ -42,6 +43,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const WeeklySummaryCard(),
+            const SizedBox(height: 16),
+            const WeightEvolutionCard(),
             const SizedBox(height: 16),
             if (profile != null) AdaptiveTdeeCard(profile: profile),
             SegmentedButton<ProgressPeriod>(
