@@ -22,6 +22,7 @@ import '../auth/auth_providers.dart';
 import '../auth/delete_account_dialog.dart';
 import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
+import '../hydration/hydration_card.dart';
 import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
 import '../workout_log/add_workout_sheet.dart';
@@ -200,6 +201,11 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
               )
               .animate()
               .fadeIn(duration: 400.ms)
+              .slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic),
+          const SizedBox(height: 12),
+          HydrationSection(date: today)
+              .animate(delay: 60.ms)
+              .fadeIn(duration: 350.ms)
               .slideY(begin: 0.05, end: 0, curve: Curves.easeOutCubic),
           const SizedBox(height: 20),
           for (final (i, mealType) in MealType.values.indexed) ...[
