@@ -14,9 +14,11 @@ Widget gradientBorderFrame(
   double radius = 28,
   int steps = 6,
   double stepThickness = 1.5,
+  Color? innerColor,
+  Color? outerColor,
 }) {
-  final darkColor = Color.lerp(statusColor, Colors.black, 0.35)!;
-  final surfaceColor = Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface;
+  final darkColor = outerColor ?? Color.lerp(statusColor, Colors.black, 0.35)!;
+  final surfaceColor = innerColor ?? Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface;
 
   var framed = child;
   for (var i = 0; i < steps; i++) {

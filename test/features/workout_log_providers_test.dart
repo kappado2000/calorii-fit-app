@@ -43,6 +43,22 @@ void main() {
     expect(entries.first.activityType, ActivityType.running);
   });
 
+  test('addManualWorkout stores the given calories directly, bypassing the MET formula', () async {
+    final container = _buildContainer();
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final date = DateTime(2026, 4, 3);
+    final notifier = container.read(workoutLogProvider(date).notifier);
+
+    await notifier.addManualWorkout(caloriesBurned: 180);
+    await pumpEventQueue();
+
+    final entry = container.read(workoutLogProvider(date)).single;
+    expect(entry.caloriesBurned, 180);
+    expect(entry.duration, Duration.zero);
+    expect(entry.activityType, ActivityType.other);
+  });
+
   test('removeWorkout deletes the entry', () async {
     final container = _buildContainer();
     addTearDown(container.dispose);

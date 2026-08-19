@@ -940,56 +940,87 @@ class _WorkoutSection extends ConsumerWidget {
   final List<WorkoutEntry> workouts;
   final double totalBurned;
 
+  static const _cardColor = Color(0xFFC99A2E);
+  static const _borderColor = Color(0xFF6B4423);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    return gradientBorderFrame(
+      context,
+      statusColor: _borderColor,
+      outerColor: _borderColor,
+      innerColor: _cardColor,
+      child: Card(
+        color: _cardColor,
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
           children: [
-            ListTile(
-              leading: Icon(
-                Icons.fitness_center_rounded,
-                color: colorScheme.primary,
-              ),
-              title: Text(
-                'Activitate sportivă',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              trailing: Text(
-                '${formatThousands(totalBurned.round())} kcal arse',
-                style: Theme.of(context).textTheme.titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w700),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.fitness_center_rounded,
+                      color: colorScheme.primary,
+                    ),
+                    title: Text(
+                      'Activitate sportivă',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    trailing: Text(
+                      '${formatThousands(totalBurned.round())} kcal arse',
+                      style: Theme.of(context).textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  for (final workout in workouts)
+                    ListTile(
+                      dense: true,
+                      title: Text(workout.activityType.label),
+                      subtitle: workout.duration.inMinutes > 0
+                          ? Text('${workout.duration.inMinutes} min')
+                          : const Text('Calorii introduse manual'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '${formatThousands(workout.caloriesBurned.round())} kcal',
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 18),
+                            onPressed: () => ref
+                                .read(workoutLogProvider(date).notifier)
+                                .removeWorkout(workout.id),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: TextButton.icon(
+                      onPressed: () => AddWorkoutSheet.show(context, date: date),
+                      icon: const Icon(Icons.add_rounded),
+                      label: const Text('Adaugă activitate'),
+                    ),
+                  ),
+                ],
               ),
             ),
-            for (final workout in workouts)
-              ListTile(
-                dense: true,
-                title: Text(workout.activityType.label),
-                subtitle: Text('${workout.duration.inMinutes} min'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '${formatThousands(workout.caloriesBurned.round())} kcal',
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded, size: 18),
-                      onPressed: () => ref
-                          .read(workoutLogProvider(date).notifier)
-                          .removeWorkout(workout.id),
-                    ),
-                  ],
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: TextButton.icon(
-                onPressed: () => AddWorkoutSheet.show(context, date: date),
-                icon: const Icon(Icons.add_rounded),
-                label: const Text('Adaugă activitate'),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: const BoxDecoration(color: _borderColor, shape: BoxShape.circle),
+                alignment: Alignment.center,
+                child: const Icon(Icons.fitness_center_rounded, color: Colors.white, size: 17)
+                    .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                    .moveY(duration: 650.ms, begin: 3, end: -3, curve: Curves.easeInOut)
+                    .rotate(duration: 650.ms, begin: -0.05, end: 0.05, curve: Curves.easeInOut),
               ),
             ),
           ],

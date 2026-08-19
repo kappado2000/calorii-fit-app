@@ -49,7 +49,13 @@ void main() {
         child: const CalorieApp(),
       ),
     );
-    await tester.pumpAndSettle();
+    // Not pumpAndSettle: the workout card's lifting-icon badge repeats
+    // forever (deliberately, it's a decorative loop), so it never
+    // "settles" — a bounded pump sequence instead, enough for the
+    // auth/profile streams and router redirect to resolve.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Dimineață'), findsOneWidget);
     expect(find.text('Prânz'), findsOneWidget);

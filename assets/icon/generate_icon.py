@@ -49,13 +49,16 @@ def make_gradient(size, top_color, bottom_color):
     return img
 
 
-def radial_gradient(size, cx, cy, radius, center_color, edge_color):
+def radial_gradient(size, cx, cy, radius, center_color, edge_color, power=1.0):
     """A radial gradient image, vectorized with numpy (a pure-Python
     per-pixel loop at 4096x4096 is too slow) — center_color at the
-    gradient's origin, fading to edge_color at and beyond `radius`."""
+    gradient's origin, fading to edge_color at and beyond `radius`.
+    `power` > 1 keeps the blend near center_color for most of the radius
+    and only ramps to edge_color close to the boundary — a thin dark rim
+    instead of the dark tone eating into the middle of the shape."""
     y, x = np.mgrid[0:size, 0:size]
     dist = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
-    t = np.clip(dist / radius, 0.0, 1.0)
+    t = np.clip(dist / radius, 0.0, 1.0) ** power
     channels = []
     for c_center, c_edge in zip(center_color, edge_color):
         channel = c_center + (c_edge - c_center) * t
@@ -190,12 +193,14 @@ def build():
     )
     mask = ImageChops.subtract(apple_mask, bite_mask)
 
-    # Dark green at the body's edges, fading in to the current green toward
-    # the center — radius tuned to the shape's side-to-side reach, so the
-    # top/sides fully reach the dark edge tone while the bottom tip (which
-    # extends further) also lands fully dark, as an edge should.
+    # Only the rim is dark green — radius reaches the shape's actual max
+    # extent (the bottom tip), so the true edge lands fully dark, but a
+    # steep power curve keeps the whole interior at the original green,
+    # with the dark tone confined to a thin band right at the boundary.
     apple_edge_color = tuple(int(c * 0.45) for c in APPLE_COLOR)
-    apple_fill = radial_gradient(SIZE, cx, cy, apple_scale * 0.55, APPLE_COLOR, apple_edge_color)
+    apple_fill = radial_gradient(
+        SIZE, cx, cy, apple_scale * 0.72, APPLE_COLOR, apple_edge_color, power=4.0
+    )
 
     apple_layer = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     apple_layer.paste(apple_fill, (0, 0), mask)

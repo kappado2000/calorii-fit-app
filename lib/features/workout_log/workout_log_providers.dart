@@ -39,6 +39,21 @@ class WorkoutLogNotifier extends StateNotifier<List<WorkoutEntry>> {
     await _dataSource.add(entry, _date);
   }
 
+  /// For activities that don't fit the MET/duration model, or when the
+  /// user already knows the number from elsewhere (a watch, a gym
+  /// machine's display) and would rather not translate it into a duration.
+  /// Duration is kept at zero — the UI hides the "X min" subtitle for
+  /// these entries rather than showing a misleading "0 min".
+  Future<void> addManualWorkout({required double caloriesBurned, ActivityType activityType = ActivityType.other}) async {
+    final entry = WorkoutEntry(
+      id: _uuid.v4(),
+      activityType: activityType,
+      duration: Duration.zero,
+      caloriesBurned: caloriesBurned,
+    );
+    await _dataSource.add(entry, _date);
+  }
+
   Future<void> removeWorkout(String id) => _dataSource.delete(id);
 
   @override
