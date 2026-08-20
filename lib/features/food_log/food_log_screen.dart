@@ -1092,6 +1092,11 @@ class _WeightlifterBadgeState extends State<_WeightlifterBadge>
           size: const Size(20, 20),
           painter: _WeightlifterPainter(
             lift: Curves.easeInOut.transform(_controller.value),
+            // The badge's circle background is light gold in dark mode
+            // (see _WorkoutSection._borderColorDark) — white line art on
+            // top of that is barely visible, so the figure switches to a
+            // dark ink color there instead of staying white everywhere.
+            color: isDark ? const Color(0xFF3D2610) : Colors.white,
           ),
         ),
       ),
@@ -1100,19 +1105,20 @@ class _WeightlifterBadgeState extends State<_WeightlifterBadge>
 }
 
 class _WeightlifterPainter extends CustomPainter {
-  _WeightlifterPainter({required this.lift});
+  _WeightlifterPainter({required this.lift, required this.color});
 
   /// 0 = arm racked down at the shoulder, 1 = arm locked out overhead.
   final double lift;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
-      ..color = Colors.white
+      ..color = color
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
-    final fillPaint = Paint()..color = Colors.white;
+    final fillPaint = Paint()..color = color;
 
     final cx = size.width * 0.46;
 
@@ -1169,5 +1175,5 @@ class _WeightlifterPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _WeightlifterPainter oldDelegate) =>
-      oldDelegate.lift != lift;
+      oldDelegate.lift != lift || oldDelegate.color != color;
 }
