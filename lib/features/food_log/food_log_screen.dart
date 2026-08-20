@@ -88,7 +88,20 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.appTitle),
+        title: ShaderMask(
+          shaderCallback: (bounds) => context.appColors.heroGradient.createShader(bounds),
+          child: Text(
+            l10n.appTitle,
+            style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.3,
+              // ShaderMask paints the gradient through this color's alpha
+              // channel, so it must stay opaque white, not onSurface.
+              color: Colors.white,
+            ),
+          ),
+        ),
         actions: [
           const StreakBadge(),
           IconButton(
