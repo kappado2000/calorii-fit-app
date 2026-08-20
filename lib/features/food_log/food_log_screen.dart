@@ -887,20 +887,33 @@ class _WorkoutSection extends ConsumerWidget {
   final List<WorkoutEntry> workouts;
   final double totalBurned;
 
-  static const _cardColor = Color(0xFFEFCA76);
-  static const _borderColor = Color(0xFF6B4423);
+  static const _cardColorLight = Color(0xFFEFCA76);
+  static const _cardColorDark = Color(0xFF4A3418);
+  static const _borderColorLight = Color(0xFF6B4423);
+  static const _borderColorDark = Color(0xFFEFCA76);
+  // Explicit text/icon color rather than the theme's default onSurface —
+  // this card's fill is a fixed warm tan/brown, not the theme surface
+  // color, so the default text color (near-white in dark mode) went
+  // invisible against it. Both variants are tuned for contrast against
+  // their matching card fill above.
+  static const _onCardLight = Color(0xFF3D2610);
+  static const _onCardDark = Color(0xFFF5E6C8);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? _cardColorDark : _cardColorLight;
+    final borderColor = isDark ? _borderColorDark : _borderColorLight;
+    final onCard = isDark ? _onCardDark : _onCardLight;
     return gradientBorderFrame(
       context,
-      statusColor: _borderColor,
-      outerColor: _borderColor,
-      innerColor: _cardColor,
+      statusColor: borderColor,
+      outerColor: borderColor,
+      innerColor: cardColor,
       child: Card(
-        color: _cardColor,
+        color: cardColor,
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
@@ -916,7 +929,7 @@ class _WorkoutSection extends ConsumerWidget {
                     ),
                     title: Text(
                       l10n.sportActivity,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(color: onCard),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -924,7 +937,7 @@ class _WorkoutSection extends ConsumerWidget {
                         Text(
                           '${formatThousands(totalBurned.round())} kcal',
                           style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w700),
+                              ?.copyWith(fontWeight: FontWeight.w700, color: onCard),
                         ),
                         const SizedBox(width: 4),
                         const _AnimatedFlameIcon(),
@@ -934,18 +947,22 @@ class _WorkoutSection extends ConsumerWidget {
                   for (final workout in workouts)
                     ListTile(
                       dense: true,
-                      title: Text(workout.activityType.label(l10n)),
-                      subtitle: workout.duration.inMinutes > 0
-                          ? Text('${workout.duration.inMinutes} min')
-                          : Text(l10n.manualCaloriesEntered),
+                      title: Text(workout.activityType.label(l10n), style: TextStyle(color: onCard)),
+                      subtitle: Text(
+                        workout.duration.inMinutes > 0
+                            ? '${workout.duration.inMinutes} min'
+                            : l10n.manualCaloriesEntered,
+                        style: TextStyle(color: onCard.withValues(alpha: 0.75)),
+                      ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             '${formatThousands(workout.caloriesBurned.round())} kcal',
+                            style: TextStyle(color: onCard),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.close_rounded, size: 18),
+                            icon: Icon(Icons.close_rounded, size: 18, color: onCard.withValues(alpha: 0.75)),
                             onPressed: () => ref
                                 .read(workoutLogProvider(date).notifier)
                                 .removeWorkout(workout.id),
@@ -1060,11 +1077,12 @@ class _WeightlifterBadgeState extends State<_WeightlifterBadge>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: 32,
       height: 32,
-      decoration: const BoxDecoration(
-        color: _WorkoutSection._borderColor,
+      decoration: BoxDecoration(
+        color: isDark ? _WorkoutSection._borderColorDark : _WorkoutSection._borderColorLight,
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
