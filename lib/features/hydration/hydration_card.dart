@@ -63,14 +63,16 @@ class HydrationSection extends ConsumerWidget {
                       children: [
                         Text(
                           l10n.hydrationTitle,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(color: onCard),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: onCard, fontWeight: FontWeight.w600),
                         ),
                         const Spacer(),
                         Text(
                           '${totalMl.round()} / ${dailyHydrationTargetMl.round()} ml',
                           style: Theme.of(
                             context,
-                          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, color: onCard),
+                          ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: onCard),
                         ),
                       ],
                     ),
