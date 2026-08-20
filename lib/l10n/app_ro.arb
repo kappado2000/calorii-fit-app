@@ -121,6 +121,9 @@
   "cameraFrameHint": "Încadrează farfuria și apasă declanșatorul",
   "cameraErrorPrefixed": "Nu am putut porni/analiza fotografia:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Ai atins limita de 20 de analize foto pe zi. Încearcă din nou mâine.",
+  "cameraUnauthenticatedMessage": "Trebuie să fii autentificat pentru a analiza o fotografie.",
+  "cameraNetworkErrorMessage": "Nu s-a putut realiza conexiunea. Verifică internetul și încearcă din nou.",
   "retry": "Încearcă din nou",
 
   "authEnterEmailFirst": "Introdu emailul mai întâi, ca să-ți trimitem linkul de resetare.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Tema telefonului (implicit)",
   "themeLight": "Luminoasă",
   "themeDark": "Întunecată",
-  "themeMenuEntry": "Temă"
+  "themeMenuEntry": "Temă",
+
+  "barcodeToggleTorch": "Comută blițul",
+  "clearSelection": "Șterge selecția"
 }

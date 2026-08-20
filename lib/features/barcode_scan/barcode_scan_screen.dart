@@ -79,6 +79,7 @@ class _BarcodeScanScreenState extends ConsumerState<BarcodeScanScreen> {
         title: Text(AppLocalizations.of(context).barcodeScanTitle),
         actions: [
           IconButton(
+            tooltip: AppLocalizations.of(context).barcodeToggleTorch,
             icon: ValueListenableBuilder(
               valueListenable: _controller,
               builder: (context, state, child) {

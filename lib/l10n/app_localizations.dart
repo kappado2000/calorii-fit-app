@@ -690,6 +690,24 @@ abstract class AppLocalizations {
   /// **'Nu am putut porni/analiza fotografia:\n{message}'**
   String cameraErrorPrefixed(String message);
 
+  /// No description provided for @cameraQuotaExceededMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ai atins limita de 20 de analize foto pe zi. Încearcă din nou mâine.'**
+  String get cameraQuotaExceededMessage;
+
+  /// No description provided for @cameraUnauthenticatedMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Trebuie să fii autentificat pentru a analiza o fotografie.'**
+  String get cameraUnauthenticatedMessage;
+
+  /// No description provided for @cameraNetworkErrorMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Nu s-a putut realiza conexiunea. Verifică internetul și încearcă din nou.'**
+  String get cameraNetworkErrorMessage;
+
   /// No description provided for @retry.
   ///
   /// In ro, this message translates to:
@@ -2189,6 +2207,18 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Temă'**
   String get themeMenuEntry;
+
+  /// No description provided for @barcodeToggleTorch.
+  ///
+  /// In ro, this message translates to:
+  /// **'Comută blițul'**
+  String get barcodeToggleTorch;
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In ro, this message translates to:
+  /// **'Șterge selecția'**
+  String get clearSelection;
 }
 
 class _AppLocalizationsDelegate

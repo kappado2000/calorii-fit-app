@@ -962,6 +962,7 @@ class _WorkoutSection extends ConsumerWidget {
                             style: TextStyle(color: onCard),
                           ),
                           IconButton(
+                            tooltip: l10n.delete,
                             icon: Icon(Icons.close_rounded, size: 18, color: onCard.withValues(alpha: 0.75)),
                             onPressed: () => ref
                                 .read(workoutLogProvider(date).notifier)

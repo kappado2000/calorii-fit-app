@@ -27,7 +27,7 @@ class CameraCaptureController extends StateNotifier<CameraCaptureState> {
       state = AnalyzingPhoto(capture);
       final idToken = await _ref.read(firebaseAuthProvider).currentUser?.getIdToken();
       if (idToken == null) {
-        state = CaptureFailed('Trebuie să fii autentificat pentru a analiza o fotografie.');
+        state = CaptureFailed('Not authenticated', reason: CaptureFailureReason.unauthenticated);
         return;
       }
       final apiClient = AnalyzePhotoApiClient();
@@ -52,6 +52,16 @@ class CameraCaptureController extends StateNotifier<CameraCaptureState> {
         mixedPlateDetected: analysis.mixedPlateDetected,
         items: items,
       );
+    } on AnalyzePhotoException catch (e) {
+      if (e.isQuotaExceeded) {
+        state = CaptureFailed(e.message, reason: CaptureFailureReason.quotaExceeded);
+      } else if (e.isUnauthenticated) {
+        state = CaptureFailed(e.message, reason: CaptureFailureReason.unauthenticated);
+      } else {
+        state = CaptureFailed(e.message);
+      }
+    } on SocketException catch (e) {
+      state = CaptureFailed(e.toString(), reason: CaptureFailureReason.network);
     } catch (e) {
       state = CaptureFailed(e.toString());
     }

@@ -341,6 +341,18 @@ class AppLocalizationsDa extends AppLocalizations {
   }
 
   @override
+  String get cameraQuotaExceededMessage =>
+      'Du har nået grænsen på 20 fotoanalyser om dagen. Prøv igen i morgen.';
+
+  @override
+  String get cameraUnauthenticatedMessage =>
+      'Du skal være logget ind for at analysere et billede.';
+
+  @override
+  String get cameraNetworkErrorMessage =>
+      'Kunne ikke oprette forbindelse. Tjek din internetforbindelse, og prøv igen.';
+
+  @override
   String get retry => 'Prøv igen';
 
   @override
@@ -1181,4 +1193,10 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get themeMenuEntry => 'Tema';
+
+  @override
+  String get barcodeToggleTorch => 'Skift blitz';
+
+  @override
+  String get clearSelection => 'Ryd valg';
 }

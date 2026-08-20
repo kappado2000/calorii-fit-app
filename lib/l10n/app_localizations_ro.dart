@@ -343,6 +343,18 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
+  String get cameraQuotaExceededMessage =>
+      'Ai atins limita de 20 de analize foto pe zi. Încearcă din nou mâine.';
+
+  @override
+  String get cameraUnauthenticatedMessage =>
+      'Trebuie să fii autentificat pentru a analiza o fotografie.';
+
+  @override
+  String get cameraNetworkErrorMessage =>
+      'Nu s-a putut realiza conexiunea. Verifică internetul și încearcă din nou.';
+
+  @override
   String get retry => 'Încearcă din nou';
 
   @override
@@ -1181,4 +1193,10 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get themeMenuEntry => 'Temă';
+
+  @override
+  String get barcodeToggleTorch => 'Comută blițul';
+
+  @override
+  String get clearSelection => 'Șterge selecția';
 }

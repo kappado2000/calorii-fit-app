@@ -121,6 +121,9 @@
   "cameraFrameHint": "Cadrez l'assiette et appuyez sur le déclencheur",
   "cameraErrorPrefixed": "Impossible de démarrer/analyser la photo :\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Vous avez atteint la limite de 20 analyses photo par jour. Réessayez demain.",
+  "cameraUnauthenticatedMessage": "Vous devez être connecté pour analyser une photo.",
+  "cameraNetworkErrorMessage": "Impossible de se connecter. Vérifiez votre connexion internet et réessayez.",
   "retry": "Réessayer",
 
   "authEnterEmailFirst": "Entrez d'abord votre email, pour que nous puissions vous envoyer le lien de réinitialisation.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Thème du téléphone (par défaut)",
   "themeLight": "Clair",
   "themeDark": "Sombre",
-  "themeMenuEntry": "Thème"
+  "themeMenuEntry": "Thème",
+
+  "barcodeToggleTorch": "Activer/désactiver le flash",
+  "clearSelection": "Effacer la sélection"
 }

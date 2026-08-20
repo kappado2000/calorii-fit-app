@@ -7,8 +7,17 @@ import '../../../../core/constants/app_config.dart';
 import '../../../models/analyzed_food_item.dart';
 
 class AnalyzePhotoException implements Exception {
-  AnalyzePhotoException(this.message);
+  AnalyzePhotoException(this.message, {this.status});
   final String message;
+
+  /// The callable-function wire protocol's error status (e.g.
+  /// `RESOURCE_EXHAUSTED`, `UNAUTHENTICATED`) — lets callers branch on
+  /// *why* the call failed without parsing [message], which is server-side
+  /// text in a fixed language, not localized per client.
+  final String? status;
+
+  bool get isQuotaExceeded => status == 'RESOURCE_EXHAUSTED';
+  bool get isUnauthenticated => status == 'UNAUTHENTICATED';
 
   @override
   String toString() => 'AnalyzePhotoException: $message';
@@ -44,8 +53,11 @@ class AnalyzePhotoApiClient {
     final decoded = jsonDecode(response.body) as Map<String, dynamic>;
 
     if (response.statusCode != 200) {
-      final errorMessage = (decoded['error'] as Map<String, dynamic>?)?['message'] as String?;
-      throw AnalyzePhotoException(errorMessage ?? 'HTTP ${response.statusCode}');
+      final error = decoded['error'] as Map<String, dynamic>?;
+      throw AnalyzePhotoException(
+        error?['message'] as String? ?? 'HTTP ${response.statusCode}',
+        status: error?['status'] as String?,
+      );
     }
 
     final result = decoded['result'] as Map<String, dynamic>?;

@@ -121,6 +121,9 @@
   "cameraFrameHint": "Enquadre o prato e toque no obturador",
   "cameraErrorPrefixed": "Não foi possível iniciar/analisar a foto:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Você atingiu o limite de 20 análises de fotos por dia. Tente novamente amanhã.",
+  "cameraUnauthenticatedMessage": "Você precisa estar conectado para analisar uma foto.",
+  "cameraNetworkErrorMessage": "Não foi possível conectar. Verifique sua conexão com a internet e tente novamente.",
   "retry": "Tentar novamente",
 
   "authEnterEmailFirst": "Digite seu e-mail primeiro, para que possamos enviar o link de redefinição.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Tema do telefone (padrão)",
   "themeLight": "Claro",
   "themeDark": "Escuro",
-  "themeMenuEntry": "Tema"
+  "themeMenuEntry": "Tema",
+
+  "barcodeToggleTorch": "Alternar flash",
+  "clearSelection": "Limpar seleção"
 }

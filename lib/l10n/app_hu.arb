@@ -121,6 +121,9 @@
   "cameraFrameHint": "Keretezd be a tányért, és koppints a zárkioldóra",
   "cameraErrorPrefixed": "Nem sikerült elindítani/elemezni a fotót:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Elérted a napi 20 fotóelemzés limitet. Próbáld újra holnap.",
+  "cameraUnauthenticatedMessage": "Be kell jelentkezned egy fotó elemzéséhez.",
+  "cameraNetworkErrorMessage": "Nem sikerült csatlakozni. Ellenőrizd az internetkapcsolatot, és próbáld újra.",
   "retry": "Újra",
 
   "authEnterEmailFirst": "Először add meg az e-mail címedet, hogy elküldhessük a visszaállítási linket.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Telefon témája (alapértelmezett)",
   "themeLight": "Világos",
   "themeDark": "Sötét",
-  "themeMenuEntry": "Téma"
+  "themeMenuEntry": "Téma",
+
+  "barcodeToggleTorch": "Vaku be/ki",
+  "clearSelection": "Kijelölés törlése"
 }

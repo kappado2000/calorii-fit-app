@@ -121,6 +121,9 @@
   "cameraFrameHint": "Kader het bord en tik op de sluiter",
   "cameraErrorPrefixed": "Kon de foto niet starten/analyseren:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Je hebt de limiet van 20 fotoanalyses per dag bereikt. Probeer het morgen opnieuw.",
+  "cameraUnauthenticatedMessage": "Je moet ingelogd zijn om een foto te analyseren.",
+  "cameraNetworkErrorMessage": "Kan geen verbinding maken. Controleer je internetverbinding en probeer het opnieuw.",
   "retry": "Opnieuw proberen",
 
   "authEnterEmailFirst": "Voer eerst je e-mail in, zodat we je de resetlink kunnen sturen.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Telefoonthema (standaard)",
   "themeLight": "Licht",
   "themeDark": "Donker",
-  "themeMenuEntry": "Thema"
+  "themeMenuEntry": "Thema",
+
+  "barcodeToggleTorch": "Flitser aan/uit",
+  "clearSelection": "Selectie wissen"
 }

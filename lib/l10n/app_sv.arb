@@ -121,6 +121,9 @@
   "cameraFrameHint": "Rama in tallriken och tryck på slutaren",
   "cameraErrorPrefixed": "Det gick inte att starta/analysera fotot:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Du har nått gränsen på 20 fotoanalyser per dag. Försök igen imorgon.",
+  "cameraUnauthenticatedMessage": "Du måste vara inloggad för att analysera ett foto.",
+  "cameraNetworkErrorMessage": "Det gick inte att ansluta. Kontrollera din internetanslutning och försök igen.",
   "retry": "Försök igen",
 
   "authEnterEmailFirst": "Ange din e-post först, så att vi kan skicka återställningslänken till dig.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Telefonens tema (standard)",
   "themeLight": "Ljust",
   "themeDark": "Mörkt",
-  "themeMenuEntry": "Tema"
+  "themeMenuEntry": "Tema",
+
+  "barcodeToggleTorch": "Växla blixt",
+  "clearSelection": "Rensa val"
 }

@@ -121,6 +121,9 @@
   "cameraFrameHint": "Ramm inn tallerkenen og trykk på utløseren",
   "cameraErrorPrefixed": "Kunne ikke starte/analysere bildet:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Du har nådd grensen på 20 bildeanalyser per dag. Prøv igjen i morgen.",
+  "cameraUnauthenticatedMessage": "Du må være logget inn for å analysere et bilde.",
+  "cameraNetworkErrorMessage": "Kunne ikke koble til. Sjekk internettforbindelsen din og prøv igjen.",
   "retry": "Prøv igjen",
 
   "authEnterEmailFirst": "Skriv inn e-posten din først, slik at vi kan sende deg tilbakestillingslenken.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Telefonens tema (standard)",
   "themeLight": "Lyst",
   "themeDark": "Mørkt",
-  "themeMenuEntry": "Tema"
+  "themeMenuEntry": "Tema",
+
+  "barcodeToggleTorch": "Slå av/på blits",
+  "clearSelection": "Fjern valg"
 }

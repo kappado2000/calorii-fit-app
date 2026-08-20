@@ -121,6 +121,9 @@
   "cameraFrameHint": "Rahme den Teller ein und tippe auf den Auslöser",
   "cameraErrorPrefixed": "Foto konnte nicht gestartet/analysiert werden:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Du hast das Tageslimit von 20 Foto-Analysen erreicht. Versuche es morgen erneut.",
+  "cameraUnauthenticatedMessage": "Du musst angemeldet sein, um ein Foto zu analysieren.",
+  "cameraNetworkErrorMessage": "Verbindung fehlgeschlagen. Überprüfe deine Internetverbindung und versuche es erneut.",
   "retry": "Erneut versuchen",
 
   "authEnterEmailFirst": "Gib zuerst deine E-Mail ein, damit wir dir den Link zum Zurücksetzen senden können.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Telefon-Design (Standard)",
   "themeLight": "Hell",
   "themeDark": "Dunkel",
-  "themeMenuEntry": "Design"
+  "themeMenuEntry": "Design",
+
+  "barcodeToggleTorch": "Blitz umschalten",
+  "clearSelection": "Auswahl löschen"
 }

@@ -259,7 +259,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                 labelText: l10n.productNameLabel,
                 hintText: l10n.productNameHint,
                 suffixIcon: _selectedProduct != null
-                    ? IconButton(icon: const Icon(Icons.close), onPressed: _clearSelection)
+                    ? IconButton(tooltip: l10n.clearSelection, icon: const Icon(Icons.close), onPressed: _clearSelection)
                     : IconButton(
                         icon: const Icon(Icons.qr_code_scanner_rounded),
                         tooltip: l10n.barcodeScanTitle,

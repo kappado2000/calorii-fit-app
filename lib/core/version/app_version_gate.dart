@@ -110,6 +110,7 @@ class _UpdateAvailableBanner extends StatelessWidget {
                   ),
                 ),
                 IconButton(
+                  tooltip: AppLocalizations.of(context).close,
                   icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onInverseSurface),
                   onPressed: onDismiss,
                 ),

@@ -342,6 +342,18 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
+  String get cameraQuotaExceededMessage =>
+      'Elérted a napi 20 fotóelemzés limitet. Próbáld újra holnap.';
+
+  @override
+  String get cameraUnauthenticatedMessage =>
+      'Be kell jelentkezned egy fotó elemzéséhez.';
+
+  @override
+  String get cameraNetworkErrorMessage =>
+      'Nem sikerült csatlakozni. Ellenőrizd az internetkapcsolatot, és próbáld újra.';
+
+  @override
   String get retry => 'Újra';
 
   @override
@@ -1185,4 +1197,10 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get themeMenuEntry => 'Téma';
+
+  @override
+  String get barcodeToggleTorch => 'Vaku be/ki';
+
+  @override
+  String get clearSelection => 'Kijelölés törlése';
 }

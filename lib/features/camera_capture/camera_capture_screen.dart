@@ -117,7 +117,8 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
           CaptureInProgress() => _StatusMessage(message: l10n.cameraCapturingStatus),
           AnalyzingPhoto() => _StatusMessage(message: l10n.cameraAnalyzingStatus),
           AwaitingConfirmation() => _StatusMessage(message: l10n.cameraConfirmationOpeningStatus),
-          CaptureFailed(:final message) => _ErrorPrompt(message: message, onRetry: _retry),
+          CaptureFailed(:final message, :final reason) =>
+            _ErrorPrompt(message: message, reason: reason, onRetry: _retry),
           CaptureIdle() => const SizedBox.shrink(),
         },
       );
@@ -190,22 +191,33 @@ class _StatusMessage extends StatelessWidget {
 }
 
 class _ErrorPrompt extends StatelessWidget {
-  const _ErrorPrompt({required this.message, required this.onRetry});
+  const _ErrorPrompt({required this.message, this.reason = CaptureFailureReason.unknown, required this.onRetry});
 
+  /// Raw technical detail — only actually displayed when [reason] is
+  /// [CaptureFailureReason.unknown] (including preview-init failures,
+  /// which never carry a reason).
   final String message;
+  final CaptureFailureReason reason;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final (icon, friendlyMessage) = switch (reason) {
+      CaptureFailureReason.quotaExceeded => (Icons.schedule_rounded, l10n.cameraQuotaExceededMessage),
+      CaptureFailureReason.unauthenticated => (Icons.lock_outline_rounded, l10n.cameraUnauthenticatedMessage),
+      CaptureFailureReason.network => (Icons.wifi_off_rounded, l10n.cameraNetworkErrorMessage),
+      CaptureFailureReason.unknown => (Icons.error_outline, l10n.cameraErrorPrefixed(message)),
+    };
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline, size: 56, color: Theme.of(context).colorScheme.error),
+          Icon(icon, size: 56, color: colorScheme.error),
           const SizedBox(height: 12),
-          Text(l10n.cameraErrorPrefixed(message), textAlign: TextAlign.center),
+          Text(friendlyMessage, textAlign: TextAlign.center),
           const SizedBox(height: 20),
           FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],

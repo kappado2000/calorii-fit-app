@@ -121,6 +121,9 @@
   "cameraFrameHint": "Frame the plate and tap the shutter",
   "cameraErrorPrefixed": "Couldn't start/analyze the photo:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "You've reached the limit of 20 photo analyses per day. Try again tomorrow.",
+  "cameraUnauthenticatedMessage": "You need to be signed in to analyze a photo.",
+  "cameraNetworkErrorMessage": "Couldn't connect. Check your internet connection and try again.",
   "retry": "Try again",
 
   "authEnterEmailFirst": "Enter your email first, so we can send you the reset link.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Phone theme (default)",
   "themeLight": "Light",
   "themeDark": "Dark",
-  "themeMenuEntry": "Theme"
+  "themeMenuEntry": "Theme",
+
+  "barcodeToggleTorch": "Toggle flash",
+  "clearSelection": "Clear selection"
 }

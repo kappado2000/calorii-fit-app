@@ -121,6 +121,9 @@
   "cameraFrameHint": "Inquadra il piatto e tocca lo scatto",
   "cameraErrorPrefixed": "Impossibile avviare/analizzare la foto:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Hai raggiunto il limite di 20 analisi foto al giorno. Riprova domani.",
+  "cameraUnauthenticatedMessage": "Devi aver effettuato l'accesso per analizzare una foto.",
+  "cameraNetworkErrorMessage": "Impossibile connettersi. Controlla la tua connessione internet e riprova.",
   "retry": "Riprova",
 
   "authEnterEmailFirst": "Inserisci prima la tua email, così possiamo inviarti il link di reimpostazione.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Tema del telefono (predefinito)",
   "themeLight": "Chiaro",
   "themeDark": "Scuro",
-  "themeMenuEntry": "Tema"
+  "themeMenuEntry": "Tema",
+
+  "barcodeToggleTorch": "Attiva/disattiva flash",
+  "clearSelection": "Cancella selezione"
 }

@@ -39,7 +39,18 @@ class AwaitingConfirmation extends CameraCaptureState {
   final List<ConfirmationItem> items;
 }
 
+/// Distinguishes *why* capture/analysis failed so the UI can show a
+/// friendly, correctly-localized message instead of a raw exception
+/// string — [quotaExceeded] and [unauthenticated] in particular used to
+/// leak the Cloud Function's hardcoded Romanian error text verbatim to
+/// users of every other locale.
+enum CaptureFailureReason { quotaExceeded, unauthenticated, network, unknown }
+
 class CaptureFailed extends CameraCaptureState {
-  CaptureFailed(this.message);
+  CaptureFailed(this.message, {this.reason = CaptureFailureReason.unknown});
+
+  /// Raw technical detail — only ever shown to the user when [reason] is
+  /// [CaptureFailureReason.unknown], as a last-resort fallback.
   final String message;
+  final CaptureFailureReason reason;
 }

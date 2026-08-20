@@ -181,6 +181,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                 title: Text(ingredient.name),
                 subtitle: Text('${ingredient.grams.round()} g · ${ingredient.calories.round()} kcal'),
                 trailing: IconButton(
+                  tooltip: l10n.delete,
                   icon: const Icon(Icons.close_rounded),
                   onPressed: () => setState(() => _ingredients.removeAt(index)),
                 ),
@@ -291,6 +292,7 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
               labelText: l10n.productNameLabel,
               suffixIcon: _selected != null
                   ? IconButton(
+                      tooltip: l10n.clearSelection,
                       icon: const Icon(Icons.close),
                       onPressed: () => setState(() => _selected = null),
                     )

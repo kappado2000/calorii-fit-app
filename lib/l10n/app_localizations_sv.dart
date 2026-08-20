@@ -341,6 +341,18 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String get cameraQuotaExceededMessage =>
+      'Du har nått gränsen på 20 fotoanalyser per dag. Försök igen imorgon.';
+
+  @override
+  String get cameraUnauthenticatedMessage =>
+      'Du måste vara inloggad för att analysera ett foto.';
+
+  @override
+  String get cameraNetworkErrorMessage =>
+      'Det gick inte att ansluta. Kontrollera din internetanslutning och försök igen.';
+
+  @override
   String get retry => 'Försök igen';
 
   @override
@@ -1181,4 +1193,10 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get themeMenuEntry => 'Tema';
+
+  @override
+  String get barcodeToggleTorch => 'Växla blixt';
+
+  @override
+  String get clearSelection => 'Rensa val';
 }

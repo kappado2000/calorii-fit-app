@@ -121,6 +121,9 @@
   "cameraFrameHint": "Ustaw talerz w kadrze i dotknij migawki",
   "cameraErrorPrefixed": "Nie udało się uruchomić/przeanalizować zdjęcia:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
+  "cameraQuotaExceededMessage": "Osiągnięto dzienny limit 20 analiz zdjęć. Spróbuj ponownie jutro.",
+  "cameraUnauthenticatedMessage": "Musisz być zalogowany, aby przeanalizować zdjęcie.",
+  "cameraNetworkErrorMessage": "Nie udało się połączyć. Sprawdź połączenie internetowe i spróbuj ponownie.",
   "retry": "Spróbuj ponownie",
 
   "authEnterEmailFirst": "Najpierw podaj swój e-mail, abyśmy mogli wysłać ci link do resetowania.",
@@ -421,5 +424,8 @@
   "themeSystemDefault": "Motyw telefonu (domyślny)",
   "themeLight": "Jasny",
   "themeDark": "Ciemny",
-  "themeMenuEntry": "Motyw"
+  "themeMenuEntry": "Motyw",
+
+  "barcodeToggleTorch": "Przełącz lampę błyskową",
+  "clearSelection": "Wyczyść wybór"
 }

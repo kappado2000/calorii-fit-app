@@ -343,6 +343,18 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get cameraQuotaExceededMessage =>
+      'Du hast das Tageslimit von 20 Foto-Analysen erreicht. Versuche es morgen erneut.';
+
+  @override
+  String get cameraUnauthenticatedMessage =>
+      'Du musst angemeldet sein, um ein Foto zu analysieren.';
+
+  @override
+  String get cameraNetworkErrorMessage =>
+      'Verbindung fehlgeschlagen. Überprüfe deine Internetverbindung und versuche es erneut.';
+
+  @override
   String get retry => 'Erneut versuchen';
 
   @override
@@ -1184,4 +1196,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get themeMenuEntry => 'Design';
+
+  @override
+  String get barcodeToggleTorch => 'Blitz umschalten';
+
+  @override
+  String get clearSelection => 'Auswahl löschen';
 }
