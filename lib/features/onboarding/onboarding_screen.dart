@@ -468,11 +468,31 @@ class _DisclaimerStep extends StatelessWidget {
         Text(
           'Calorii Fit estimează necesarul caloric și ritmul de slăbit pe baza unor '
           'formule general acceptate (Mifflin-St Jeor), nu pe baza unei evaluări '
-          'medicale individuale. Nu înlocuiește sfatul unui medic sau nutriționist, '
-          'mai ales dacă ai o afecțiune medicală, ești însărcinată sau alăptezi.',
+          'medicale individuale.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
+        _DisclaimerPoint(
+          icon: Icons.medical_services_outlined,
+          text:
+              'Nu înlocuiește sfatul unui medic sau nutriționist — mai ales dacă ai o '
+              'afecțiune medicală, ești însărcinată sau alăptezi.',
+        ),
+        _DisclaimerPoint(
+          icon: Icons.warning_amber_rounded,
+          text:
+              'Identificarea alimentelor din fotografie nu detectează alergeni. '
+              'Dacă ai o alergie sau intoleranță severă, verifică mereu ingredientele '
+              'chiar tu, nu te baza pe aplicație pentru asta.',
+        ),
+        _DisclaimerPoint(
+          icon: Icons.favorite_border_rounded,
+          text:
+              'Dacă ai avut sau ai o relație dificilă cu alimentația (tulburări de '
+              'alimentație), discută cu un medic înainte de a urmări calorii — '
+              'aplicația nu e gândită să înlocuiască acel sprijin.',
+        ),
+        const SizedBox(height: 8),
         InkWell(
           borderRadius: BorderRadius.circular(14),
           onTap: () => onChanged(!accepted),
@@ -497,6 +517,29 @@ class _DisclaimerStep extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DisclaimerPoint extends StatelessWidget {
+  const _DisclaimerPoint({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: colorScheme.primary),
+          const SizedBox(width: 10),
+          Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyMedium)),
+        ],
+      ),
     );
   }
 }
