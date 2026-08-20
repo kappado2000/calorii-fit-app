@@ -10,7 +10,7 @@ import '../../l10n/app_localizations.dart';
 const List<String> kRecipeIconOptions = [
   kDefaultRecipeIcon,
   // Proteins
-  '🍗', '🥩', '🍖', '🐟', '🍤', '🍳', '🥓',
+  '🍗', '🥩', '🍖', '🐟', '🍤', '🍳', '🥚', '🥓',
   // Grains & bread
   '🍝', '🍚', '🍞', '🥐', '🥯',
   // Vegetables
@@ -144,53 +144,55 @@ class _RecipeIconPickerSheet extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
+    // A fixed-height scrolling grid rather than shrinkWrap-inside-Flexible —
+    // that combination left the grid effectively unresponsive to taps and
+    // clipped most of the icon set on some screen sizes. A definite height
+    // sidesteps the ambiguity entirely and always leaves the full list
+    // reachable by scrolling.
     return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(l10n.chooseRecipeIconTitle, style: Theme.of(context).textTheme.titleLarge),
-              if (suggested != null && suggested != current) ...[
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(suggested),
-                  icon: Text(suggested!, style: const TextStyle(fontSize: 18)),
-                  label: Text(l10n.recipeIconSuggested),
-                ),
-              ],
-              const SizedBox(height: 16),
-              Flexible(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                  ),
-                  itemCount: kRecipeIconOptions.length,
-                  itemBuilder: (context, index) {
-                    final emoji = kRecipeIconOptions[index];
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(14),
-                      onTap: () => Navigator.of(context).pop(emoji),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: emoji == current ? colorScheme.primaryContainer : colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(emoji, style: const TextStyle(fontSize: 22)),
-                      ),
-                    );
-                  },
-                ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.chooseRecipeIconTitle, style: Theme.of(context).textTheme.titleLarge),
+            if (suggested != null && suggested != current) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.of(context).pop(suggested),
+                icon: Text(suggested!, style: const TextStyle(fontSize: 18)),
+                label: Text(l10n.recipeIconSuggested),
               ),
             ],
-          ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 340,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+                itemCount: kRecipeIconOptions.length,
+                itemBuilder: (context, index) {
+                  final emoji = kRecipeIconOptions[index];
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: () => Navigator.of(context).pop(emoji),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: emoji == current ? colorScheme.primaryContainer : colorScheme.surfaceContainerHigh,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(emoji, style: const TextStyle(fontSize: 22)),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
