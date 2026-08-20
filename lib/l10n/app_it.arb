@@ -320,6 +320,8 @@
   "activeKcal": "kcal attive",
   "newWeightFetched": "Nuovo peso recuperato: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} nuovi allenamenti importati dal tuo orologio.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "manuale",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Salute",

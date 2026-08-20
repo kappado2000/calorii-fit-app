@@ -320,6 +320,8 @@
   "activeKcal": "aktive kcal",
   "newWeightFetched": "Ny vekt hentet: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} nye treningsøkter importert fra klokken din.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "manuell",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Helse",

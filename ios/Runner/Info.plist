@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Calorii Fit sincronizează greutatea și activitatea fizică din Apple Health pentru a-ți urmări progresul.</string>
+	<string>Calorii Fit sincronizează greutatea, pașii și antrenamentele din Apple Health pentru a-ți urmări progresul.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Calorii Fit poate salva înregistrări de greutate în Apple Health.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>

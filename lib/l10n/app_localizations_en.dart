@@ -885,6 +885,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count new workouts imported from your watch.';
+  }
+
+  @override
   String get weightSourceManual => 'manual';
 
   @override

@@ -890,6 +890,11 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count nya träningspass importerade från din klocka.';
+  }
+
+  @override
   String get weightSourceManual => 'manuell';
 
   @override

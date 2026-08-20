@@ -36,6 +36,15 @@ class WorkoutFirestoreDataSource {
 
   Future<void> delete(String id) => _collection.doc(id).delete();
 
+  /// Whether a workout previously imported from Apple Health / Health
+  /// Connect (see WorkoutEntry.healthSourceUuid) already exists — checked
+  /// before importing a health-sourced session, so re-running sync never
+  /// creates duplicate entries for the same recorded workout.
+  Future<bool> existsWithHealthSourceUuid(String uuid) async {
+    final snapshot = await _collection.where('healthSourceUuid', isEqualTo: uuid).limit(1).get();
+    return snapshot.docs.isNotEmpty;
+  }
+
   /// Total calories burned per day within [start, end] — feeds the
   /// progress screen's deficit chart alongside food intake totals.
   Stream<Map<DateTime, double>> watchDailyTotalsForRange(DateTime start, DateTime end) {

@@ -54,6 +54,29 @@ class WorkoutLogNotifier extends StateNotifier<List<WorkoutEntry>> {
     await _dataSource.add(entry, _date);
   }
 
+  /// Imports one workout session read from Apple Health / Health Connect
+  /// (see HealthSyncService.todayWorkouts) — skips it if a workout with the
+  /// same [healthSourceUuid] was already imported, so re-syncing never
+  /// duplicates a session already on the card. Returns whether it was
+  /// actually added.
+  Future<bool> addSyncedWorkout({
+    required ActivityType activityType,
+    required Duration duration,
+    required double caloriesBurned,
+    required String healthSourceUuid,
+  }) async {
+    if (await _dataSource.existsWithHealthSourceUuid(healthSourceUuid)) return false;
+    final entry = WorkoutEntry(
+      id: _uuid.v4(),
+      activityType: activityType,
+      duration: duration,
+      caloriesBurned: caloriesBurned,
+      healthSourceUuid: healthSourceUuid,
+    );
+    await _dataSource.add(entry, _date);
+    return true;
+  }
+
   Future<void> removeWorkout(String id) => _dataSource.delete(id);
 
   @override

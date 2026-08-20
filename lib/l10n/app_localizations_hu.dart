@@ -894,6 +894,11 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count új edzés importálva az órádról.';
+  }
+
+  @override
   String get weightSourceManual => 'manuális';
 
   @override

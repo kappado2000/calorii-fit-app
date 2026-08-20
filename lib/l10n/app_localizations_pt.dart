@@ -891,6 +891,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count novos treinos importados do seu relógio.';
+  }
+
+  @override
   String get weightSourceManual => 'manual';
 
   @override

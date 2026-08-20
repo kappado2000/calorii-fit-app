@@ -320,6 +320,8 @@
   "activeKcal": "aktiva kcal",
   "newWeightFetched": "Ny vikt hämtad: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} nya träningspass importerade från din klocka.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "manuell",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Hälsa",

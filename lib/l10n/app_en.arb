@@ -320,6 +320,8 @@
   "activeKcal": "active kcal",
   "newWeightFetched": "New weight fetched: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} new workouts imported from your watch.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "manual",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Health",

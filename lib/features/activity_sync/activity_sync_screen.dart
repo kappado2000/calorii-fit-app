@@ -163,7 +163,7 @@ class ActivitySyncScreen extends ConsumerWidget {
       ActivitySyncInProgress() => const Center(
         child: Padding(padding: EdgeInsets.all(8), child: CircularProgressIndicator()),
       ),
-      ActivitySyncSuccess(:final summary, :final newWeightKg) => Column(
+      ActivitySyncSuccess(:final summary, :final newWeightKg, :final newWorkoutsCount) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -181,6 +181,13 @@ class ActivitySyncScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             Text(
               l10n.newWeightFetched(newWeightKg.toStringAsFixed(1)),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+          if (newWorkoutsCount > 0) ...[
+            const SizedBox(height: 12),
+            Text(
+              l10n.newWorkoutsImported(newWorkoutsCount),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],

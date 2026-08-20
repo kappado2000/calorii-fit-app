@@ -890,6 +890,11 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count antrenamente noi, importate din ceas.';
+  }
+
+  @override
   String get weightSourceManual => 'manual';
 
   @override

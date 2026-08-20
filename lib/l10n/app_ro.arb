@@ -320,6 +320,8 @@
   "activeKcal": "kcal active",
   "newWeightFetched": "Greutate nouă preluată: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} antrenamente noi, importate din ceas.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "manual",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Health",

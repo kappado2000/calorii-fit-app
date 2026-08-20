@@ -320,6 +320,8 @@
   "activeKcal": "kcal ativas",
   "newWeightFetched": "Novo peso obtido: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} novos treinos importados do seu relógio.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "manual",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Saúde",

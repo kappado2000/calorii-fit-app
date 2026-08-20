@@ -320,6 +320,8 @@
   "activeKcal": "aktív kcal",
   "newWeightFetched": "Új testsúly lekérve: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} új edzés importálva az órádról.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "manuális",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Health",

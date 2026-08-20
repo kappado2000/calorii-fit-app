@@ -896,6 +896,11 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count nuovi allenamenti importati dal tuo orologio.';
+  }
+
+  @override
   String get weightSourceManual => 'manuale';
 
   @override

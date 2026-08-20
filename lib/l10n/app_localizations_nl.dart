@@ -893,6 +893,11 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count nieuwe workouts geïmporteerd van je horloge.';
+  }
+
+  @override
   String get weightSourceManual => 'handmatig';
 
   @override

@@ -1668,6 +1668,12 @@ abstract class AppLocalizations {
   /// **'Greutate nouă preluată: {kg} kg'**
   String newWeightFetched(String kg);
 
+  /// No description provided for @newWorkoutsImported.
+  ///
+  /// In ro, this message translates to:
+  /// **'{count} antrenamente noi, importate din ceas.'**
+  String newWorkoutsImported(int count);
+
   /// No description provided for @weightSourceManual.
   ///
   /// In ro, this message translates to:

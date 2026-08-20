@@ -320,6 +320,8 @@
   "activeKcal": "actieve kcal",
   "newWeightFetched": "Nieuw gewicht opgehaald: {kg} kg",
   "@newWeightFetched": {"placeholders": {"kg": {"type": "String"}}},
+  "newWorkoutsImported": "{count} nieuwe workouts geïmporteerd van je horloge.",
+  "@newWorkoutsImported": {"placeholders": {"count": {"type": "int"}}},
   "weightSourceManual": "handmatig",
   "weightSourceHealthConnect": "Health Connect",
   "weightSourceAppleHealth": "Apple Gezondheid",

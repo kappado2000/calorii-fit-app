@@ -890,6 +890,11 @@ class AppLocalizationsDa extends AppLocalizations {
   }
 
   @override
+  String newWorkoutsImported(int count) {
+    return '$count nye træningspas importeret fra dit ur.';
+  }
+
+  @override
   String get weightSourceManual => 'manuel';
 
   @override
