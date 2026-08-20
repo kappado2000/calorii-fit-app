@@ -27,6 +27,14 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Per-user daily photo-analysis counter (anti-abuse cap, see
+    // analyzePhoto.ts) — top-level, not nested under users/{uid}, precisely
+    // so the wildcard rule above can't let a client read/reset its own
+    // count. Touched only by the Admin SDK.
+    match /photoAnalysisQuota/{document} {
+      allow read, write: if false;
+    }
+
     // App version policy (see core/version) — readable by anyone,
     // including signed-out users on the login screen, since it's the
     // update gate itself. Never written by clients; updated by hand in

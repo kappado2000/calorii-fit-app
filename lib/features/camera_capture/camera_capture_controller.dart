@@ -6,6 +6,7 @@ import '../../data/datasources/remote/cloud_functions/analyze_photo_api_client.d
 import '../../data/models/analyzed_food_item.dart';
 import '../../domain/usecases/volume_to_calorie_calculator.dart';
 import '../../platform/depth_capture_channel.dart';
+import '../auth/auth_providers.dart';
 import 'camera_capture_state.dart';
 
 /// Drives the core Phase 1 pipeline end to end: capture (native depth
@@ -24,10 +25,15 @@ class CameraCaptureController extends StateNotifier<CameraCaptureState> {
       final capture = await _ref.read(depthCaptureChannelProvider).capturePhotoWithDepth();
 
       state = AnalyzingPhoto(capture);
+      final idToken = await _ref.read(firebaseAuthProvider).currentUser?.getIdToken();
+      if (idToken == null) {
+        state = CaptureFailed('Trebuie să fii autentificat pentru a analiza o fotografie.');
+        return;
+      }
       final apiClient = AnalyzePhotoApiClient();
       final AnalyzePhotoResponse analysis;
       try {
-        analysis = await apiClient.analyze(File(capture.photoPath));
+        analysis = await apiClient.analyze(File(capture.photoPath), idToken: idToken);
       } finally {
         apiClient.dispose();
       }

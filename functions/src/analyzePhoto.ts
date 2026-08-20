@@ -1,9 +1,45 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { getApps, initializeApp } from "firebase-admin/app";
 import Anthropic from "@anthropic-ai/sdk";
 import { densityTableAsPromptText } from "./densityTable";
 
+if (getApps().length === 0) {
+  initializeApp();
+}
+
 const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
+
+/** Anti-abuse ceiling, not a monetization gate — a paid-tier limit (if any)
+ * is a separate, higher-level product decision layered on top of this. */
+const DAILY_PHOTO_ANALYSIS_LIMIT = 20;
+
+/**
+ * Atomically checks and increments today's count for [uid] in one document
+ * (`{uid}_{date}`, top-level collection — never nested under users/{uid},
+ * which clients can read/write directly; this must only ever be touched by
+ * the Admin SDK, see firestore.rules). Throws resource-exhausted once the
+ * daily cap is hit, aborting the transaction so the count doesn't increment
+ * past the limit.
+ */
+async function checkAndIncrementDailyQuota(uid: string): Promise<void> {
+  const db = getFirestore();
+  const today = new Date().toISOString().slice(0, 10);
+  const docRef = db.collection("photoAnalysisQuota").doc(`${uid}_${today}`);
+
+  await db.runTransaction(async (transaction) => {
+    const snapshot = await transaction.get(docRef);
+    const count = (snapshot.data()?.count as number | undefined) ?? 0;
+    if (count >= DAILY_PHOTO_ANALYSIS_LIMIT) {
+      throw new HttpsError(
+        "resource-exhausted",
+        `Ai atins limita de ${DAILY_PHOTO_ANALYSIS_LIMIT} analize foto pe zi. Încearcă din nou mâine.`,
+      );
+    }
+    transaction.set(docRef, { count: count + 1, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  });
+}
 
 const DENSITY_CATEGORY_KEYS = [
   "cookedRice",
@@ -142,17 +178,20 @@ function buildReportTool() {
   };
 }
 
-// TODO(Phase 2): require a verified Firebase Auth token + App Check token,
-// and add a per-user daily quota (Firestore counter) before calling Claude —
-// see "Cloud Functions" section of the project plan. Phase 0/1 leaves this
-// open so the pipeline can be exercised without auth wired up yet.
+// TODO(Phase 2): also require an App Check token — see "Cloud Functions"
+// section of the project plan. Auth + daily quota are handled below now.
 export const analyzePhoto = onCall<AnalyzePhotoRequest>(
   { secrets: [ANTHROPIC_API_KEY], region: "europe-west1", cpu: 1, memory: "512MiB" },
   async (request): Promise<AnalyzePhotoResult> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Trebuie să fii autentificat pentru a analiza o fotografie.");
+    }
     const { imageBase64, mediaType } = request.data;
     if (!imageBase64 || !mediaType) {
       throw new HttpsError("invalid-argument", "imageBase64 and mediaType are required.");
     }
+
+    await checkAndIncrementDailyQuota(request.auth.uid);
 
     const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY.value() });
 

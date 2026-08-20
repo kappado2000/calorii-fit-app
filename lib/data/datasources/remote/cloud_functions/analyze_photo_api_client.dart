@@ -22,13 +22,20 @@ class AnalyzePhotoApiClient {
 
   final http.Client _httpClient;
 
-  Future<AnalyzePhotoResponse> analyze(File photoFile) async {
+  /// [idToken] is the caller's Firebase ID token — analyzePhoto now
+  /// requires an authenticated caller (it enforces a per-user daily quota
+  /// against real abuse/cost, which needs a real uid to key off), even
+  /// though this client still talks to the callable-function wire protocol
+  /// directly rather than through the full Firebase SDK. A bare
+  /// `Authorization: Bearer <token>` header is all `onCall` needs to
+  /// populate `request.auth` server-side.
+  Future<AnalyzePhotoResponse> analyze(File photoFile, {required String idToken}) async {
     final bytes = await photoFile.readAsBytes();
     final mediaType = _mediaTypeForPath(photoFile.path);
 
     final response = await _httpClient.post(
       Uri.parse(AppConfig.analyzePhotoUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $idToken'},
       body: jsonEncode({
         'data': {'imageBase64': base64Encode(bytes), 'mediaType': mediaType},
       }),
