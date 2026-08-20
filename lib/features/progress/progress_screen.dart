@@ -9,6 +9,7 @@ import '../../core/constants/micronutrient_reference.dart';
 import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
 import '../../domain/usecases/tdee_calculator.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import '../profile/profile_providers.dart';
 import 'adaptive_tdee_card.dart';
@@ -28,6 +29,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final historyAsync = ref.watch(dailyCalorieHistoryProvider(_period));
     final burnedHistory = ref.watch(dailyBurnedHistoryProvider(_period)).valueOrNull ?? {};
     final tdee = ref.watch(tdeeResultProvider);
@@ -36,7 +38,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         ref.watch(periodNutritionSummaryProvider(_period)).valueOrNull ?? PeriodNutritionSummary.empty;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Progres')),
+      appBar: AppBar(title: Text(l10n.progress)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -47,7 +49,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           if (profile != null) AdaptiveTdeeCard(profile: profile),
           SegmentedButton<ProgressPeriod>(
             segments: ProgressPeriod.values
-                .map((p) => ButtonSegment(value: p, label: Text(p.label)))
+                .map((p) => ButtonSegment(value: p, label: Text(p.label(l10n))))
                 .toList(),
             selected: {_period},
             onSelectionChanged: (selection) => setState(() => _period = selection.first),
@@ -60,13 +62,13 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             ),
             error: (error, stackTrace) => Padding(
               padding: const EdgeInsets.all(32),
-              child: Center(child: Text('Eroare: $error')),
+              child: Center(child: Text(l10n.errorPrefixed(error.toString()))),
             ),
             data: (history) {
               if (profile == null) {
-                return const Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Center(child: Text('Setează-ți mai întâi profilul și obiectivul din meniu.')),
+                return Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Center(child: Text(l10n.setUpProfileFirst)),
                 );
               }
               final start = _period == ProgressPeriod.sinceProgramStart
@@ -104,7 +106,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                   ).animate().fadeIn(duration: 300.ms),
                   const SizedBox(height: 16),
                   _ChartCard(
-                    title: 'Aport caloric',
+                    title: l10n.caloricIntake,
                     icon: Icons.restaurant_rounded,
                     borderColor: periodStatusColor,
                     thickGradientBorder: true,
@@ -119,7 +121,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                   ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
                   const SizedBox(height: 16),
                   _ChartCard(
-                    title: 'Deficit caloric zilnic',
+                    title: l10n.dailyCaloricDeficit,
                     icon: Icons.trending_down_rounded,
                     borderColor: periodStatusColor,
                     thickGradientBorder: true,
@@ -227,6 +229,7 @@ class _PeriodStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // Positive projectedKg = calories burned exceeded calories eaten over
     // the period, i.e. an expected loss — shown as "-X kg" since that's
     // how a scale would read it, even though internally it's a positive
@@ -237,7 +240,7 @@ class _PeriodStatsRow extends StatelessWidget {
         Expanded(
           child: _StatTile(
             icon: Icons.local_dining_rounded,
-            label: 'Total calorii',
+            label: l10n.totalCaloriesLabel,
             value: formatThousands(totalIntake.round()),
             color: const Color(0xFFEF9B3D),
           ),
@@ -246,7 +249,7 @@ class _PeriodStatsRow extends StatelessWidget {
         Expanded(
           child: _StatTile(
             icon: Icons.calendar_today_rounded,
-            label: 'Medie/zi',
+            label: l10n.avgPerDay,
             value: formatThousands(avgIntake.round()),
             color: const Color(0xFF5B6EE8),
           ),
@@ -255,7 +258,7 @@ class _PeriodStatsRow extends StatelessWidget {
         Expanded(
           child: _StatTile(
             icon: Icons.monitor_weight_outlined,
-            label: 'Scădere estimată',
+            label: l10n.estimatedLoss,
             value: '${isLoss ? '-' : '+'}${projectedKg.abs().toStringAsFixed(1)} kg',
             color: const Color(0xFF2FA84F),
           ),
@@ -315,20 +318,21 @@ class _MacroBalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final proteinKcal = summary.totalProtein * MacroNutrient.protein.kcalPerGram;
     final carbsKcal = summary.totalCarbs * MacroNutrient.carbs.kcalPerGram;
     final fatKcal = summary.totalFat * MacroNutrient.fat.kcalPerGram;
     final trackedKcal = proteinKcal + carbsKcal + fatKcal;
 
     return _ChartCard(
-      title: 'Echilibru macronutrienți',
+      title: l10n.macroBalanceTitle,
       icon: Icons.pie_chart_rounded,
       borderColor: const Color(0xFF7C5CFC),
       fixedHeight: false,
       child: trackedKcal <= 0
-          ? const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text('Niciun aliment cu proteine/carbohidrați/grăsimi cunoscute în această perioadă.'),
+          ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(l10n.macroBalanceNoData),
             )
           : Column(
               children: [
@@ -352,6 +356,7 @@ class _MacroBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final (min, max) = nutrient.recommendedShareRange;
     final inRange = share >= min && share <= max;
     final barColor = inRange ? const Color(0xFF1FAE7E) : const Color(0xFFE0724A);
@@ -361,9 +366,9 @@ class _MacroBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: Text(nutrient.label, style: Theme.of(context).textTheme.bodyMedium)),
+            Expanded(child: Text(nutrient.label(l10n), style: Theme.of(context).textTheme.bodyMedium)),
             Text(
-              '${(share * 100).round()}% (recomandat ${(min * 100).round()}-${(max * 100).round()}%)',
+              l10n.macroSharePercent((share * 100).round(), (min * 100).round(), (max * 100).round()),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
           ],
@@ -396,12 +401,13 @@ class _MicronutrientCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final coveragePct = summary.totalEntries == 0
         ? 0
         : (summary.entriesWithMicronutrientData / summary.totalEntries * 100).round();
 
     return _ChartCard(
-      title: 'Micronutrienți (medie/zi)',
+      title: l10n.micronutrientsTitle,
       icon: Icons.science_outlined,
       borderColor: const Color(0xFF1FAE7E),
       fixedHeight: false,
@@ -409,12 +415,9 @@ class _MicronutrientCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (summary.micronutrientTotals.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(
-                'Niciun aliment cu date despre vitamine/minerale în această perioadă — '
-                'vezi nota de mai jos.',
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(l10n.micronutrientsNoData),
             )
           else
             for (final nutrient in Micronutrient.values)
@@ -428,11 +431,12 @@ class _MicronutrientCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             summary.totalEntries == 0
-                ? 'Fără alimente înregistrate în această perioadă.'
-                : 'Date de vitamine/minerale disponibile pentru $coveragePct% din alimentele '
-                      'înregistrate (${summary.entriesWithMicronutrientData}/${summary.totalEntries}) — '
-                      'restul (mâncare de casă, produse fără etichetă) nu au date cunoscute și nu '
-                      'sunt incluse în medie.',
+                ? l10n.micronutrientsNoEntries
+                : l10n.micronutrientsCoverage(
+                    coveragePct,
+                    summary.entriesWithMicronutrientData,
+                    summary.totalEntries,
+                  ),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
           ),
         ],
@@ -450,6 +454,7 @@ class _MicronutrientBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final share = avgPerDay / nutrient.dailyReferenceValue;
     final barColor = share >= 0.8 ? const Color(0xFF1FAE7E) : const Color(0xFFE0724A);
 
@@ -458,9 +463,9 @@ class _MicronutrientBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: Text(nutrient.label, style: Theme.of(context).textTheme.bodyMedium)),
+            Expanded(child: Text(nutrient.label(l10n), style: Theme.of(context).textTheme.bodyMedium)),
             Text(
-              '${avgPerDay.toStringAsFixed(1)} ${nutrient.unit} · ${(share * 100).round()}% din doza zilnică',
+              l10n.micronutrientShare(avgPerDay.toStringAsFixed(1), nutrient.unit, (share * 100).round()),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
           ],
@@ -504,6 +509,7 @@ class _IntakeChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final maxIntake = days.map((d) => history[d] ?? 0).fold<double>(0, (a, b) => a > b ? a : b);
     final rawMaxY = [maxIntake, target ?? 0, 100].reduce((a, b) => a > b ? a : b) * 1.25;
     // A round, non-overlap-prone step (nearest 100/250/500 depending on
@@ -570,7 +576,7 @@ class _IntakeChart extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         fontSize: 10.5,
                       ),
-                      labelResolver: (_) => 'Țintă',
+                      labelResolver: (_) => l10n.chartTargetLabel,
                     ),
                   ),
                 ],

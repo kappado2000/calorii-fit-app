@@ -1,7 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
+
+import '../../l10n/app_localizations.dart';
 
 const int _dailyReminderId = 1001;
 
@@ -46,23 +49,27 @@ class NotificationService {
 
   /// Schedules (or reschedules) the daily log reminder for [hour]:[minute]
   /// local time, repeating every day — `matchDateTimeComponents: time` is
-  /// what makes it recurring rather than a one-shot.
-  Future<void> scheduleDailyReminder({required int hour, required int minute}) async {
+  /// what makes it recurring rather than a one-shot. [locale] must be one
+  /// of AppLocalizations.supportedLocales (resolve it first — see
+  /// reminder_settings_providers.dart) since this runs with no
+  /// BuildContext to read the locale from directly.
+  Future<void> scheduleDailyReminder({required int hour, required int minute, required Locale locale}) async {
     await _init();
     await _ensureTimezone();
+    final l10n = await AppLocalizations.delegate.load(locale);
     await _plugin.zonedSchedule(
       id: _dailyReminderId,
-      title: 'Nu uita să-ți loghezi mesele',
-      body: 'Câteva secunde acum îți țin jurnalul la zi și streak-ul viu.',
+      title: l10n.dailyReminderTitle,
+      body: l10n.dailyReminderBody,
       scheduledDate: _nextInstanceOf(hour, minute),
-      notificationDetails: const NotificationDetails(
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_log_reminder',
-          'Memento zilnic',
-          channelDescription: 'Memento să-ți loghezi mesele din ziua curentă',
+          l10n.dailyReminderChannelName,
+          channelDescription: l10n.dailyReminderChannelDescription,
           importance: Importance.defaultImportance,
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: const DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,

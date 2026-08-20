@@ -1,3 +1,5 @@
+import '../../l10n/app_localizations.dart';
+
 enum ActivityType {
   walkingCasual,
   walkingBrisk,
@@ -18,40 +20,43 @@ enum ActivityType {
 }
 
 extension ActivityTypeLabel on ActivityType {
-  String get label {
+  /// Takes AppLocalizations directly (not a BuildContext) so call sites
+  /// that already resolved `l10n` once (e.g. mapping a whole list) don't
+  /// re-resolve it per item.
+  String label(AppLocalizations l10n) {
     switch (this) {
       case ActivityType.walkingCasual:
-        return 'Mers pe jos (lejer)';
+        return l10n.activityWalkingCasual;
       case ActivityType.walkingBrisk:
-        return 'Mers pe jos (alert)';
+        return l10n.activityWalkingBrisk;
       case ActivityType.running:
-        return 'Alergare';
+        return l10n.activityRunning;
       case ActivityType.runningFast:
-        return 'Alergare rapidă';
+        return l10n.activityRunningFast;
       case ActivityType.cycling:
-        return 'Ciclism (moderat)';
+        return l10n.activityCycling;
       case ActivityType.cyclingIntense:
-        return 'Ciclism (intens)';
+        return l10n.activityCyclingIntense;
       case ActivityType.swimming:
-        return 'Înot';
+        return l10n.activitySwimming;
       case ActivityType.strengthTraining:
-        return 'Antrenament de forță';
+        return l10n.activityStrengthTraining;
       case ActivityType.yoga:
-        return 'Yoga';
+        return l10n.activityYoga;
       case ActivityType.dancing:
-        return 'Dans';
+        return l10n.activityDancing;
       case ActivityType.hiking:
-        return 'Drumeție';
+        return l10n.activityHiking;
       case ActivityType.jumpRope:
-        return 'Sărit coarda';
+        return l10n.activityJumpRope;
       case ActivityType.football:
-        return 'Fotbal';
+        return l10n.activityFootball;
       case ActivityType.basketball:
-        return 'Baschet';
+        return l10n.activityBasketball;
       case ActivityType.tennis:
-        return 'Tenis';
+        return l10n.activityTennis;
       case ActivityType.other:
-        return 'Altă activitate';
+        return l10n.activityOther;
     }
   }
 }

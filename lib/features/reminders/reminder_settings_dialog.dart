@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'reminder_settings_providers.dart';
 
 class ReminderSettingsDialog extends ConsumerWidget {
@@ -14,7 +15,7 @@ class ReminderSettingsDialog extends ConsumerWidget {
     final granted = await ref.read(reminderSettingsProvider.notifier).setEnabled(value);
     if (!granted && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Permite notificările pentru aplicație din setările telefonului.')),
+        SnackBar(content: Text(AppLocalizations.of(context).reminderPermissionDenied)),
       );
     }
   }
@@ -23,7 +24,7 @@ class ReminderSettingsDialog extends ConsumerWidget {
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: settings.hour, minute: settings.minute),
-      helpText: 'Ora mementoului',
+      helpText: AppLocalizations.of(context).reminderTimePickerHelp,
     );
     if (picked != null) {
       await ref.read(reminderSettingsProvider.notifier).setTime(picked.hour, picked.minute);
@@ -33,16 +34,17 @@ class ReminderSettingsDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(reminderSettingsProvider);
+    final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: const Text('Memento zilnic'),
+      title: Text(l10n.reminderDialogTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Notificare zilnică'),
-            subtitle: const Text('O rememorare să-ți loghezi mesele'),
+            title: Text(l10n.reminderDailyNotification),
+            subtitle: Text(l10n.reminderDailyNotificationSubtitle),
             value: settings.enabled,
             onChanged: (value) => _toggle(context, ref, value),
           ),
@@ -50,7 +52,7 @@ class ReminderSettingsDialog extends ConsumerWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.schedule_rounded),
-              title: const Text('Ora'),
+              title: Text(l10n.reminderTimeLabel),
               trailing: Text(
                 '${settings.hour.toString().padLeft(2, '0')}:${settings.minute.toString().padLeft(2, '0')}',
                 style: Theme.of(context).textTheme.titleMedium,
@@ -60,7 +62,7 @@ class ReminderSettingsDialog extends ConsumerWidget {
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Închide')),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.close)),
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/home_widget/home_widget_sync_provider.dart';
 import '../../core/theme/app_colors.dart';
@@ -15,6 +16,7 @@ import '../../data/models/user_profile.dart';
 import '../../data/models/workout_entry.dart';
 import '../../domain/usecases/met_calorie_estimator.dart';
 import '../../domain/usecases/tdee_calculator.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared_widgets/deficit_gauge.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import '../activity_sync/activity_sync_screen.dart';
@@ -27,6 +29,7 @@ import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
 import '../recipes/recipes_screen.dart';
 import '../reminders/reminder_settings_dialog.dart';
+import '../settings/language_picker_dialog.dart';
 import '../streaks/streak_badge.dart';
 import '../workout_log/add_workout_sheet.dart';
 import '../workout_log/workout_log_providers.dart';
@@ -50,12 +53,13 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
   }
 
   Future<void> _pickDate() async {
+    final l10n = AppLocalizations.of(context);
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      helpText: 'Alege ziua',
+      helpText: l10n.pickDayHelp,
     );
     if (picked != null) {
       setState(() => _selectedDate = normalizeDate(picked));
@@ -64,6 +68,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final today = _selectedDate;
     final entries = ref.watch(dailyLogProvider(today));
     final totalCalories = entries.fold<double>(
@@ -81,18 +86,18 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calorii Fit'),
+        title: Text(l10n.appTitle),
         actions: [
           const StreakBadge(),
           IconButton(
-            tooltip: 'Progres',
+            tooltip: l10n.progress,
             icon: const Icon(Icons.show_chart_rounded),
             onPressed: () => Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (_) => const ProgressScreen())),
           ),
           IconButton(
-            tooltip: 'Activitate & sincronizare',
+            tooltip: l10n.activityAndSync,
             icon: const Icon(Icons.watch_outlined),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const ActivitySyncScreen()),
@@ -104,9 +109,9 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: () => context.push('/onboarding'),
-                child: const ListTile(
-                  leading: Icon(Icons.tune_rounded),
-                  title: Text('Editează profil/obiectiv'),
+                child: ListTile(
+                  leading: const Icon(Icons.tune_rounded),
+                  title: Text(l10n.editProfileGoal),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -116,9 +121,9 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                     builder: (_) => const DeviceCapabilityScreen(),
                   ),
                 ),
-                child: const ListTile(
-                  leading: Icon(Icons.phone_iphone_rounded),
-                  title: Text('Verifică capabilitate device'),
+                child: ListTile(
+                  leading: const Icon(Icons.phone_iphone_rounded),
+                  title: Text(l10n.checkDeviceCapability),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -126,25 +131,33 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 value: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const RecipesScreen()),
                 ),
-                child: const ListTile(
-                  leading: Icon(Icons.menu_book_rounded),
-                  title: Text('Rețetele mele'),
+                child: ListTile(
+                  leading: const Icon(Icons.menu_book_rounded),
+                  title: Text(l10n.myRecipes),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
               PopupMenuItem(
                 value: () => ReminderSettingsDialog.show(context),
-                child: const ListTile(
-                  leading: Icon(Icons.notifications_active_outlined),
-                  title: Text('Memento zilnic'),
+                child: ListTile(
+                  leading: const Icon(Icons.notifications_active_outlined),
+                  title: Text(l10n.reminderDialogTitle),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: () => LanguagePickerDialog.show(context),
+                child: ListTile(
+                  leading: const Icon(Icons.language_rounded),
+                  title: Text(l10n.languageMenuEntry),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
               PopupMenuItem(
                 value: () => ref.read(authControllerProvider).signOut(),
-                child: const ListTile(
-                  leading: Icon(Icons.logout_rounded),
-                  title: Text('Deconectare'),
+                child: ListTile(
+                  leading: const Icon(Icons.logout_rounded),
+                  title: Text(l10n.signOut),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -153,7 +166,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 child: ListTile(
                   leading: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.error),
                   title: Text(
-                    'Șterge cont definitiv',
+                    l10n.deleteAccountTitle,
                     style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                   contentPadding: EdgeInsets.zero,
@@ -168,7 +181,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
           context,
         ).push(MaterialPageRoute(builder: (_) => const CameraCaptureScreen())),
         icon: const Icon(Icons.camera_alt_rounded),
-        label: const Text('Fotografiază'),
+        label: Text(l10n.takePhoto),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
@@ -179,7 +192,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
               IconButton(
                 onPressed: () => _shiftDay(-1),
                 icon: const Icon(Icons.chevron_left_rounded),
-                tooltip: 'Ziua anterioară',
+                tooltip: l10n.previousDay,
               ),
               InkWell(
                 borderRadius: BorderRadius.circular(12),
@@ -193,7 +206,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        _dateLabelRo(today),
+                        _dateLabel(l10n, today),
                         style: Theme.of(context).textTheme.titleSmall
                             ?.copyWith(fontWeight: FontWeight.w700),
                       ),
@@ -210,7 +223,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
               IconButton(
                 onPressed: () => _shiftDay(1),
                 icon: const Icon(Icons.chevron_right_rounded),
-                tooltip: 'Ziua următoare',
+                tooltip: l10n.nextDay,
               ),
             ],
           ),
@@ -259,40 +272,26 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
   }
 }
 
-const _romanianMonths = [
-  'ianuarie',
-  'februarie',
-  'martie',
-  'aprilie',
-  'mai',
-  'iunie',
-  'iulie',
-  'august',
-  'septembrie',
-  'octombrie',
-  'noiembrie',
-  'decembrie',
-];
-
-String _formatDateRo(DateTime date) =>
-    '${date.day} ${_romanianMonths[date.month - 1]}';
-
 /// "Azi"/"Ieri"/"Mâine" when applicable (the common case), otherwise the
 /// plain date — used in the day-navigation header so it's obvious at a
 /// glance whether you're looking at today or a day you've navigated to.
-String _dateLabelRo(DateTime date) {
+/// Month names come from `intl`'s own locale data (see main.dart's
+/// initializeDateFormatting call), not a hand-translated list — that
+/// covers every supported language correctly, including ones with
+/// non-trivial month-name grammar.
+String _dateLabel(AppLocalizations l10n, DateTime date) {
   final today = normalizeDate(DateTime.now());
   final diff = date.difference(today).inDays;
-  final formatted = _formatDateRo(date);
+  final formatted = DateFormat('d MMMM', l10n.localeName).format(date);
   switch (diff) {
     case 0:
-      return 'Azi, $formatted';
+      return l10n.dateToday(formatted);
     case -1:
-      return 'Ieri, $formatted';
+      return l10n.dateYesterday(formatted);
     case 1:
-      return 'Mâine, $formatted';
+      return l10n.dateTomorrow(formatted);
     default:
-      return date.year == today.year ? formatted : '$formatted ${date.year}';
+      return date.year == today.year ? formatted : DateFormat('d MMMM y', l10n.localeName).format(date);
   }
 }
 
@@ -328,18 +327,18 @@ Color _colorForMeal(MealType mealType) {
 /// The calorie ceiling/floor derived from the goal set in onboarding (target
 /// kg/week) plus any exercise logged that day — phrased by goal direction so
 /// "don't exceed" only appears when the goal is actually to lose weight.
-String _limitCaption(Goal? goal, double adjustedTarget) {
+String _limitCaption(AppLocalizations l10n, Goal? goal, double adjustedTarget) {
+  final kcal = formatThousands(adjustedTarget.round());
   switch (goal) {
     case Goal.lose:
-      return 'Nu depăși ${formatThousands(adjustedTarget.round())} kcal, ca să atingi ritmul de slăbit propus.';
+      return l10n.limitCaptionLose(kcal);
     case Goal.gain:
-      return 'Ai nevoie de cel puțin ${formatThousands(adjustedTarget.round())} kcal pentru ritmul de creștere propus.';
+      return l10n.limitCaptionGain(kcal);
     case Goal.maintain:
     case null:
-      return 'Rămâi în jurul a ${formatThousands(adjustedTarget.round())} kcal pentru menținere.';
+      return l10n.limitCaptionMaintain(kcal);
   }
 }
-
 
 class _DailyProgressCard extends StatelessWidget {
   const _DailyProgressCard({
@@ -358,6 +357,7 @@ class _DailyProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appColors = context.appColors;
+    final l10n = AppLocalizations.of(context);
 
     if (tdee == null) {
       return Container(
@@ -374,7 +374,7 @@ class _DailyProgressCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Configurează-ți obiectivul',
+                    l10n.setUpYourGoal,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -382,7 +382,7 @@ class _DailyProgressCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${formatThousands(totalCalories.round())} kcal azi',
+                    l10n.kcalToday(formatThousands(totalCalories.round())),
                     style: Theme.of(context).textTheme.bodyMedium
                         ?.copyWith(color: Colors.white70),
                   ),
@@ -395,7 +395,7 @@ class _DailyProgressCard extends StatelessWidget {
                 foregroundColor: appColors.protein,
               ),
               onPressed: () => context.push('/onboarding'),
-              child: const Text('Setează'),
+              child: Text(l10n.setUp),
             ),
           ],
         ),
@@ -445,7 +445,7 @@ class _DailyProgressCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Ținta: ${formatThousands(tdee!.dailyDeficit.round())} kcal',
+                            l10n.dailyTargetLabel(formatThousands(tdee!.dailyDeficit.round())),
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -457,7 +457,7 @@ class _DailyProgressCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Deficit caloric',
+                              l10n.calorieDeficit,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(width: 4),
@@ -490,7 +490,7 @@ class _DailyProgressCard extends StatelessWidget {
                       // being alive and moving around, not from a sport.
                       icon: Icons.local_fire_department_rounded,
                       iconColor: appColors.protein,
-                      label: 'Total arse',
+                      label: l10n.totalBurnedLabel,
                       value: totalBurnedToday.round(),
                     ),
                   ),
@@ -498,7 +498,7 @@ class _DailyProgressCard extends StatelessWidget {
                     child: _StatBlock(
                       icon: Icons.shopping_basket_rounded,
                       iconColor: const Color(0xFF1FAE7E),
-                      label: 'Total consumate',
+                      label: l10n.totalConsumedLabel,
                       value: totalCalories.round(),
                       target: adjustedTarget.round(),
                     ),
@@ -531,8 +531,8 @@ class _DailyProgressCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         isOverLimit
-                            ? 'Ai depășit limita cu ${formatThousands(overBy.round())} kcal (peste ${formatThousands(adjustedTarget.round())} kcal).'
-                            : _limitCaption(goal, adjustedTarget),
+                            ? l10n.overLimitCaption(formatThousands(overBy.round()), formatThousands(adjustedTarget.round()))
+                            : _limitCaption(l10n, goal, adjustedTarget),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isOverLimit
                               ? colorScheme.onErrorContainer
@@ -643,6 +643,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final subtotal = widget.entries.fold<double>(
       0,
       (sum, entry) => sum + entry.calories,
@@ -698,7 +699,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              widget.mealType.label,
+                              widget.mealType.label(l10n),
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     color: mealColor,
@@ -710,7 +711,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                         if (rangeLow != null && rangeHigh != null) ...[
                           const SizedBox(height: 2),
                           Text(
-                            'Valoare recomandată: ${formatThousands(rangeLow.round())}–${formatThousands(rangeHigh.round())} kcal',
+                            l10n.recommendedRange(formatThousands(rangeLow.round()), formatThousands(rangeHigh.round())),
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
@@ -799,7 +800,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                       date: widget.date,
                     ),
                     icon: const Icon(Icons.add_rounded),
-                    label: const Text('Adaugă aliment'),
+                    label: Text(l10n.addFood),
                   ),
                 ),
               ],
@@ -835,6 +836,7 @@ class _WorkoutSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return gradientBorderFrame(
       context,
       statusColor: _borderColor,
@@ -856,7 +858,7 @@ class _WorkoutSection extends ConsumerWidget {
                       color: colorScheme.primary,
                     ),
                     title: Text(
-                      'Activitate sportivă',
+                      l10n.sportActivity,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     trailing: Row(
@@ -875,10 +877,10 @@ class _WorkoutSection extends ConsumerWidget {
                   for (final workout in workouts)
                     ListTile(
                       dense: true,
-                      title: Text(workout.activityType.label),
+                      title: Text(workout.activityType.label(l10n)),
                       subtitle: workout.duration.inMinutes > 0
                           ? Text('${workout.duration.inMinutes} min')
-                          : const Text('Calorii introduse manual'),
+                          : Text(l10n.manualCaloriesEntered),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -899,7 +901,7 @@ class _WorkoutSection extends ConsumerWidget {
                     child: TextButton.icon(
                       onPressed: () => AddWorkoutSheet.show(context, date: date),
                       icon: const Icon(Icons.add_rounded),
-                      label: const Text('Adaugă activitate'),
+                      label: Text(l10n.addActivity),
                     ),
                   ),
                 ],

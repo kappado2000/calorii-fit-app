@@ -2,6 +2,7 @@ import 'package:depth_capture/depth_capture.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../device_capability/device_capability_screen.dart';
 
 /// The trust/differentiation screen: most competitor apps guess calories
@@ -17,62 +18,48 @@ class HowItWorksScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final capabilities = ref.watch(captureCapabilitiesProvider).valueOrNull;
     final source = capabilities?.bestAvailableSource;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cum calculăm caloriile')),
+      appBar: AppBar(title: Text(l10n.howItWorksTitle)),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Text(
-            'Majoritatea aplicațiilor de nutriție ghicesc porția dintr-o '
-            'singură fotografie 2D. Calorii Fit măsoară efectiv volumul '
-            'mâncării de pe farfurie, folosind harta de adâncime a '
-            'telefonului tău — de asta estimarea e mai precisă.',
+            l10n.howItWorksIntro,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
           _StepCard(
             number: 1,
             icon: Icons.camera_alt_rounded,
-            title: 'Fotografiezi farfuria',
-            description: 'O singură poză, fără poziționare specială.',
+            title: l10n.howItWorksStep1Title,
+            description: l10n.howItWorksStep1Description,
           ),
           _StepCard(
             number: 2,
             icon: Icons.threed_rotation_rounded,
-            title: 'Telefonul captează adâncimea',
-            description: source == null
-                ? 'Telefonul tău folosește LiDAR, ARCore Depth sau camera duală, în funcție de model, ca să știe cât de înaltă e mâncarea, nu doar cum arată de sus.'
-                : _depthExplanationFor(source),
+            title: l10n.howItWorksStep2Title,
+            description: source == null ? l10n.howItWorksStep2GenericDescription : _depthExplanationFor(l10n, source),
             highlighted: true,
           ),
           _StepCard(
             number: 3,
             icon: Icons.psychology_alt_rounded,
-            title: 'Claude identifică alimentele',
-            description:
-                'Modelul recunoaște ce e pe farfurie și marchează conturul '
-                'aproximativ al fiecărui aliment — nu calculează el caloriile, '
-                'doar identifică.',
+            title: l10n.howItWorksStep3Title,
+            description: l10n.howItWorksStep3Description,
           ),
           _StepCard(
             number: 4,
             icon: Icons.calculate_rounded,
-            title: 'Volumul devine grame, apoi calorii',
-            description:
-                'Harta de adâncime × conturul fiecărui aliment dă un volum '
-                'în cm³. Un tabel de densități (specific fiecărui tip de '
-                'aliment) transformă volumul în grame, iar baza de date '
-                'nutrițională transformă gramele în calorii și macro-nutrienți.',
+            title: l10n.howItWorksStep4Title,
+            description: l10n.howItWorksStep4Description,
           ),
           _StepCard(
             number: 5,
             icon: Icons.fact_check_rounded,
-            title: 'Tu confirmi sau corectezi',
-            description:
-                'Estimarea automată nu se salvează niciodată direct — vezi '
-                'mereu un ecran de confirmare unde poți ajusta porția sau '
-                'schimba alimentul identificat.',
+            title: l10n.howItWorksStep5Title,
+            description: l10n.howItWorksStep5Description,
           ),
           const SizedBox(height: 8),
           Padding(
@@ -82,7 +69,7 @@ class HowItWorksScreen extends ConsumerWidget {
                 MaterialPageRoute(builder: (_) => const DeviceCapabilityScreen()),
               ),
               icon: const Icon(Icons.phone_iphone_rounded, size: 18),
-              label: const Text('Vezi ce metodă folosește telefonul tău'),
+              label: Text(l10n.howItWorksSeeDeviceMethod),
             ),
           ),
         ],
@@ -90,18 +77,18 @@ class HowItWorksScreen extends ConsumerWidget {
     );
   }
 
-  String _depthExplanationFor(DepthSource source) {
+  String _depthExplanationFor(AppLocalizations l10n, DepthSource source) {
     switch (source) {
       case DepthSource.lidar:
-        return 'Telefonul tău are LiDAR — cea mai precisă metodă disponibilă azi pe un telefon, cu o eroare tipică de doar 10-15%.';
+        return l10n.howItWorksDepthLidar;
       case DepthSource.arcoreDepth:
-        return 'Telefonul tău folosește ARCore Depth API pentru a estima adâncimea scenei.';
+        return l10n.howItWorksDepthArcore;
       case DepthSource.portraitDualCamera:
-        return 'Telefonul tău estimează adâncimea din camera duală (mod portret) — mai puțin precis decât LiDAR, dar tot mai bun decât o poză simplă.';
+        return l10n.howItWorksDepthPortrait;
       case DepthSource.referenceObjectOnly:
-        return 'Telefonul tău nu are senzor de adâncime, așa că folosim diametrul standard al unei farfurii ca referință de scară — cea mai puțin precisă metodă, dar tot mai bună decât o ghicire pur vizuală.';
+        return l10n.howItWorksDepthReference;
       case DepthSource.none:
-        return 'Nu am putut determina metoda folosită de telefonul tău.';
+        return l10n.howItWorksDepthUnknown;
     }
   }
 }

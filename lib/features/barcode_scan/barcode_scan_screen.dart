@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../data/models/food_product.dart';
+import '../../l10n/app_localizations.dart';
 import '../food_log/food_log_providers.dart';
 
 /// Scans a product barcode and resolves it via the `lookupBarcode` Cloud
@@ -75,7 +76,7 @@ class _BarcodeScanScreenState extends ConsumerState<BarcodeScanScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Scanează codul de bare'),
+        title: Text(AppLocalizations.of(context).barcodeScanTitle),
         actions: [
           IconButton(
             icon: ValueListenableBuilder(
@@ -133,6 +134,7 @@ class _NotFoundPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -148,7 +150,7 @@ class _NotFoundPanel extends StatelessWidget {
             const Icon(Icons.search_off_rounded, size: 36),
             const SizedBox(height: 8),
             Text(
-              'Produsul cu codul $barcode nu a fost găsit.',
+              l10n.barcodeNotFound(barcode ?? ''),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -158,12 +160,12 @@ class _NotFoundPanel extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Adaugă manual'),
+                    child: Text(l10n.addManually),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: FilledButton(onPressed: onRetry, child: const Text('Scanează din nou')),
+                  child: FilledButton(onPressed: onRetry, child: Text(l10n.scanAgain)),
                 ),
               ],
             ),

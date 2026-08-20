@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/models/user_profile.dart';
+import '../../l10n/app_localizations.dart';
 import '../profile/profile_providers.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -157,6 +158,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         leading: _page > 0
@@ -232,7 +234,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
-                    : Text(_page == _totalPages - 1 ? 'Finalizează' : 'Continuă'),
+                    : Text(_page == _totalPages - 1 ? l10n.finish : l10n.continueLabel),
               ),
             ),
           ),
@@ -288,37 +290,38 @@ class _AgeSexStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final age = int.tryParse(ageController.text);
     final ageError = age == null
         ? null
         : age < _minimumAge
-        ? 'Aplicația e destinată persoanelor de la $_minimumAge ani în sus.'
+        ? l10n.onboardingAgeTooLow(_minimumAge)
         : age > _maximumAge
-        ? 'Valoare invalidă.'
+        ? l10n.onboardingAgeInvalid
         : null;
 
     return _StepScaffold(
-      title: 'Câțiva ani și sexul biologic',
+      title: l10n.onboardingAgeSexTitle,
       icon: Icons.cake_rounded,
       children: [
         TextField(
           controller: ageController,
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: 'Vârstă', suffixText: 'ani', errorText: ageError),
+          decoration: InputDecoration(labelText: l10n.age, suffixText: l10n.years, errorText: ageError),
           onChanged: (_) => onTextChanged(),
         ),
         const SizedBox(height: 20),
         SegmentedButton<Sex>(
-          segments: const [
-            ButtonSegment(value: Sex.female, label: Text('Femeie')),
-            ButtonSegment(value: Sex.male, label: Text('Bărbat')),
+          segments: [
+            ButtonSegment(value: Sex.female, label: Text(l10n.sexFemale)),
+            ButtonSegment(value: Sex.male, label: Text(l10n.sexMale)),
           ],
           selected: {sex},
           onSelectionChanged: (selection) => onSexChanged(selection.first),
         ),
         const SizedBox(height: 8),
         Text(
-          'Folosit doar pentru calculul metabolismului bazal (formula Mifflin-St Jeor).',
+          l10n.onboardingSexHint,
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ],
@@ -339,21 +342,22 @@ class _HeightWeightStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return _StepScaffold(
-      title: 'Înălțime și greutate actuală',
+      title: l10n.onboardingHeightWeightTitle,
       icon: Icons.straighten_rounded,
       children: [
         TextField(
           controller: heightController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Înălțime', suffixText: 'cm'),
+          decoration: InputDecoration(labelText: l10n.height, suffixText: 'cm'),
           onChanged: (_) => onTextChanged(),
         ),
         const SizedBox(height: 16),
         TextField(
           controller: weightController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Greutate', suffixText: 'kg'),
+          decoration: InputDecoration(labelText: l10n.weight, suffixText: 'kg'),
           onChanged: (_) => onTextChanged(),
         ),
       ],
@@ -370,8 +374,9 @@ class _ActivityStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return _StepScaffold(
-      title: 'Nivel de activitate fizică',
+      title: l10n.onboardingActivityTitle,
       icon: Icons.directions_run_rounded,
       children: [
         RadioGroup<ActivityLevel>(
@@ -390,7 +395,7 @@ class _ActivityStep extends StatelessWidget {
                   ),
                   child: RadioListTile<ActivityLevel>(
                     value: level,
-                    title: Text(level.label),
+                    title: Text(level.label(l10n)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
@@ -417,12 +422,13 @@ class _GoalStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return _StepScaffold(
-      title: 'Care e obiectivul tău?',
+      title: l10n.onboardingGoalTitle,
       icon: Icons.flag_rounded,
       children: [
         SegmentedButton<Goal>(
-          segments: Goal.values.map((g) => ButtonSegment(value: g, label: Text(g.label))).toList(),
+          segments: Goal.values.map((g) => ButtonSegment(value: g, label: Text(g.label(l10n)))).toList(),
           selected: {goal},
           onSelectionChanged: (selection) => onGoalChanged(selection.first),
         ),
@@ -432,14 +438,14 @@ class _GoalStep extends StatelessWidget {
             controller: targetRateController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
-              labelText: goal == Goal.lose ? 'Ritm de slăbit dorit' : 'Ritm de creștere dorit',
-              suffixText: 'kg/săptămână',
+              labelText: goal == Goal.lose ? l10n.onboardingLossRate : l10n.onboardingGainRate,
+              suffixText: l10n.kgPerWeek,
             ),
             onChanged: (_) => onTextChanged(),
           ),
           const SizedBox(height: 8),
           Text(
-            'Recomandat: 0.25-0.75 kg/săptămână pentru un ritm sustenabil.',
+            l10n.onboardingRateRecommendation,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -461,36 +467,27 @@ class _DisclaimerStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return _StepScaffold(
-      title: 'Înainte să începi',
+      title: l10n.disclaimerTitle,
       icon: Icons.health_and_safety_outlined,
       children: [
         Text(
-          'Calorii Fit estimează necesarul caloric și ritmul de slăbit pe baza unor '
-          'formule general acceptate (Mifflin-St Jeor), nu pe baza unei evaluări '
-          'medicale individuale.',
+          l10n.disclaimerIntro,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 16),
         _DisclaimerPoint(
           icon: Icons.medical_services_outlined,
-          text:
-              'Nu înlocuiește sfatul unui medic sau nutriționist — mai ales dacă ai o '
-              'afecțiune medicală, ești însărcinată sau alăptezi.',
+          text: l10n.disclaimerMedical,
         ),
         _DisclaimerPoint(
           icon: Icons.warning_amber_rounded,
-          text:
-              'Identificarea alimentelor din fotografie nu detectează alergeni. '
-              'Dacă ai o alergie sau intoleranță severă, verifică mereu ingredientele '
-              'chiar tu, nu te baza pe aplicație pentru asta.',
+          text: l10n.disclaimerAllergens,
         ),
         _DisclaimerPoint(
           icon: Icons.favorite_border_rounded,
-          text:
-              'Dacă ai avut sau ai o relație dificilă cu alimentația (tulburări de '
-              'alimentație), discută cu un medic înainte de a urmări calorii — '
-              'aplicația nu e gândită să înlocuiască acel sprijin.',
+          text: l10n.disclaimerEatingDisorders,
         ),
         const SizedBox(height: 8),
         InkWell(
@@ -508,7 +505,7 @@ class _DisclaimerStep extends StatelessWidget {
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    'Am înțeles și sunt de acord să folosesc aplicația în cunoștință de cauză.',
+                    l10n.disclaimerAcceptLabel,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),

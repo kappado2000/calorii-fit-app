@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/weight_entry.dart';
+import '../../l10n/app_localizations.dart';
 import '../profile/profile_providers.dart';
 
 /// Add or edit a manual weight entry — full date *and* time (not just the
@@ -45,18 +46,19 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
   String _formatWeight(double kg) => kg == kg.roundToDouble() ? kg.toStringAsFixed(0) : kg.toString();
 
   Future<void> _pickDateTime() async {
+    final l10n = AppLocalizations.of(context);
     final date = await showDatePicker(
       context: context,
       initialDate: _dateTime,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
-      helpText: 'Data cântăririi',
+      helpText: l10n.weighInDateHelp,
     );
     if (date == null || !mounted) return;
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(_dateTime),
-      helpText: 'Ora cântăririi',
+      helpText: l10n.weighInTimeHelp,
     );
     if (time == null) return;
     setState(() {
@@ -93,8 +95,9 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(widget.existing == null ? 'Adaugă greutate' : 'Editează greutatea'),
+      title: Text(widget.existing == null ? l10n.addWeightTitle : l10n.editWeightTitle),
       content: Form(
         key: _formKey,
         child: Column(
@@ -105,10 +108,10 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
               controller: _weightController,
               autofocus: widget.existing == null,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'Greutate', suffixText: 'kg'),
+              decoration: InputDecoration(labelText: l10n.weight, suffixText: 'kg'),
               validator: (value) {
                 final parsed = double.tryParse((value ?? '').replaceAll(',', '.'));
-                if (parsed == null || parsed <= 0 || parsed > 400) return 'Valoare invalidă';
+                if (parsed == null || parsed <= 0 || parsed > 400) return l10n.invalidValue;
                 return null;
               },
             ),
@@ -127,10 +130,10 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
           TextButton(
             onPressed: _saving ? null : _delete,
             style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
-            child: const Text('Șterge'),
+            child: Text(l10n.delete),
           ),
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Anulează')),
-        FilledButton(onPressed: _saving ? null : _save, child: const Text('Salvează')),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.cancel)),
+        FilledButton(onPressed: _saving ? null : _save, child: Text(l10n.save)),
       ],
     );
   }

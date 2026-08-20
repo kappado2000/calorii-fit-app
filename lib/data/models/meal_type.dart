@@ -1,16 +1,18 @@
+import '../../l10n/app_localizations.dart';
+
 enum MealType { breakfast, lunch, dinner, snack }
 
 extension MealTypeLabel on MealType {
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case MealType.breakfast:
-        return 'Dimineață';
+        return l10n.mealBreakfast;
       case MealType.lunch:
-        return 'Prânz';
+        return l10n.mealLunch;
       case MealType.dinner:
-        return 'Seară';
+        return l10n.mealDinner;
       case MealType.snack:
-        return 'Gustare';
+        return l10n.mealSnack;
     }
   }
 

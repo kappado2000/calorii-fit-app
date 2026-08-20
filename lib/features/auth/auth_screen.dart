@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import 'auth_providers.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
@@ -58,9 +59,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Future<void> _resetPassword() async {
+    final l10n = AppLocalizations.of(context);
     final email = _emailController.text.trim();
     if (email.isEmpty) {
-      setState(() => _errorMessage = 'Introdu emailul mai întâi, ca să-ți trimitem linkul de resetare.');
+      setState(() => _errorMessage = l10n.authEnterEmailFirst);
       return;
     }
     try {
@@ -68,7 +70,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Ți-am trimis un email de resetare a parolei.')));
+        ).showSnackBar(SnackBar(content: Text(l10n.authPasswordResetSent)));
       }
     } on FirebaseAuthException catch (e) {
       setState(() => _errorMessage = _messageForAuthError(e));
@@ -76,20 +78,21 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   String _messageForAuthError(FirebaseAuthException e) {
+    final l10n = AppLocalizations.of(context);
     switch (e.code) {
       case 'invalid-email':
-        return 'Adresă de email invalidă.';
+        return l10n.authErrorInvalidEmail;
       case 'user-not-found':
-        return 'Nu există niciun cont cu acest email.';
+        return l10n.authErrorUserNotFound;
       case 'wrong-password':
       case 'invalid-credential':
-        return 'Email sau parolă greșită.';
+        return l10n.authErrorWrongCredentials;
       case 'email-already-in-use':
-        return 'Există deja un cont cu acest email.';
+        return l10n.authErrorEmailInUse;
       case 'weak-password':
-        return 'Parola e prea slabă (minim 6 caractere).';
+        return l10n.authErrorWeakPassword;
       default:
-        return e.message ?? 'A apărut o eroare. Încearcă din nou.';
+        return e.message ?? l10n.authErrorGeneric;
     }
   }
 
@@ -97,6 +100,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Widget build(BuildContext context) {
     final isSignIn = _mode == _AuthMode.signIn;
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -128,13 +132,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     child: const Icon(Icons.restaurant_rounded, size: 40, color: Colors.white),
                   ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
                   Text(
-                    'Calorii Fit',
+                    l10n.appTitle,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isSignIn ? 'Bine ai revenit' : 'Hai să începem',
+                    isSignIn ? l10n.authWelcomeBack : l10n.authLetsStart,
                     textAlign: TextAlign.center,
                     style: Theme.of(
                       context,
@@ -144,23 +148,23 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.mail_outline_rounded),
+                    decoration: InputDecoration(
+                      labelText: l10n.email,
+                      prefixIcon: const Icon(Icons.mail_outline_rounded),
                     ),
                     validator: (value) =>
-                        (value == null || !value.contains('@')) ? 'Introdu un email valid' : null,
+                        (value == null || !value.contains('@')) ? l10n.authEnterValidEmail : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Parolă',
-                      prefixIcon: Icon(Icons.lock_outline_rounded),
+                    decoration: InputDecoration(
+                      labelText: l10n.password,
+                      prefixIcon: const Icon(Icons.lock_outline_rounded),
                     ),
                     validator: (value) =>
-                        (value == null || value.length < 6) ? 'Minim 6 caractere' : null,
+                        (value == null || value.length < 6) ? l10n.authPasswordMinLength : null,
                   ),
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 12),
@@ -185,7 +189,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : Text(isSignIn ? 'Autentificare' : 'Creează cont'),
+                        : Text(isSignIn ? l10n.authSignIn : l10n.authCreateAccount),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
@@ -194,11 +198,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       _errorMessage = null;
                     }),
                     child: Text(
-                      isSignIn ? 'Nu ai cont? Creează unul' : 'Ai deja cont? Autentifică-te',
+                      isSignIn ? l10n.authNoAccountYet : l10n.authHaveAccountAlready,
                     ),
                   ),
                   if (isSignIn)
-                    TextButton(onPressed: _resetPassword, child: const Text('Ai uitat parola?')),
+                    TextButton(onPressed: _resetPassword, child: Text(l10n.authForgotPassword)),
                 ],
               ),
             ),

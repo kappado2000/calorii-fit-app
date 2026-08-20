@@ -1,3 +1,5 @@
+import '../../l10n/app_localizations.dart';
+
 /// The six micronutrients tracked across the app — a deliberately small,
 /// commonly-referenced set (vitamin C/D, calcium, iron, magnesium,
 /// potassium) rather than the full 20+ vitamins/minerals nutrition science
@@ -6,20 +8,20 @@
 enum Micronutrient { vitaminC, vitaminD, calcium, iron, magnesium, potassium }
 
 extension MicronutrientInfo on Micronutrient {
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case Micronutrient.vitaminC:
-        return 'Vitamina C';
+        return l10n.nutrientVitaminC;
       case Micronutrient.vitaminD:
-        return 'Vitamina D';
+        return l10n.nutrientVitaminD;
       case Micronutrient.calcium:
-        return 'Calciu';
+        return l10n.nutrientCalcium;
       case Micronutrient.iron:
-        return 'Fier';
+        return l10n.nutrientIron;
       case Micronutrient.magnesium:
-        return 'Magneziu';
+        return l10n.nutrientMagnesium;
       case Micronutrient.potassium:
-        return 'Potasiu';
+        return l10n.nutrientPotassium;
     }
   }
 
@@ -125,14 +127,14 @@ class MicronutrientProfile {
 enum MacroNutrient { protein, carbs, fat }
 
 extension MacroNutrientInfo on MacroNutrient {
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case MacroNutrient.protein:
-        return 'Proteine';
+        return l10n.macroProtein;
       case MacroNutrient.carbs:
-        return 'Carbohidrați';
+        return l10n.macroCarbs;
       case MacroNutrient.fat:
-        return 'Grăsimi';
+        return l10n.macroFat;
     }
   }
 

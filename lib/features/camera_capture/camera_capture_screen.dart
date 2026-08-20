@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../food_confirmation/food_confirmation_screen.dart';
 import 'camera_capture_controller.dart';
 import 'camera_capture_state.dart';
@@ -40,8 +41,9 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
     });
     try {
       final cameras = await availableCameras();
+      if (!mounted) return;
       if (cameras.isEmpty) {
-        throw StateError('Nicio cameră disponibilă pe acest dispozitiv.');
+        throw StateError(AppLocalizations.of(context).cameraNoneAvailable);
       }
       final backCamera = cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.back,
@@ -100,20 +102,21 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
     });
 
     final state = ref.watch(cameraCaptureControllerProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Fotografiază farfuria')),
-      body: _buildBody(context, state),
+      appBar: AppBar(title: Text(l10n.cameraCaptureTitle)),
+      body: _buildBody(context, state, l10n),
     );
   }
 
-  Widget _buildBody(BuildContext context, CameraCaptureState state) {
+  Widget _buildBody(BuildContext context, CameraCaptureState state, AppLocalizations l10n) {
     if (state is! CaptureIdle) {
       return Center(
         child: switch (state) {
-          CaptureInProgress() => const _StatusMessage(message: 'Se capturează fotografia și adâncimea…'),
-          AnalyzingPhoto() => const _StatusMessage(message: 'Se identifică alimentele…'),
-          AwaitingConfirmation() => const _StatusMessage(message: 'Gata — se deschide confirmarea…'),
+          CaptureInProgress() => _StatusMessage(message: l10n.cameraCapturingStatus),
+          AnalyzingPhoto() => _StatusMessage(message: l10n.cameraAnalyzingStatus),
+          AwaitingConfirmation() => _StatusMessage(message: l10n.cameraConfirmationOpeningStatus),
           CaptureFailed(:final message) => _ErrorPrompt(message: message, onRetry: _retry),
           CaptureIdle() => const SizedBox.shrink(),
         },
@@ -127,7 +130,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
     }
     final controller = _previewController;
     if (_initializingPreview || controller == null || !controller.value.isInitialized) {
-      return const Center(child: _StatusMessage(message: 'Se pornește camera…'));
+      return Center(child: _StatusMessage(message: l10n.cameraStartingStatus));
     }
 
     return Stack(
@@ -156,9 +159,9 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
                 color: Colors.black54,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text(
-                'Încadrează farfuria și apasă declanșatorul',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                l10n.cameraFrameHint,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ),
@@ -194,6 +197,7 @@ class _ErrorPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -201,9 +205,9 @@ class _ErrorPrompt extends StatelessWidget {
         children: [
           Icon(Icons.error_outline, size: 56, color: Theme.of(context).colorScheme.error),
           const SizedBox(height: 12),
-          Text('Nu am putut porni/analiza fotografia:\n$message', textAlign: TextAlign.center),
+          Text(l10n.cameraErrorPrefixed(message), textAlign: TextAlign.center),
           const SizedBox(height: 20),
-          FilledButton(onPressed: onRetry, child: const Text('Încearcă din nou')),
+          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

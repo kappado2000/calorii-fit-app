@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/user_profile.dart';
+import '../../l10n/app_localizations.dart';
 import '../profile/profile_providers.dart';
 
 /// Status + opt-in toggle for adaptive TDEE (see AdaptiveTdeeCalculator).
@@ -15,6 +16,7 @@ class AdaptiveTdeeCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final adaptive = ref.watch(adaptiveTdeeEstimateProvider);
     final applied = ref.watch(tdeeResultProvider);
 
@@ -32,7 +34,7 @@ class AdaptiveTdeeCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Expanded(child: Text('TDEE adaptiv', style: Theme.of(context).textTheme.titleMedium)),
+                Expanded(child: Text(l10n.adaptiveTdeeTitle, style: Theme.of(context).textTheme.titleMedium)),
                 Switch(
                   value: profile.useAdaptiveTdee,
                   onChanged: (value) => ref
@@ -44,16 +46,12 @@ class AdaptiveTdeeCard extends ConsumerWidget {
             const SizedBox(height: 4),
             if (adaptive == null)
               Text(
-                'Încă nu ai suficiente date: îți trebuie cel puțin 14 zile '
-                'logate și 2 cântăriri la minim 10 zile distanță, în '
-                'ultimele 3 săptămâni. Până atunci se folosește formula '
-                'standard (Mifflin-St Jeor).',
+                l10n.adaptiveTdeeNotEnoughData,
                 style: Theme.of(context).textTheme.bodySmall,
               )
             else ...[
               Text(
-                'Calculat din propriul tău echilibru caloric (${adaptive.loggedDays}/${adaptive.windowDays} '
-                'zile logate în ultimele 3 săptămâni), nu doar din formula standard.',
+                l10n.adaptiveTdeeExplanation(adaptive.loggedDays, adaptive.windowDays),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 10),
@@ -61,14 +59,14 @@ class AdaptiveTdeeCard extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: _Metric(
-                      label: 'TDEE estimat',
+                      label: l10n.adaptiveTdeeEstimatedLabel,
                       value: '${adaptive.estimatedTdee.round()} kcal',
                     ),
                   ),
                   Expanded(
                     child: _Metric(
-                      label: 'Trend greutate',
-                      value: '${adaptive.weightTrendKgPerWeek >= 0 ? '+' : ''}${adaptive.weightTrendKgPerWeek.toStringAsFixed(2)} kg/săpt.',
+                      label: l10n.adaptiveTdeeWeightTrendLabel,
+                      value: l10n.weightTrendValue(adaptive.weightTrendKgPerWeek >= 0 ? '+' : '', adaptive.weightTrendKgPerWeek.toStringAsFixed(2)),
                     ),
                   ),
                 ],
@@ -76,9 +74,7 @@ class AdaptiveTdeeCard extends ConsumerWidget {
               if (profile.useAdaptiveTdee && applied?.isAdaptive != true) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Estimarea diferă prea mult de formula standard ca să fie '
-                  'de încredere încă — se folosește în continuare formula '
-                  'standard, până se adună mai multe date consistente.',
+                  l10n.adaptiveTdeeRejected,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.error),
                 ),
               ],

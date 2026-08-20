@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import 'hydration_providers.dart';
 
@@ -17,6 +18,7 @@ class HydrationSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final totalMl = ref.watch(dailyHydrationTotalProvider(date));
     final progress = (totalMl / dailyHydrationTargetMl).clamp(0.0, 1.0);
     final notifier = ref.read(hydrationLogProvider(date).notifier);
@@ -47,7 +49,7 @@ class HydrationSection extends ConsumerWidget {
                   children: [
                     Row(
                       children: [
-                        Text('Hidratare', style: Theme.of(context).textTheme.titleMedium),
+                        Text(l10n.hydrationTitle, style: Theme.of(context).textTheme.titleMedium),
                         const Spacer(),
                         Text(
                           '${totalMl.round()} / ${dailyHydrationTargetMl.round()} ml',
@@ -73,13 +75,13 @@ class HydrationSection extends ConsumerWidget {
                 onPressed: notifier.removeLastGlass,
                 icon: const Icon(Icons.remove_circle_outline_rounded),
                 color: _borderColor,
-                tooltip: 'Anulează ultimul pahar',
+                tooltip: l10n.hydrationUndoLastGlass,
               ),
               IconButton(
                 onPressed: notifier.addGlass,
                 icon: const Icon(Icons.add_circle_rounded),
                 color: _borderColor,
-                tooltip: 'Adaugă un pahar (${hydrationGlassMl.round()} ml)',
+                tooltip: l10n.hydrationAddGlass(hydrationGlassMl.round()),
               ),
             ],
           ),

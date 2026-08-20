@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/weight_entry.dart';
 import '../../domain/usecases/weight_evolution.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import '../profile/profile_providers.dart';
 
@@ -39,7 +40,7 @@ class WeightEvolutionCard extends ConsumerWidget {
               children: [
                 Icon(Icons.show_chart_rounded, size: 18, color: statusColor),
                 const SizedBox(width: 8),
-                Expanded(child: Text('Evoluția greutății', style: Theme.of(context).textTheme.titleMedium)),
+                Expanded(child: Text(AppLocalizations.of(context).weightEvolutionTitle, style: Theme.of(context).textTheme.titleMedium)),
                 Text(
                   '${summary.differenceKg > 0 ? '+' : ''}${summary.differenceKg.toStringAsFixed(1)} kg',
                   style: Theme.of(
@@ -49,8 +50,11 @@ class WeightEvolutionCard extends ConsumerWidget {
               ],
             ),
             Text(
-              'De la ${_formatDate(summary.startDate)} (${summary.startWeightKg.toStringAsFixed(1)} kg) '
-              'până azi (${summary.latestWeightKg.toStringAsFixed(1)} kg)',
+              AppLocalizations.of(context).weightEvolutionSubtitle(
+                _formatDate(summary.startDate),
+                summary.startWeightKg.toStringAsFixed(1),
+                summary.latestWeightKg.toStringAsFixed(1),
+              ),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 12),

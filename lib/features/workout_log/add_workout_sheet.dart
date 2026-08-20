@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/usecases/met_calorie_estimator.dart';
+import '../../l10n/app_localizations.dart';
 import '../profile/profile_providers.dart';
 import 'workout_log_providers.dart';
 
@@ -67,6 +68,7 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final profile = ref.watch(userProfileProvider).valueOrNull;
     final weightKg = profile?.weightKg ?? 70;
     final minutes = _durationMinutes ?? 0;
@@ -87,15 +89,15 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Adaugă activitate sportivă', style: Theme.of(context).textTheme.titleLarge),
+          Text(l10n.addWorkoutTitle, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 16),
           SegmentedButton<bool>(
-            segments: const [
-              ButtonSegment(value: false, label: Text('Din activitate'), icon: Icon(Icons.calculate_outlined)),
+            segments: [
+              ButtonSegment(value: false, label: Text(l10n.addWorkoutFromActivity), icon: const Icon(Icons.calculate_outlined)),
               ButtonSegment(
                 value: true,
-                label: Text('Calorii directe'),
-                icon: Icon(Icons.edit_outlined),
+                label: Text(l10n.addWorkoutDirectCalories),
+                icon: const Icon(Icons.edit_outlined),
               ),
             ],
             selected: {_manualMode},
@@ -105,9 +107,9 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
           if (_manualMode) ...[
             DropdownButtonFormField<ActivityType>(
               initialValue: _manualActivityType,
-              decoration: const InputDecoration(labelText: 'Tip activitate (opțional)'),
+              decoration: InputDecoration(labelText: l10n.addWorkoutActivityTypeOptional),
               items: ActivityType.values
-                  .map((type) => DropdownMenuItem(value: type, child: Text(type.label)))
+                  .map((type) => DropdownMenuItem(value: type, child: Text(type.label(l10n))))
                   .toList(),
               onChanged: (value) => setState(() => _manualActivityType = value!),
             ),
@@ -115,10 +117,10 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
             TextField(
               controller: _manualCaloriesController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'Calorii arse',
+              decoration: InputDecoration(
+                labelText: l10n.addWorkoutCaloriesBurned,
                 suffixText: 'kcal',
-                hintText: 'ex. 250',
+                hintText: l10n.addWorkoutCaloriesHint,
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -131,14 +133,14 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Salvează'),
+                  : Text(l10n.save),
             ),
           ] else ...[
             DropdownButtonFormField<ActivityType>(
               initialValue: _activityType,
-              decoration: const InputDecoration(labelText: 'Tip activitate'),
+              decoration: InputDecoration(labelText: l10n.addWorkoutActivityType),
               items: ActivityType.values
-                  .map((type) => DropdownMenuItem(value: type, child: Text(type.label)))
+                  .map((type) => DropdownMenuItem(value: type, child: Text(type.label(l10n))))
                   .toList(),
               onChanged: (value) => setState(() => _activityType = value!),
             ),
@@ -146,7 +148,7 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
             TextField(
               controller: _durationController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'Durată', suffixText: 'minute'),
+              decoration: InputDecoration(labelText: l10n.addWorkoutDuration, suffixText: l10n.minutes),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
@@ -161,7 +163,7 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
                   Icon(Icons.local_fire_department_rounded, color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 10),
                   Text(
-                    'Estimare: ${estimatedCalories.round()} kcal arse',
+                    l10n.addWorkoutEstimate(estimatedCalories.round()),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
                   ),
                 ],
@@ -176,7 +178,7 @@ class _AddWorkoutSheetState extends ConsumerState<AddWorkoutSheet> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Salvează'),
+                  : Text(l10n.save),
             ),
           ],
         ],

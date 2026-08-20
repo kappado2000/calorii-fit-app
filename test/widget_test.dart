@@ -17,6 +17,10 @@ void main() {
   testWidgets('CalorieApp shows the food log with all meal sections for a user with a saved profile', (
     WidgetTester tester,
   ) async {
+    tester.platformDispatcher.localeTestValue = const Locale('ro');
+    tester.platformDispatcher.localesTestValue = const [Locale('ro')];
+    addTearDown(tester.platformDispatcher.clearLocaleTestValue);
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     // Tall surface so every meal card (including the last, "Gustare") is
     // actually mounted by the ListView's sliver viewport rather than left
     // unbuilt below the default 600px test viewport.
@@ -66,6 +70,11 @@ void main() {
   testWidgets('CalorieApp sends a signed-in user with no saved profile to onboarding', (
     WidgetTester tester,
   ) async {
+    tester.platformDispatcher.localeTestValue = const Locale('ro');
+    tester.platformDispatcher.localesTestValue = const [Locale('ro')];
+    addTearDown(tester.platformDispatcher.clearLocaleTestValue);
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+
     final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
     final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: true);
     final fakeFirestore = FakeFirebaseFirestore();
@@ -85,6 +94,11 @@ void main() {
   });
 
   testWidgets('CalorieApp shows the login screen when signed out', (WidgetTester tester) async {
+    tester.platformDispatcher.localeTestValue = const Locale('ro');
+    tester.platformDispatcher.localesTestValue = const [Locale('ro')];
+    addTearDown(tester.platformDispatcher.clearLocaleTestValue);
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+
     final mockAuth = MockFirebaseAuth(signedIn: false);
     final fakeFirestore = FakeFirebaseFirestore();
 

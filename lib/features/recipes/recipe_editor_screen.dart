@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/food_product.dart';
 import '../../data/models/recipe.dart';
+import '../../l10n/app_localizations.dart';
 import '../food_log/food_log_providers.dart';
 import 'recipes_providers.dart';
 
@@ -71,37 +72,38 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final preview = _previewRecipe;
     final canSave = _nameController.text.trim().isNotEmpty &&
         (int.tryParse(_servingsController.text) ?? 0) > 0 &&
         _ingredients.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.existing == null ? 'Rețetă nouă' : 'Editează rețeta')),
+      appBar: AppBar(title: Text(widget.existing == null ? l10n.newRecipe : l10n.editRecipe)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Denumire rețetă', hintText: 'ex. Salata mea de pui'),
+            decoration: InputDecoration(labelText: l10n.recipeNameLabel, hintText: l10n.recipeNameHint),
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _servingsController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Număr de porții'),
+            decoration: InputDecoration(labelText: l10n.numberOfServings),
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Ingrediente', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.ingredients, style: Theme.of(context).textTheme.titleMedium),
               TextButton.icon(
                 onPressed: _addIngredient,
                 icon: const Icon(Icons.add_rounded),
-                label: const Text('Adaugă'),
+                label: Text(l10n.addLabel),
               ),
             ],
           ),
@@ -109,7 +111,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Text(
-                'Adaugă cel puțin un ingredient.',
+                l10n.addAtLeastOneIngredient,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.outline),
               ),
             )
@@ -137,7 +139,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
             onPressed: (!canSave || _saving) ? null : _save,
             child: _saving
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Salvează rețeta'),
+                : Text(l10n.saveRecipe),
           ),
         ),
       ),
@@ -152,6 +154,7 @@ class _RecipeSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     String fmt(double? v) => v == null ? '—' : '${v.round()}g';
     return Container(
       padding: const EdgeInsets.all(14),
@@ -163,14 +166,19 @@ class _RecipeSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Per porție (${recipe.perServingGrams.round()} g): ${(recipe.kcalPer100g * recipe.perServingGrams / 100).round()} kcal',
+            l10n.perServing(
+              recipe.perServingGrams.round(),
+              (recipe.kcalPer100g * recipe.perServingGrams / 100).round(),
+            ),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 4),
           Text(
-            'Proteine ${fmt(recipe.proteinPer100g == null ? null : recipe.proteinPer100g! * recipe.perServingGrams / 100)} · '
-            'Carbohidrați ${fmt(recipe.carbsPer100g == null ? null : recipe.carbsPer100g! * recipe.perServingGrams / 100)} · '
-            'Grăsimi ${fmt(recipe.fatPer100g == null ? null : recipe.fatPer100g! * recipe.perServingGrams / 100)}',
+            l10n.macroSummaryLine(
+              fmt(recipe.proteinPer100g == null ? null : recipe.proteinPer100g! * recipe.perServingGrams / 100),
+              fmt(recipe.carbsPer100g == null ? null : recipe.carbsPer100g! * recipe.perServingGrams / 100),
+              fmt(recipe.fatPer100g == null ? null : recipe.fatPer100g! * recipe.perServingGrams / 100),
+            ),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -200,6 +208,7 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final searchState = ref.watch(foodSearchProvider);
     final grams = double.tryParse(_gramsController.text.replaceAll(',', '.'));
 
@@ -214,13 +223,13 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Adaugă ingredient', style: Theme.of(context).textTheme.titleLarge),
+          Text(l10n.addIngredientTitle, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 16),
           TextField(
             controller: _queryController,
             enabled: _selected == null,
             decoration: InputDecoration(
-              labelText: 'Denumire produs',
+              labelText: l10n.productNameLabel,
               suffixIcon: _selected != null
                   ? IconButton(
                       icon: const Icon(Icons.close),
@@ -242,9 +251,9 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: searchState.results.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('Niciun produs găsit.'),
+                  ? Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(l10n.noProductFound),
                     )
                   : ListView.separated(
                       shrinkWrap: true,
@@ -270,7 +279,7 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
             TextField(
               controller: _gramsController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'Cantitate', suffixText: 'g'),
+              decoration: InputDecoration(labelText: l10n.quantityLabel, suffixText: 'g'),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 20),
@@ -287,7 +296,7 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                           fatPer100g: _selected!.fatPer100g,
                         ),
                       ),
-              child: const Text('Adaugă ingredientul'),
+              child: Text(l10n.addIngredientButton),
             ),
           ],
         ],

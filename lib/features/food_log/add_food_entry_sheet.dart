@@ -5,6 +5,7 @@ import '../../core/constants/micronutrient_reference.dart';
 import '../../data/models/custom_food.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
+import '../../l10n/app_localizations.dart';
 import '../barcode_scan/barcode_scan_screen.dart';
 import '../recipes/recipes_screen.dart';
 import 'food_log_providers.dart';
@@ -188,6 +189,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final searchState = ref.watch(foodSearchProvider);
     final frequentFoods = foodsRankedForMeal(ref.watch(customFoodsProvider), widget.mealType);
     final query = _queryController.text.trim();
@@ -207,19 +209,19 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Adaugă aliment — ${widget.mealType.label}', style: Theme.of(context).textTheme.titleLarge),
+            Text(l10n.addFoodTitle(widget.mealType.label(l10n)), style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             TextFormField(
               controller: _queryController,
               enabled: _selectedProduct == null,
               decoration: InputDecoration(
-                labelText: 'Denumire produs',
-                hintText: 'ex. Iaurt grecesc',
+                labelText: l10n.productNameLabel,
+                hintText: l10n.productNameHint,
                 suffixIcon: _selectedProduct != null
                     ? IconButton(icon: const Icon(Icons.close), onPressed: _clearSelection)
                     : IconButton(
                         icon: const Icon(Icons.qr_code_scanner_rounded),
-                        tooltip: 'Scanează codul de bare',
+                        tooltip: l10n.barcodeScanTitle,
                         onPressed: _scanBarcode,
                       ),
               ),
@@ -228,7 +230,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                 setState(() {});
               },
               validator: (value) =>
-                  (value == null || value.trim().isEmpty) ? 'Introdu denumirea produsului' : null,
+                  (value == null || value.trim().isEmpty) ? l10n.enterProductName : null,
             ),
             if (_selectedProduct == null && !_manualMode) ...[
               Align(
@@ -236,13 +238,13 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                 child: TextButton.icon(
                   onPressed: _openRecipes,
                   icon: const Icon(Icons.menu_book_rounded, size: 18),
-                  label: const Text('Rețetele mele'),
+                  label: Text(l10n.myRecipes),
                 ),
               ),
             ],
             if (showQuickAdd) ...[
               const SizedBox(height: 16),
-              Text('Înregistrate frecvent', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.frequentlyLogged, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 4),
               _QuickAddChecklist(
                 foods: frequentFoods,
@@ -259,7 +261,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                         )
-                      : Text('Adaugă (${_quickAddSelectedIds.length})'),
+                      : Text(l10n.addCount(_quickAddSelectedIds.length)),
                 ),
               ],
             ],
@@ -280,11 +282,11 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
               TextFormField(
                 controller: _manualKcalController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'Indice caloric (kcal / 100g)',
+                decoration: InputDecoration(
+                  labelText: l10n.calorieIndexLabel,
                   suffixText: 'kcal/100g',
                 ),
-                validator: _validatePositiveNumber,
+                validator: (value) => _validatePositiveNumber(l10n, value),
               ),
               const SizedBox(height: 12),
               Row(
@@ -293,7 +295,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                     child: TextFormField(
                       controller: _manualProteinController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Proteine', suffixText: 'g/100g'),
+                      decoration: InputDecoration(labelText: l10n.macroProtein, suffixText: 'g/100g'),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -301,7 +303,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                     child: TextFormField(
                       controller: _manualCarbsController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Carbohidrați', suffixText: 'g/100g'),
+                      decoration: InputDecoration(labelText: l10n.macroCarbs, suffixText: 'g/100g'),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -309,7 +311,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                     child: TextFormField(
                       controller: _manualFatController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Grăsimi', suffixText: 'g/100g'),
+                      decoration: InputDecoration(labelText: l10n.macroFat, suffixText: 'g/100g'),
                     ),
                   ),
                 ],
@@ -320,8 +322,8 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
               TextFormField(
                 controller: _gramsController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'Cantitate consumată', suffixText: 'g'),
-                validator: _validatePositiveNumber,
+                decoration: InputDecoration(labelText: l10n.quantityEatenLabel, suffixText: 'g'),
+                validator: (value) => _validatePositiveNumber(l10n, value),
                 onChanged: (_) => setState(() {}),
               ),
               _GramsPreview(
@@ -342,7 +344,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Salvează'),
+                    : Text(l10n.save),
               ),
             ],
           ],
@@ -351,10 +353,10 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
     );
   }
 
-  String? _validatePositiveNumber(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Câmp obligatoriu';
+  String? _validatePositiveNumber(AppLocalizations l10n, String? value) {
+    if (value == null || value.trim().isEmpty) return l10n.requiredField;
     final parsed = double.tryParse(value.replaceAll(',', '.'));
-    if (parsed == null || parsed <= 0) return 'Valoare invalidă';
+    if (parsed == null || parsed <= 0) return l10n.invalidValue;
     return null;
   }
 }
@@ -427,6 +429,7 @@ class _SearchResultsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       constraints: const BoxConstraints(maxHeight: 260),
       decoration: BoxDecoration(
@@ -447,14 +450,12 @@ class _SearchResultsList extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    state.hadRemoteError
-                        ? 'Căutarea nu a putut fi realizată (verifică conexiunea).'
-                        : 'Niciun produs găsit.',
+                    state.hadRemoteError ? l10n.searchFailedCheckConnection : l10n.noProductFound,
                     style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  TextButton(onPressed: onManualEntry, child: const Text('Adaugă produs manual')),
+                  TextButton(onPressed: onManualEntry, child: Text(l10n.addProductManually)),
                 ],
               ),
             )
@@ -469,7 +470,7 @@ class _SearchResultsList extends StatelessWidget {
                   return ListTile(
                     dense: true,
                     title: Text(product.displayName),
-                    subtitle: Text(_macroSummary(product)),
+                    subtitle: Text(_macroSummary(l10n, product)),
                     trailing: Text('${product.kcalPer100g.round()} kcal/100g'),
                     onTap: () => onSelect(product),
                   );
@@ -481,12 +482,12 @@ class _SearchResultsList extends StatelessWidget {
     );
   }
 
-  String _macroSummary(FoodProduct product) {
+  String _macroSummary(AppLocalizations l10n, FoodProduct product) {
     final parts = <String>[];
-    if (product.proteinPer100g != null) parts.add('P ${product.proteinPer100g!.round()}g');
-    if (product.carbsPer100g != null) parts.add('C ${product.carbsPer100g!.round()}g');
-    if (product.fatPer100g != null) parts.add('G ${product.fatPer100g!.round()}g');
-    return parts.isEmpty ? 'Macro-nutrienți indisponibili' : parts.join(' · ');
+    if (product.proteinPer100g != null) parts.add('${l10n.macroProteinShort} ${product.proteinPer100g!.round()}g');
+    if (product.carbsPer100g != null) parts.add('${l10n.macroCarbsShort} ${product.carbsPer100g!.round()}g');
+    if (product.fatPer100g != null) parts.add('${l10n.macroFatShort} ${product.fatPer100g!.round()}g');
+    return parts.isEmpty ? l10n.macrosUnavailable : parts.join(' · ');
   }
 }
 
@@ -497,6 +498,7 @@ class _ProductNutritionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -518,7 +520,7 @@ class _ProductNutritionCard extends StatelessWidget {
                   ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 Text(
-                  _macroLine(),
+                  _macroLine(l10n),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -529,9 +531,9 @@ class _ProductNutritionCard extends StatelessWidget {
     );
   }
 
-  String _macroLine() {
+  String _macroLine(AppLocalizations l10n) {
     String fmt(double? v) => v == null ? '—' : '${v.round()}g';
-    return 'Proteine ${fmt(product.proteinPer100g)} · Carbohidrați ${fmt(product.carbsPer100g)} · Grăsimi ${fmt(product.fatPer100g)} (per 100g)';
+    return l10n.macroSummaryLine(fmt(product.proteinPer100g), fmt(product.carbsPer100g), fmt(product.fatPer100g));
   }
 }
 
@@ -553,6 +555,7 @@ class _GramsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (grams == null || grams! <= 0 || kcalPer100g == null) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
 
     final factor = grams! / 100;
     String fmt(double? per100g) => per100g == null ? '—' : '${(per100g * factor).round()}g';
@@ -560,8 +563,12 @@ class _GramsPreview extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Text(
-        '${(kcalPer100g! * factor).round()} kcal · Proteine ${fmt(proteinPer100g)} · '
-        'Carbohidrați ${fmt(carbsPer100g)} · Grăsimi ${fmt(fatPer100g)}',
+        l10n.gramsPreviewLine(
+          (kcalPer100g! * factor).round(),
+          fmt(proteinPer100g),
+          fmt(carbsPer100g),
+          fmt(fatPer100g),
+        ),
         style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
       ),
     );

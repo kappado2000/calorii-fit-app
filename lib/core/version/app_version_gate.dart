@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'app_version_providers.dart';
 
 /// Wraps the whole app. `updateRequired` blocks with a full-screen notice
@@ -62,15 +63,13 @@ class _UpdateRequiredScreen extends StatelessWidget {
                 const Icon(Icons.system_update_rounded, size: 56),
                 const SizedBox(height: 20),
                 Text(
-                  'E nevoie de o actualizare',
+                  AppLocalizations.of(context).updateRequiredTitle,
                   style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  message ??
-                      'Versiunea aplicației de pe acest telefon nu mai este suportată. '
-                          'Instalează cea mai nouă versiune pentru a continua.',
+                  message ?? AppLocalizations.of(context).updateRequiredMessage,
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -106,7 +105,7 @@ class _UpdateAvailableBanner extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    message ?? 'O versiune nouă a aplicației este disponibilă.',
+                    message ?? AppLocalizations.of(context).updateAvailableMessage,
                     style: TextStyle(color: Theme.of(context).colorScheme.onInverseSurface),
                   ),
                 ),

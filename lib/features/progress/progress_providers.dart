@@ -5,6 +5,7 @@ import '../../data/datasources/remote/firestore/food_log_firestore_datasource.da
 import '../../data/datasources/remote/firestore/workout_firestore_datasource.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/user_profile.dart';
+import '../../l10n/app_localizations.dart';
 import '../auth/uid_provider.dart';
 import '../food_log/food_log_providers.dart';
 import '../profile/profile_providers.dart';
@@ -12,14 +13,14 @@ import '../profile/profile_providers.dart';
 enum ProgressPeriod { last7Days, last30Days, sinceProgramStart }
 
 extension ProgressPeriodLabel on ProgressPeriod {
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case ProgressPeriod.last7Days:
-        return '7 zile';
+        return l10n.progressPeriod7Days;
       case ProgressPeriod.last30Days:
-        return '30 zile';
+        return l10n.progressPeriod30Days;
       case ProgressPeriod.sinceProgramStart:
-        return 'Tot programul';
+        return l10n.progressPeriodWholeProgram;
     }
   }
 }

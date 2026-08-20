@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/utils/number_format.dart';
+import '../../l10n/app_localizations.dart';
 import 'weekly_summary_providers.dart';
 
 /// A fixed "last 7 days vs the 7 before" recap — unlike the rest of
@@ -13,6 +14,7 @@ class WeeklySummaryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final summary = ref.watch(weeklySummaryProvider).valueOrNull ?? WeeklySummary.empty;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -28,21 +30,21 @@ class WeeklySummaryCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Rezumatul săptămânii', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.weeklySummaryTitle, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             Row(
               children: [
                 _StatColumn(
-                  label: 'Zile logate',
+                  label: l10n.weeklySummaryDaysLogged,
                   value: '${summary.thisWeekDaysLogged}/7',
                 ),
                 _StatColumn(
-                  label: 'Medie kcal/zi',
+                  label: l10n.weeklySummaryAvgCalories,
                   value: formatThousands(summary.thisWeekAvgCalories.round()),
                   trailing: hasComparison ? _DeltaBadge(delta: delta) : null,
                 ),
                 _StatColumn(
-                  label: 'Antrenamente',
+                  label: l10n.weeklySummaryWorkouts,
                   value: '${summary.thisWeekWorkouts}',
                 ),
               ],

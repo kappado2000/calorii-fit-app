@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/weight_entry.dart';
+import '../../l10n/app_localizations.dart';
 import '../bluetooth_scale/bluetooth_scale_screen.dart';
 import '../profile/profile_providers.dart';
 import 'activity_sync_providers.dart';
@@ -22,9 +23,10 @@ class ActivitySyncScreen extends ConsumerWidget {
     final state = ref.watch(activitySyncControllerProvider);
     final weightEntries = ref.watch(weightEntriesProvider).valueOrNull ?? [];
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Activitate & sincronizare')),
+      appBar: AppBar(title: Text(l10n.activityAndSync)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -49,17 +51,17 @@ class ActivitySyncScreen extends ConsumerWidget {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text('Health Connect / Apple Health', style: Theme.of(context).textTheme.titleMedium),
+                        child: Text(l10n.healthConnectTitle, style: Theme.of(context).textTheme.titleMedium),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Preia greutatea și activitatea fizică înregistrată de ceasul tău, prin platforma de sănătate a telefonului.',
+                    l10n.healthConnectDescription,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 16),
-                  _buildSyncBody(context, ref, state),
+                  _buildSyncBody(context, ref, state, l10n),
                 ],
               ),
             ),
@@ -76,8 +78,8 @@ class ActivitySyncScreen extends ConsumerWidget {
                 alignment: Alignment.center,
                 child: Icon(Icons.bluetooth_rounded, color: colorScheme.onSecondaryContainer),
               ),
-              title: const Text('Cântar Bluetooth'),
-              subtitle: const Text('Conectează direct un cântar inteligent'),
+              title: Text(l10n.bluetoothScaleTitle),
+              subtitle: Text(l10n.bluetoothScaleSubtitle),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () => Navigator.of(
                 context,
@@ -88,11 +90,11 @@ class ActivitySyncScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Istoric greutate', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.weightHistoryTitle, style: Theme.of(context).textTheme.titleMedium),
               TextButton.icon(
                 onPressed: () => WeightEntryDialog.show(context),
                 icon: const Icon(Icons.add_rounded),
-                label: const Text('Adaugă'),
+                label: Text(l10n.addLabel),
               ),
             ],
           ),
@@ -100,7 +102,7 @@ class ActivitySyncScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Text(
-                'Nicio înregistrare încă.',
+                l10n.noEntriesYet,
                 style: TextStyle(color: colorScheme.onSurfaceVariant),
               ),
             )
@@ -129,7 +131,7 @@ class ActivitySyncScreen extends ConsumerWidget {
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                         subtitle: Text(_formatDateTime(entry.date)),
-                        trailing: Text(_sourceLabel(entry.source), style: Theme.of(context).textTheme.bodySmall),
+                        trailing: Text(_sourceLabel(l10n, entry.source), style: Theme.of(context).textTheme.bodySmall),
                         onTap: entry.source == WeightSource.manual
                             ? () => WeightEntryDialog.show(context, existing: entry)
                             : null,
@@ -151,12 +153,12 @@ class ActivitySyncScreen extends ConsumerWidget {
     return '$d.$m.${dt.year}, $h:$min';
   }
 
-  Widget _buildSyncBody(BuildContext context, WidgetRef ref, ActivitySyncState state) {
+  Widget _buildSyncBody(BuildContext context, WidgetRef ref, ActivitySyncState state, AppLocalizations l10n) {
     return switch (state) {
       ActivitySyncIdle() => FilledButton.icon(
         onPressed: () => ref.read(activitySyncControllerProvider.notifier).sync(),
         icon: const Icon(Icons.sync_rounded),
-        label: const Text('Sincronizează'),
+        label: Text(l10n.syncButton),
       ),
       ActivitySyncInProgress() => const Center(
         child: Padding(padding: EdgeInsets.all(8), child: CircularProgressIndicator()),
@@ -167,18 +169,18 @@ class ActivitySyncScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _StatColumn(icon: Icons.directions_walk_rounded, value: '${summary.steps}', label: 'pași azi'),
+              _StatColumn(icon: Icons.directions_walk_rounded, value: '${summary.steps}', label: l10n.stepsToday),
               _StatColumn(
                 icon: Icons.local_fire_department_rounded,
                 value: summary.activeCaloriesBurned.round().toString(),
-                label: 'kcal active',
+                label: l10n.activeKcal,
               ),
             ],
           ),
           if (newWeightKg != null) ...[
             const SizedBox(height: 12),
             Text(
-              'Greutate nouă preluată: ${newWeightKg.toStringAsFixed(1)} kg',
+              l10n.newWeightFetched(newWeightKg.toStringAsFixed(1)),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -186,7 +188,7 @@ class ActivitySyncScreen extends ConsumerWidget {
           OutlinedButton.icon(
             onPressed: () => ref.read(activitySyncControllerProvider.notifier).sync(),
             icon: const Icon(Icons.sync_rounded),
-            label: const Text('Sincronizează din nou'),
+            label: Text(l10n.syncAgain),
           ),
         ],
       ),
@@ -198,23 +200,23 @@ class ActivitySyncScreen extends ConsumerWidget {
           FilledButton.icon(
             onPressed: () => ref.read(activitySyncControllerProvider.notifier).sync(),
             icon: const Icon(Icons.sync_rounded),
-            label: const Text('Încearcă din nou'),
+            label: Text(l10n.retry),
           ),
         ],
       ),
     };
   }
 
-  String _sourceLabel(WeightSource source) {
+  String _sourceLabel(AppLocalizations l10n, WeightSource source) {
     switch (source) {
       case WeightSource.manual:
-        return 'manual';
+        return l10n.weightSourceManual;
       case WeightSource.healthConnect:
-        return 'Health Connect';
+        return l10n.weightSourceHealthConnect;
       case WeightSource.appleHealth:
-        return 'Apple Health';
+        return l10n.weightSourceAppleHealth;
       case WeightSource.bluetoothScale:
-        return 'cântar BT';
+        return l10n.weightSourceBluetoothScale;
     }
   }
 }

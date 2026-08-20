@@ -1,20 +1,22 @@
+import '../../l10n/app_localizations.dart';
+
 enum Sex { male, female }
 
 enum ActivityLevel { sedentary, light, moderate, active, veryActive }
 
 extension ActivityLevelLabel on ActivityLevel {
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case ActivityLevel.sedentary:
-        return 'Sedentar (muncă de birou, fără sport)';
+        return l10n.activityLevelSedentary;
       case ActivityLevel.light:
-        return 'Activitate ușoară (sport 1-3 zile/săpt.)';
+        return l10n.activityLevelLight;
       case ActivityLevel.moderate:
-        return 'Activitate moderată (sport 3-5 zile/săpt.)';
+        return l10n.activityLevelModerate;
       case ActivityLevel.active:
-        return 'Activ (sport 6-7 zile/săpt.)';
+        return l10n.activityLevelActive;
       case ActivityLevel.veryActive:
-        return 'Foarte activ (sport intens zilnic / muncă fizică)';
+        return l10n.activityLevelVeryActive;
     }
   }
 
@@ -38,14 +40,14 @@ extension ActivityLevelLabel on ActivityLevel {
 enum Goal { lose, maintain, gain }
 
 extension GoalLabel on Goal {
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case Goal.lose:
-        return 'Slăbit';
+        return l10n.goalLose;
       case Goal.maintain:
-        return 'Menținere';
+        return l10n.goalMaintain;
       case Goal.gain:
-        return 'Masă musculară';
+        return l10n.goalGain;
     }
   }
 }

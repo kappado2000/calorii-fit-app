@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../platform/depth_capture_channel.dart';
 
 final captureCapabilitiesProvider = FutureProvider<CaptureCapabilities>((ref) {
@@ -15,16 +16,17 @@ class DeviceCapabilityScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final capabilities = ref.watch(captureCapabilitiesProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Capabilitate captură adâncime')),
+      appBar: AppBar(title: Text(l10n.deviceCapabilityTitle)),
       body: Center(
         child: capabilities.when(
           loading: () => const CircularProgressIndicator(),
           error: (error, stackTrace) => Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              'Eroare la verificarea capabilităților:\n$error',
+              l10n.deviceCapabilityError(error.toString()),
               textAlign: TextAlign.center,
             ),
           ),
@@ -43,6 +45,7 @@ class _CapabilityResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -56,10 +59,10 @@ class _CapabilityResult extends StatelessWidget {
             child: Icon(_iconFor(source), size: 44, color: colorScheme.onPrimaryContainer),
           ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
           const SizedBox(height: 20),
-          Text(_labelFor(source), style: Theme.of(context).textTheme.headlineSmall),
+          Text(_labelFor(l10n, source), style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
-            _descriptionFor(source),
+            _descriptionFor(l10n, source),
             textAlign: TextAlign.center,
             style: TextStyle(color: colorScheme.onSurfaceVariant),
           ),
@@ -83,33 +86,33 @@ class _CapabilityResult extends StatelessWidget {
     }
   }
 
-  String _labelFor(DepthSource source) {
+  String _labelFor(AppLocalizations l10n, DepthSource source) {
     switch (source) {
       case DepthSource.lidar:
-        return 'LiDAR disponibil';
+        return l10n.depthSourceLidarLabel;
       case DepthSource.arcoreDepth:
-        return 'ARCore Depth disponibil';
+        return l10n.depthSourceArcoreLabel;
       case DepthSource.portraitDualCamera:
-        return 'Cameră duală (portrait depth)';
+        return l10n.depthSourcePortraitLabel;
       case DepthSource.referenceObjectOnly:
-        return 'Fără senzor de adâncime';
+        return l10n.depthSourceReferenceLabel;
       case DepthSource.none:
-        return 'Necunoscut';
+        return l10n.depthSourceUnknownLabel;
     }
   }
 
-  String _descriptionFor(DepthSource source) {
+  String _descriptionFor(AppLocalizations l10n, DepthSource source) {
     switch (source) {
       case DepthSource.lidar:
-        return 'Estimare volumetrică de înaltă precizie (~10-15% eroare).';
+        return l10n.depthSourceLidarDescription;
       case DepthSource.arcoreDepth:
-        return 'Estimare volumetrică prin ARCore Depth API.';
+        return l10n.depthSourceArcoreDescription;
       case DepthSource.portraitDualCamera:
-        return 'Adâncime aproximativă din camera duală, precizie redusă.';
+        return l10n.depthSourcePortraitDescription;
       case DepthSource.referenceObjectOnly:
-        return 'Se va folosi diametrul farfuriei ca referință de scară (estimare mai puțin precisă).';
+        return l10n.depthSourceReferenceDescription;
       case DepthSource.none:
-        return 'Nu s-a putut determina capabilitatea device-ului.';
+        return l10n.depthSourceUnknownDescription;
     }
   }
 }

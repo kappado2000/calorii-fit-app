@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'bluetooth_scale_providers.dart';
 
 class BluetoothScaleScreen extends ConsumerWidget {
@@ -10,9 +11,10 @@ class BluetoothScaleScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(bluetoothScaleControllerProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cântar Bluetooth')),
+      appBar: AppBar(title: Text(l10n.bluetoothScaleTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _buildBody(context, ref, state),
@@ -22,13 +24,14 @@ class BluetoothScaleScreen extends ConsumerWidget {
           : FloatingActionButton.extended(
               onPressed: () => ref.read(bluetoothScaleControllerProvider.notifier).startScan(),
               icon: const Icon(Icons.bluetooth_searching_rounded),
-              label: const Text('Caută cântare'),
+              label: Text(l10n.bluetoothScaleSearch),
             ),
     );
   }
 
   Widget _buildBody(BuildContext context, WidgetRef ref, BluetoothScaleState state) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return switch (state) {
       ScaleScanIdle() => Center(
         child: Column(
@@ -42,8 +45,8 @@ class BluetoothScaleScreen extends ConsumerWidget {
               child: Icon(Icons.bluetooth_rounded, size: 40, color: colorScheme.onPrimaryContainer),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Apasă "Caută cântare" și pornește-ți cântarul lângă telefon.',
+            Text(
+              l10n.bluetoothScaleIdleHint,
               textAlign: TextAlign.center,
             ),
           ],
@@ -54,11 +57,11 @@ class BluetoothScaleScreen extends ConsumerWidget {
         children: [
           const LinearProgressIndicator(),
           const SizedBox(height: 12),
-          const Text('Se caută...'),
+          Text(l10n.bluetoothScaleSearching),
           const SizedBox(height: 12),
           Expanded(
             child: devices.isEmpty
-                ? const Center(child: Text('Niciun cântar găsit încă.'))
+                ? Center(child: Text(l10n.bluetoothScaleNoneFound))
                 : ListView.builder(
                     itemCount: devices.length,
                     itemBuilder: (context, index) {
@@ -82,10 +85,10 @@ class BluetoothScaleScreen extends ConsumerWidget {
           ),
         ],
       ),
-      ScaleConnecting() => const Center(
+      ScaleConnecting() => Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [CircularProgressIndicator(), SizedBox(height: 12), Text('Se conectează...')],
+          children: [const CircularProgressIndicator(), const SizedBox(height: 12), Text(l10n.bluetoothScaleConnecting)],
         ),
       ),
       ScaleWeightReceived(:final weightKg) => Center(
@@ -101,13 +104,13 @@ class BluetoothScaleScreen extends ConsumerWidget {
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 4),
-            Text('Greutate salvată.', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+            Text(l10n.bluetoothScaleWeightSaved, style: TextStyle(color: colorScheme.onSurfaceVariant)),
           ],
         ),
       ),
       ScaleError(:final message) => Center(
         child: Text(
-          'Eroare: $message',
+          l10n.errorPrefixed(message),
           style: TextStyle(color: colorScheme.error),
           textAlign: TextAlign.center,
         ),

@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/meal_type.dart';
+import '../../l10n/app_localizations.dart';
 import '../camera_capture/camera_capture_state.dart';
 import '../food_log/food_log_providers.dart';
 import '../how_it_works/how_it_works_screen.dart';
@@ -82,12 +83,13 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Confirmă alimentele'),
+        title: Text(l10n.confirmFoodsTitle),
         actions: [
           IconButton(
-            tooltip: 'Cum calculăm caloriile?',
+            tooltip: l10n.howItWorksTooltip,
             icon: const Icon(Icons.info_outline_rounded),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const HowItWorksScreen()),
@@ -102,12 +104,12 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                const Text('Masă:'),
+                Text(l10n.mealLabel),
                 const SizedBox(width: 12),
                 Expanded(
                   child: SegmentedButton<MealType>(
                     segments: MealType.values
-                        .map((type) => ButtonSegment(value: type, label: Text(type.label)))
+                        .map((type) => ButtonSegment(value: type, label: Text(type.label(l10n))))
                         .toList(),
                     selected: {_mealType},
                     onSelectionChanged: (selection) => setState(() => _mealType = selection.first),
@@ -164,7 +166,7 @@ class _MixedPlateBanner extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Farfurie cu alimente amestecate — verifică fiecare element, identificarea poate fi mai puțin precisă.',
+              AppLocalizations.of(context).mixedPlateWarning,
               style: TextStyle(color: colorScheme.onTertiaryContainer),
             ),
           ),
@@ -183,7 +185,7 @@ class _NoItemsLeftMessage extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Text(
-          'Ai eliminat toate elementele identificate. Fotografiază din nou dacă vrei să reîncerci.',
+          AppLocalizations.of(context).noItemsLeft,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
@@ -199,11 +201,11 @@ class _FoodItemCard extends StatelessWidget {
   final ValueChanged<double> onPortionFactorChanged;
   final VoidCallback onRemove;
 
-  static const _portionPresets = {'Mic': 0.7, 'Mediu': 1.0, 'Mare': 1.4};
-
   @override
   Widget build(BuildContext context) {
     final estimate = item.estimate;
+    final l10n = AppLocalizations.of(context);
+    final portionPresets = {l10n.portionSmall: 0.7, l10n.portionMedium: 1.0, l10n.portionLarge: 1.4};
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -219,7 +221,7 @@ class _FoodItemCard extends StatelessWidget {
                 ),
                 _ConfidenceBadge(confidence: item.analyzed.confidence),
                 IconButton(
-                  tooltip: 'Nu e pe farfurie — elimină',
+                  tooltip: l10n.notOnPlateRemove,
                   icon: const Icon(Icons.delete_outline_rounded),
                   onPressed: onRemove,
                 ),
@@ -232,7 +234,7 @@ class _FoodItemCard extends StatelessWidget {
                   Icon(Icons.info_outline, size: 16, color: Theme.of(context).colorScheme.tertiary),
                   const SizedBox(width: 4),
                   Text(
-                    'Estimare aproximativă (${_depthSourceLabel(estimate.depthSource)}, fără senzor de adâncime)',
+                    l10n.roughEstimateNote(_depthSourceLabel(l10n, estimate.depthSource)),
                     style: Theme.of(
                       context,
                     ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.tertiary),
@@ -255,7 +257,7 @@ class _FoodItemCard extends StatelessWidget {
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: _portionPresets.entries
+              children: portionPresets.entries
                   .map(
                     (preset) => ChoiceChip(
                       label: Text(preset.key),
@@ -279,18 +281,18 @@ class _FoodItemCard extends StatelessWidget {
     );
   }
 
-  String _depthSourceLabel(DepthSource source) {
+  String _depthSourceLabel(AppLocalizations l10n, DepthSource source) {
     switch (source) {
       case DepthSource.lidar:
-        return 'LiDAR';
+        return l10n.depthSourceLidarShort;
       case DepthSource.arcoreDepth:
-        return 'ARCore Depth';
+        return l10n.depthSourceArcoreShort;
       case DepthSource.portraitDualCamera:
-        return 'cameră duală';
+        return l10n.depthSourcePortraitShort;
       case DepthSource.referenceObjectOnly:
-        return 'referință vizuală';
+        return l10n.depthSourceReferenceShort;
       case DepthSource.none:
-        return 'necunoscut';
+        return l10n.depthSourceUnknownShort;
     }
   }
 }
@@ -327,6 +329,7 @@ class _SaveBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -340,7 +343,7 @@ class _SaveBar extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Total: ${totalCalories.round()} kcal',
+                  l10n.totalCalories(totalCalories.round()),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
@@ -352,7 +355,7 @@ class _SaveBar extends StatelessWidget {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
-                    : const Text('Salvează'),
+                    : Text(l10n.save),
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import 'auth_providers.dart';
 
 /// Confirms and performs full account deletion — required by both the App
@@ -32,6 +33,7 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
   }
 
   Future<void> _confirm() async {
+    final l10n = AppLocalizations.of(context);
     final password = _passwordController.text;
     if (password.isEmpty) return;
     setState(() {
@@ -48,13 +50,13 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
       setState(() {
         _deleting = false;
         _error = e.code == 'wrong-password' || e.code == 'invalid-credential'
-            ? 'Parolă greșită.'
-            : 'Nu am putut șterge contul (${e.code}). Încearcă din nou.';
+            ? l10n.deleteAccountWrongPassword
+            : l10n.deleteAccountFailed(e.code);
       });
     } catch (_) {
       setState(() {
         _deleting = false;
-        _error = 'Nu am putut șterge contul. Încearcă din nou.';
+        _error = l10n.deleteAccountFailedGeneric;
       });
     }
   }
@@ -62,15 +64,15 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('Ștergere cont'),
+      title: Text(l10n.deleteAccountTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Se șterg definitiv contul și toate datele tale (profil, jurnal de mese, '
-            'antrenamente, greutăți, alimente memorate). Acțiunea nu poate fi anulată.',
+            l10n.deleteAccountExplanation,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
@@ -79,7 +81,7 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
             obscureText: true,
             autofocus: true,
             decoration: InputDecoration(
-              labelText: 'Parolă',
+              labelText: l10n.password,
               errorText: _error,
             ),
             onSubmitted: (_) => _deleting ? null : _confirm(),
@@ -89,7 +91,7 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
       actions: [
         TextButton(
           onPressed: _deleting ? null : () => Navigator.of(context).pop(),
-          child: const Text('Anulează'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
@@ -100,7 +102,7 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                 )
-              : const Text('Șterge definitiv'),
+              : Text(l10n.deleteAccountConfirm),
         ),
       ],
     );
