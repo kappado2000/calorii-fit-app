@@ -43,6 +43,7 @@ class CameraCaptureController extends StateNotifier<CameraCaptureState> {
           capture: capture,
           boundingBox: item.boundingBox,
           densityCategory: item.densityCategory,
+          nutritionMatch: item.nutritionMatch,
         );
         return ConfirmationItem(analyzed: item, baseEstimate: estimate);
       }).toList();

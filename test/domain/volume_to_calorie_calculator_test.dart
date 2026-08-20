@@ -1,7 +1,9 @@
 import 'package:depth_capture/depth_capture.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:calorie_app/core/constants/density_table.dart';
+import 'package:calorie_app/core/constants/nutrition_reference.dart';
 import 'package:calorie_app/data/models/bounding_box.dart';
+import 'package:calorie_app/data/models/food_product.dart';
 import 'package:calorie_app/domain/usecases/volume_to_calorie_calculator.dart';
 
 void main() {
@@ -119,6 +121,87 @@ void main() {
       expect(result.depthSource, DepthSource.referenceObjectOnly);
       expect(result.volumeCm3, greaterThan(0));
       expect(result.calories, greaterThan(0));
+    });
+  });
+
+  group('nutritionMatch', () {
+    const capture = DepthCaptureResult(
+      photoPath: '/tmp/photo.jpg',
+      depthSource: DepthSource.referenceObjectOnly,
+      referenceObjectScaleHint: 28,
+    );
+    const box = BoundingBox(xMin: 0.2, yMin: 0.2, xMax: 0.5, yMax: 0.5);
+
+    test('a real product match replaces the category-average calories and adds macros', () {
+      const product = FoodProduct(
+        name: 'Piept de pui la grătar',
+        kcalPer100g: 165,
+        proteinPer100g: 31,
+        carbsPer100g: 0,
+        fatPer100g: 3.6,
+      );
+
+      final withoutMatch = calculator.estimate(
+        capture: capture,
+        boundingBox: box,
+        densityCategory: DensityCategory.denseMeat,
+      );
+      final withMatch = calculator.estimate(
+        capture: capture,
+        boundingBox: box,
+        densityCategory: DensityCategory.denseMeat,
+        nutritionMatch: product,
+      );
+
+      // Mass (grams) comes only from depth-sensed volume x density — a
+      // nutrition match must never change it, only which per-100g figures
+      // are applied to it.
+      expect(withMatch.grams, closeTo(withoutMatch.grams, 0.001));
+      expect(withMatch.usedRealNutritionData, isTrue);
+      expect(withoutMatch.usedRealNutritionData, isFalse);
+      expect(withoutMatch.proteinG, isNull);
+
+      final factor = withMatch.grams / 100;
+      expect(withMatch.calories, closeTo(product.kcalPer100g * factor, 0.001));
+      expect(withMatch.proteinG, closeTo(product.proteinPer100g! * factor, 0.001));
+      expect(withMatch.carbsG, closeTo(product.carbsPer100g! * factor, 0.001));
+      expect(withMatch.fatG, closeTo(product.fatPer100g! * factor, 0.001));
+      // Confirms this is actually a *different* number from the coarse
+      // category placeholder, not a coincidental match.
+      expect(
+        withMatch.calories,
+        isNot(closeTo(averageKcalPer100gByCategory[DensityCategory.denseMeat]! * factor, 0.001)),
+      );
+    });
+
+    test('no nutrition match falls back to the category-average placeholder, as before', () {
+      final result = calculator.estimate(
+        capture: capture,
+        boundingBox: box,
+        densityCategory: DensityCategory.denseMeat,
+      );
+
+      expect(result.usedRealNutritionData, isFalse);
+      expect(result.proteinG, isNull);
+      expect(result.carbsG, isNull);
+      expect(result.fatG, isNull);
+      expect(result.micronutrients, isNull);
+    });
+
+    test('scaledByPortionFactor scales macros linearly alongside calories', () {
+      const product = FoodProduct(name: 'Somon', kcalPer100g: 208, proteinPer100g: 20, fatPer100g: 13);
+      final base = calculator.estimate(
+        capture: capture,
+        boundingBox: box,
+        densityCategory: DensityCategory.fish,
+        nutritionMatch: product,
+      );
+
+      final doubled = base.scaledByPortionFactor(2.0);
+
+      expect(doubled.proteinG, closeTo(base.proteinG! * 2, 0.001));
+      expect(doubled.fatG, closeTo(base.fatG! * 2, 0.001));
+      expect(doubled.usedRealNutritionData, isTrue);
     });
   });
 

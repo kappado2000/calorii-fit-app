@@ -1062,6 +1062,12 @@ abstract class AppLocalizations {
   /// **'Estimare aproximativă ({source}, fără senzor de adâncime)'**
   String roughEstimateNote(String source);
 
+  /// No description provided for @realNutritionDataBadge.
+  ///
+  /// In ro, this message translates to:
+  /// **'date reale'**
+  String get realNutritionDataBadge;
+
   /// No description provided for @totalCalories.
   ///
   /// In ro, this message translates to:

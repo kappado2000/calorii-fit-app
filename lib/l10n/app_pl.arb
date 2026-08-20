@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Nie ma na talerzu — usuń",
   "roughEstimateNote": "Przybliżone oszacowanie ({source}, brak czujnika głębi)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "prawdziwe dane",
   "totalCalories": "Razem: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 

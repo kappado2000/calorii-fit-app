@@ -542,6 +542,9 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get realNutritionDataBadge => 'prawdziwe dane';
+
+  @override
   String totalCalories(int kcal) {
     return 'Razem: $kcal kcal';
   }

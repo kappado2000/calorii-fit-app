@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Ikke på tallerkenen — fjern",
   "roughEstimateNote": "Groft estimat ({source}, ingen dybdesensor)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "reelle data",
   "totalCalories": "I alt: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 

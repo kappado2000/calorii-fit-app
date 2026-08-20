@@ -3,8 +3,10 @@ import 'dart:math' as math;
 import 'package:depth_capture/depth_capture.dart';
 
 import '../../core/constants/density_table.dart';
+import '../../core/constants/micronutrient_reference.dart';
 import '../../core/constants/nutrition_reference.dart';
 import '../../data/models/bounding_box.dart';
+import '../../data/models/food_product.dart';
 
 /// Result of converting a depth map (or reference-object fallback) + a
 /// bounding box into a real-world food estimate. `isRoughEstimate` is true
@@ -12,6 +14,12 @@ import '../../data/models/bounding_box.dart';
 /// callers must surface this distinction in the confirmation UI rather than
 /// presenting every estimate with the same implied confidence (see project
 /// plan, Risk #3: iOS accuracy is itself bimodal, same applies to Android).
+///
+/// `proteinG`/`carbsG`/`fatG`/`micronutrients` are null whenever no real
+/// per-food database match was found for this item — `usedRealNutritionData`
+/// distinguishes that case from a genuine zero, so the UI can show whether
+/// calories/macros come from an actual matched product or the coarse
+/// per-density-category placeholder average.
 class FoodEstimate {
   const FoodEstimate({
     required this.volumeCm3,
@@ -19,6 +27,11 @@ class FoodEstimate {
     required this.calories,
     required this.depthSource,
     required this.isRoughEstimate,
+    required this.usedRealNutritionData,
+    this.proteinG,
+    this.carbsG,
+    this.fatG,
+    this.micronutrients,
   });
 
   final double volumeCm3;
@@ -26,6 +39,11 @@ class FoodEstimate {
   final double calories;
   final DepthSource depthSource;
   final bool isRoughEstimate;
+  final bool usedRealNutritionData;
+  final double? proteinG;
+  final double? carbsG;
+  final double? fatG;
+  final MicronutrientProfile? micronutrients;
 
   FoodEstimate scaledByPortionFactor(double factor) {
     return FoodEstimate(
@@ -34,6 +52,11 @@ class FoodEstimate {
       calories: calories * factor,
       depthSource: depthSource,
       isRoughEstimate: isRoughEstimate,
+      usedRealNutritionData: usedRealNutritionData,
+      proteinG: proteinG == null ? null : proteinG! * factor,
+      carbsG: carbsG == null ? null : carbsG! * factor,
+      fatG: fatG == null ? null : fatG! * factor,
+      micronutrients: micronutrients,
     );
   }
 }
@@ -63,6 +86,7 @@ class VolumeToCalorieCalculator {
     required DepthCaptureResult capture,
     required BoundingBox boundingBox,
     required DensityCategory densityCategory,
+    FoodProduct? nutritionMatch,
   }) {
     final volumeCm3 = capture.depthMap != null && capture.intrinsics != null
         ? _volumeFromDepthMap(capture.depthMap!, capture.intrinsics!, boundingBox)
@@ -71,9 +95,19 @@ class VolumeToCalorieCalculator {
     final gramsPerCm3 = densityGramsPerCm3[densityCategory] ?? densityGramsPerCm3[DensityCategory.unknown]!;
     final grams = volumeCm3 * gramsPerCm3;
 
-    final kcalPer100g =
-        averageKcalPer100gByCategory[densityCategory] ?? averageKcalPer100gByCategory[DensityCategory.unknown]!;
+    // A real per-food database match (see AnalyzedFoodItem.nutritionMatch)
+    // replaces the coarse per-density-category placeholder for BOTH
+    // calories and macros — it's a strictly better estimate of the actual
+    // food than a category average that blends very different real foods
+    // together (e.g. "denseMeat" spans chicken breast and pork belly).
+    // Portion mass (grams) itself is unaffected either way: it comes from
+    // the depth-sensed volume x density, never from the matched product.
+    final kcalPer100g = nutritionMatch?.kcalPer100g ??
+        averageKcalPer100gByCategory[densityCategory] ??
+        averageKcalPer100gByCategory[DensityCategory.unknown]!;
     final calories = grams / 100 * kcalPer100g;
+
+    double? scaledPer100g(double? per100g) => per100g == null ? null : grams / 100 * per100g;
 
     return FoodEstimate(
       volumeCm3: volumeCm3,
@@ -81,6 +115,11 @@ class VolumeToCalorieCalculator {
       calories: calories,
       depthSource: capture.depthSource,
       isRoughEstimate: capture.depthMap == null,
+      usedRealNutritionData: nutritionMatch != null,
+      proteinG: scaledPer100g(nutritionMatch?.proteinPer100g),
+      carbsG: scaledPer100g(nutritionMatch?.carbsPer100g),
+      fatG: scaledPer100g(nutritionMatch?.fatPer100g),
+      micronutrients: nutritionMatch?.micronutrients,
     );
   }
 

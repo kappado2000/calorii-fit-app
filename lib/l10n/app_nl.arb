@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Niet op het bord — verwijderen",
   "roughEstimateNote": "Ruwe schatting ({source}, geen dieptesensor)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "echte data",
   "totalCalories": "Totaal: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 

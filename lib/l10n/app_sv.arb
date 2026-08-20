@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Inte på tallriken — ta bort",
   "roughEstimateNote": "Grov uppskattning ({source}, ingen djupsensor)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "riktiga data",
   "totalCalories": "Totalt: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 

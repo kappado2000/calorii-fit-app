@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Nicht auf dem Teller — entfernen",
   "roughEstimateNote": "Grobe Schätzung ({source}, kein Tiefensensor)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "echte Daten",
   "totalCalories": "Gesamt: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 

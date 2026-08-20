@@ -1,5 +1,6 @@
 import '../../core/constants/density_table.dart';
 import 'bounding_box.dart';
+import 'food_product.dart';
 
 /// One food item as identified by Claude — identification only, no
 /// volume/weight/calories (those are computed locally, see
@@ -12,6 +13,7 @@ class AnalyzedFoodItem {
     required this.densityCategory,
     required this.textureCues,
     this.notes,
+    this.nutritionMatch,
   });
 
   final String label;
@@ -21,7 +23,14 @@ class AnalyzedFoodItem {
   final String textureCues;
   final String? notes;
 
+  /// Best-effort real per-100g nutrition match for [label], found
+  /// server-side against the same database the manual/barcode search uses
+  /// (see analyzePhoto.ts). Null when nothing matched confidently — the
+  /// calorie calculator then falls back to the coarse per-category average.
+  final FoodProduct? nutritionMatch;
+
   factory AnalyzedFoodItem.fromJson(Map<String, dynamic> json) {
+    final nutritionMatchJson = json['nutritionMatch'] as Map<String, dynamic>?;
     return AnalyzedFoodItem(
       label: json['label'] as String,
       confidence: (json['confidence'] as num).toDouble(),
@@ -29,6 +38,7 @@ class AnalyzedFoodItem {
       densityCategory: densityCategoryFromWire(json['estimatedDensityCategory'] as String),
       textureCues: json['textureCues'] as String? ?? '',
       notes: json['notes'] as String?,
+      nutritionMatch: nutritionMatchJson == null ? null : FoodProduct.fromJson(nutritionMatchJson),
     );
   }
 }

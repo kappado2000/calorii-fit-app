@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Nincs a tányéron — eltávolítás",
   "roughEstimateNote": "Hozzávetőleges becslés ({source}, mélységérzékelő nélkül)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "valós adatok",
   "totalCalories": "Összesen: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 

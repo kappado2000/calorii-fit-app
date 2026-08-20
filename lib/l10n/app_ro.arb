@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Nu e pe farfurie — elimină",
   "roughEstimateNote": "Estimare aproximativă ({source}, fără senzor de adâncime)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "date reale",
   "totalCalories": "Total: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 

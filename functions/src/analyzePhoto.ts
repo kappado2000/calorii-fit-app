@@ -5,6 +5,8 @@ import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getApps, initializeApp } from "firebase-admin/app";
 import Anthropic from "@anthropic-ai/sdk";
 import { densityTableAsPromptText } from "./densityTable";
+import { findBestNutritionMatch } from "./foodMatching";
+import { FoodProductResult } from "./foodProduct";
 
 if (getApps().length === 0) {
   initializeApp();
@@ -78,7 +80,10 @@ and calories/macros come from a nutrition database keyed off the food name.
 Guessing numeric quantities yourself would bypass that pipeline and must be avoided.
 
 For each distinct food item visible on the plate, report:
-- label: a short, specific description (e.g. "grilled chicken breast", not just "chicken")
+- label: a short, specific description, IN ROMANIAN (e.g. "piept de pui la
+  grătar", not just "pui") — the app's users and its nutrition database are
+  Romanian, and this label is both shown to the user as-is and used to look
+  up real per-food nutrition data, so it must be a natural Romanian food name
 - confidence: your identification confidence from 0 to 1
 - boundingBox: the item's approximate region in the image, normalized 0-1
   (xMin, yMin, xMax, yMax), where (0,0) is the top-left corner
@@ -117,6 +122,12 @@ interface FoodItemResult {
   estimatedDensityCategory: (typeof DENSITY_CATEGORY_KEYS)[number];
   textureCues: string;
   notes: string | null;
+  /** Best-effort real per-100g nutrition match for [label] (see
+   * foodMatching.ts) — null when nothing matched confidently. When present,
+   * the client uses these real macros/micronutrients instead of the coarse
+   * per-density-category placeholder average. Added after Claude's own
+   * response, not part of its output schema. */
+  nutritionMatch: FoodProductResult | null;
 }
 
 interface AnalyzePhotoResult {
@@ -232,6 +243,21 @@ export const analyzePhoto = onCall<AnalyzePhotoRequest>(
       throw new HttpsError("internal", "Claude did not return a structured tool_use response.");
     }
 
-    return toolUse.input as AnalyzePhotoResult;
+    const result = toolUse.input as Omit<AnalyzePhotoResult, "items"> & {
+      items: Omit<FoodItemResult, "nutritionMatch">[];
+    };
+
+    // Run every item's nutrition lookup in parallel — sequential lookups
+    // would multiply this call's latency by the plate's item count, and
+    // findBestNutritionMatch never throws (see foodMatching.ts), so one
+    // slow/failed lookup can't take the rest down with it.
+    const items: FoodItemResult[] = await Promise.all(
+      result.items.map(async (item) => ({
+        ...item,
+        nutritionMatch: await findBestNutritionMatch(item.label),
+      })),
+    );
+
+    return { ...result, items };
   }
 );

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/meal_type.dart';
 import '../../data/models/recipe.dart';
+import '../../domain/usecases/volume_to_calorie_calculator.dart';
 import '../../l10n/app_localizations.dart';
 import '../camera_capture/camera_capture_state.dart';
 import '../food_log/food_log_providers.dart';
@@ -72,13 +73,18 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
 
     final ingredients = _items
         .where((item) => item.estimate.grams > 0)
-        .map(
-          (item) => RecipeIngredient(
+        .map((item) {
+          final estimate = item.estimate;
+          final factor = 100 / estimate.grams;
+          return RecipeIngredient(
             name: item.analyzed.label,
-            grams: item.estimate.grams,
-            kcalPer100g: item.estimate.calories / item.estimate.grams * 100,
-          ),
-        )
+            grams: estimate.grams,
+            kcalPer100g: estimate.calories * factor,
+            proteinPer100g: estimate.proteinG == null ? null : estimate.proteinG! * factor,
+            carbsPer100g: estimate.carbsG == null ? null : estimate.carbsG! * factor,
+            fatPer100g: estimate.fatG == null ? null : estimate.fatG! * factor,
+          );
+        })
         .toList();
     if (ingredients.isEmpty) return;
 
@@ -96,12 +102,26 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
     setState(() => _saving = true);
     final today = normalizeDate(DateTime.now());
     for (final item in _items) {
-      final grams = item.estimate.grams;
+      final estimate = item.estimate;
+      final grams = estimate.grams;
       if (grams <= 0) continue;
-      final kcalPer100g = item.estimate.calories / grams * 100;
+      final factor = 100 / grams;
+      final kcalPer100g = estimate.calories * factor;
+      final proteinPer100g = estimate.proteinG == null ? null : estimate.proteinG! * factor;
+      final carbsPer100g = estimate.carbsG == null ? null : estimate.carbsG! * factor;
+      final fatPer100g = estimate.fatG == null ? null : estimate.fatG! * factor;
       await ref
           .read(customFoodsProvider.notifier)
-          .rememberProduct(name: item.analyzed.label, kcalPer100g: kcalPer100g, gramsUsed: grams);
+          .rememberProduct(
+            name: item.analyzed.label,
+            kcalPer100g: kcalPer100g,
+            proteinPer100g: proteinPer100g,
+            carbsPer100g: carbsPer100g,
+            fatPer100g: fatPer100g,
+            gramsUsed: grams,
+            micronutrients: estimate.micronutrients,
+            mealType: _mealType,
+          );
       await ref
           .read(dailyLogProvider(today).notifier)
           .addEntry(
@@ -109,6 +129,10 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
             foodName: item.analyzed.label,
             grams: grams,
             kcalPer100g: kcalPer100g,
+            proteinPer100g: proteinPer100g,
+            carbsPer100g: carbsPer100g,
+            fatPer100g: fatPer100g,
+            micronutrients: estimate.micronutrients,
           );
     }
     if (mounted) Navigator.of(context).pop();
@@ -288,9 +312,33 @@ class _FoodItemCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                '${estimate.grams.round()} g · ${estimate.calories.round()} kcal',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '${estimate.grams.round()} g · ${estimate.calories.round()} kcal',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      if (estimate.usedRealNutritionData) ...[
+                        const SizedBox(width: 8),
+                        _RealDataBadge(label: l10n.realNutritionDataBadge),
+                      ],
+                    ],
+                  ),
+                  if (_hasMacros(estimate)) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.macroSummaryLine(
+                        _fmtGrams(estimate.proteinG),
+                        _fmtGrams(estimate.carbsG),
+                        _fmtGrams(estimate.fatG),
+                      ),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ],
               ),
             ),
             const SizedBox(height: 8),
@@ -320,6 +368,11 @@ class _FoodItemCard extends StatelessWidget {
     );
   }
 
+  bool _hasMacros(FoodEstimate estimate) =>
+      estimate.proteinG != null || estimate.carbsG != null || estimate.fatG != null;
+
+  String _fmtGrams(double? grams) => grams == null ? '—' : '${grams.round()}g';
+
   String _depthSourceLabel(AppLocalizations l10n, DepthSource source) {
     switch (source) {
       case DepthSource.lidar:
@@ -333,6 +386,29 @@ class _FoodItemCard extends StatelessWidget {
       case DepthSource.none:
         return l10n.depthSourceUnknownShort;
     }
+  }
+}
+
+class _RealDataBadge extends StatelessWidget {
+  const _RealDataBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.primary;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.verified_rounded, size: 12, color: color),
+          const SizedBox(width: 3),
+          Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 10.5)),
+        ],
+      ),
+    );
   }
 }
 

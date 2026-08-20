@@ -542,6 +542,9 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
+  String get realNutritionDataBadge => 'valós adatok';
+
+  @override
   String totalCalories(int kcal) {
     return 'Összesen: $kcal kcal';
   }

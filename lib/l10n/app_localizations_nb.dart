@@ -541,6 +541,9 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
+  String get realNutritionDataBadge => 'ekte data';
+
+  @override
   String totalCalories(int kcal) {
     return 'Totalt: $kcal kcal';
   }

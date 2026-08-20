@@ -190,6 +190,7 @@
   "notOnPlateRemove": "Not on the plate — remove",
   "roughEstimateNote": "Rough estimate ({source}, no depth sensor)",
   "@roughEstimateNote": {"placeholders": {"source": {"type": "String"}}},
+  "realNutritionDataBadge": "real data",
   "totalCalories": "Total: {kcal} kcal",
   "@totalCalories": {"placeholders": {"kcal": {"type": "int"}}},
 
