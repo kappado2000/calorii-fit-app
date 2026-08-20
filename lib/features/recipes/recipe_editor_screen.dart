@@ -5,6 +5,7 @@ import '../../data/models/food_product.dart';
 import '../../data/models/recipe.dart';
 import '../../l10n/app_localizations.dart';
 import '../food_log/food_log_providers.dart';
+import 'recipe_icon.dart';
 import 'recipes_providers.dart';
 
 /// Create or edit a [Recipe]: a name, a serving count, and a list of
@@ -24,6 +25,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _servingsController;
   late final List<RecipeIngredient> _ingredients;
+  late String _icon;
   bool _saving = false;
 
   @override
@@ -33,6 +35,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     _nameController = TextEditingController(text: existing?.name ?? '');
     _servingsController = TextEditingController(text: '${existing?.servings ?? 1}');
     _ingredients = [...?existing?.ingredients];
+    _icon = existing?.icon ?? kDefaultRecipeIcon;
   }
 
   @override
@@ -47,6 +50,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     name: _nameController.text,
     servings: int.tryParse(_servingsController.text) ?? 1,
     ingredients: _ingredients,
+    icon: _icon,
   );
 
   Future<void> _addIngredient() async {
@@ -58,6 +62,29 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     if (ingredient != null) setState(() => _ingredients.add(ingredient));
   }
 
+  Future<void> _editIngredientQuantity(int index) async {
+    final grams = await showEditIngredientQuantityDialog(context, current: _ingredients[index].grams);
+    if (grams == null) return;
+    setState(() {
+      final ingredient = _ingredients[index];
+      _ingredients[index] = RecipeIngredient(
+        name: ingredient.name,
+        grams: grams,
+        kcalPer100g: ingredient.kcalPer100g,
+        proteinPer100g: ingredient.proteinPer100g,
+        carbsPer100g: ingredient.carbsPer100g,
+        fatPer100g: ingredient.fatPer100g,
+      );
+    });
+  }
+
+  Future<void> _changeIcon() async {
+    final byCalories = [..._ingredients]..sort((a, b) => b.calories.compareTo(a.calories));
+    final suggested = suggestRecipeIcon(byCalories.map((i) => i.name));
+    final chosen = await pickRecipeIcon(context, current: _icon, suggested: suggested);
+    if (chosen != null) setState(() => _icon = chosen);
+  }
+
   Future<void> _save() async {
     final name = _nameController.text.trim();
     final servings = int.tryParse(_servingsController.text) ?? 0;
@@ -66,7 +93,13 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     setState(() => _saving = true);
     await ref
         .read(recipesProvider.notifier)
-        .saveRecipe(id: widget.existing?.id, name: name, servings: servings, ingredients: _ingredients);
+        .saveRecipe(
+          id: widget.existing?.id,
+          name: name,
+          servings: servings,
+          ingredients: _ingredients,
+          icon: _icon,
+        );
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -83,6 +116,31 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
+          Center(
+            child: GestureDetector(
+              onTap: _changeIcon,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    child: Text(_icon, style: const TextStyle(fontSize: 32)),
+                  ),
+                  Positioned(
+                    right: -4,
+                    bottom: -4,
+                    child: CircleAvatar(
+                      radius: 14,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      child: Icon(Icons.edit_rounded, size: 14, color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
           TextField(
             controller: _nameController,
             decoration: InputDecoration(labelText: l10n.recipeNameLabel, hintText: l10n.recipeNameHint),
@@ -119,6 +177,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
             for (final (index, ingredient) in _ingredients.indexed)
               ListTile(
                 contentPadding: EdgeInsets.zero,
+                onTap: () => _editIngredientQuantity(index),
                 title: Text(ingredient.name),
                 subtitle: Text('${ingredient.grams.round()} g · ${ingredient.calories.round()} kcal'),
                 trailing: IconButton(
@@ -301,6 +360,67 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Small numeric dialog for adjusting an already-added ingredient's
+/// quantity without going through the full product search again — the
+/// product identity and its per-100g values don't change, only the grams.
+Future<double?> showEditIngredientQuantityDialog(BuildContext context, {required double current}) {
+  return showDialog<double>(
+    context: context,
+    builder: (_) => _EditIngredientQuantityDialog(current: current),
+  );
+}
+
+class _EditIngredientQuantityDialog extends StatefulWidget {
+  const _EditIngredientQuantityDialog({required this.current});
+
+  final double current;
+
+  @override
+  State<_EditIngredientQuantityDialog> createState() => _EditIngredientQuantityDialogState();
+}
+
+class _EditIngredientQuantityDialogState extends State<_EditIngredientQuantityDialog> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.current.round().toString());
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final grams = double.tryParse(_controller.text.replaceAll(',', '.'));
+    return AlertDialog(
+      title: Text(l10n.editIngredientQuantityTitle),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        decoration: InputDecoration(labelText: l10n.quantityLabel, suffixText: 'g'),
+        onChanged: (_) => setState(() {}),
+        onSubmitted: (_) {
+          if (grams != null && grams > 0) Navigator.of(context).pop(grams);
+        },
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.cancel)),
+        FilledButton(
+          onPressed: (grams == null || grams <= 0) ? null : () => Navigator.of(context).pop(grams),
+          child: Text(l10n.save),
+        ),
+      ],
     );
   }
 }

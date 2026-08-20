@@ -72,6 +72,10 @@ class RecipesScreen extends ConsumerWidget {
                 return Card(
                   child: ListTile(
                     onTap: () => _handleTap(context, ref, recipe),
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      child: Text(recipe.icon, style: const TextStyle(fontSize: 18)),
+                    ),
                     title: Text(recipe.name),
                     subtitle: Text(
                       l10n.recipeServingsSummary(

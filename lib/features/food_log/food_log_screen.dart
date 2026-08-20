@@ -24,6 +24,7 @@ import '../auth/auth_providers.dart';
 import '../auth/delete_account_dialog.dart';
 import '../camera_capture/camera_capture_screen.dart';
 import '../device_capability/device_capability_screen.dart';
+import '../guide/app_guide_screen.dart';
 import '../hydration/hydration_card.dart';
 import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
@@ -146,6 +147,16 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 ),
               ),
               PopupMenuItem(
+                value: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AppGuideScreen()),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.help_outline_rounded),
+                  title: Text(l10n.guideMenuEntry),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
                 value: () => LanguagePickerDialog.show(context),
                 child: ListTile(
                   leading: const Icon(Icons.language_rounded),
@@ -164,10 +175,15 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
               PopupMenuItem(
                 value: () => DeleteAccountDialog.show(context),
                 child: ListTile(
-                  leading: Icon(Icons.delete_forever_rounded, color: Theme.of(context).colorScheme.error),
+                  leading: Icon(
+                    Icons.delete_forever_rounded,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   title: Text(
                     l10n.deleteAccountTitle,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -291,7 +307,9 @@ String _dateLabel(AppLocalizations l10n, DateTime date) {
     case 1:
       return l10n.dateTomorrow(formatted);
     default:
-      return date.year == today.year ? formatted : DateFormat('d MMMM y', l10n.localeName).format(date);
+      return date.year == today.year
+          ? formatted
+          : DateFormat('d MMMM y', l10n.localeName).format(date);
   }
 }
 
@@ -439,17 +457,23 @@ class _DailyProgressCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF1B6B34),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            l10n.dailyTargetLabel(formatThousands(tdee!.dailyDeficit.round())),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
+                            l10n.dailyTargetLabel(
+                              formatThousands(tdee!.dailyDeficit.round()),
                             ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -531,7 +555,10 @@ class _DailyProgressCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         isOverLimit
-                            ? l10n.overLimitCaption(formatThousands(overBy.round()), formatThousands(adjustedTarget.round()))
+                            ? l10n.overLimitCaption(
+                                formatThousands(overBy.round()),
+                                formatThousands(adjustedTarget.round()),
+                              )
                             : _limitCaption(l10n, goal, adjustedTarget),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isOverLimit
@@ -671,70 +698,78 @@ class _MealSectionState extends ConsumerState<_MealSection> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(height: 5, color: mealColor),
-          InkWell(
-            onTap: () => setState(() => _expanded = !_expanded),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: mealColor,
-                                shape: BoxShape.circle,
+          Container(
+            color: mealColor.withValues(alpha: 0.14),
+            child: InkWell(
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: mealColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  _iconForMeal(widget.mealType),
+                                  size: 17,
+                                  color: Colors.white,
+                                ),
                               ),
-                              alignment: Alignment.center,
-                              child: Icon(
-                                _iconForMeal(widget.mealType),
-                                size: 17,
-                                color: Colors.white,
+                              const SizedBox(width: 10),
+                              Text(
+                                widget.mealType.label(l10n),
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(
+                                      color: mealColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
+                            ],
+                          ),
+                          if (rangeLow != null && rangeHigh != null) ...[
+                            const SizedBox(height: 2),
                             Text(
-                              widget.mealType.label(l10n),
-                              style: Theme.of(context).textTheme.titleMedium
+                              l10n.recommendedRange(
+                                formatThousands(rangeLow.round()),
+                                formatThousands(rangeHigh.round()),
+                              ),
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
-                                    color: mealColor,
-                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurfaceVariant,
                                   ),
                             ),
                           ],
-                        ),
-                        if (rangeLow != null && rangeHigh != null) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            l10n.recommendedRange(formatThousands(rangeLow.round()), formatThousands(rangeHigh.round())),
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(color: colorScheme.onSurfaceVariant),
-                          ),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    '${formatThousands(subtotal.round())} kcal',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: isOverRange ? warningColor : null,
+                    Text(
+                      '${formatThousands(subtotal.round())} kcal',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: isOverRange ? warningColor : null,
+                      ),
                     ),
-                  ),
-                  AnimatedRotation(
-                    turns: _expanded ? 0.25 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      color: colorScheme.onSurfaceVariant,
+                    AnimatedRotation(
+                      turns: _expanded ? 0.25 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.chevron_right_rounded,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -897,9 +932,13 @@ class _WorkoutSection extends ConsumerWidget {
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     child: TextButton.icon(
-                      onPressed: () => AddWorkoutSheet.show(context, date: date),
+                      onPressed: () =>
+                          AddWorkoutSheet.show(context, date: date),
                       icon: const Icon(Icons.add_rounded),
                       label: Text(l10n.addActivity),
                     ),
@@ -907,11 +946,7 @@ class _WorkoutSection extends ConsumerWidget {
                 ],
               ),
             ),
-            const Positioned(
-              top: 8,
-              left: 8,
-              child: _WeightlifterBadge(),
-            ),
+            const Positioned(top: 8, left: 8, child: _WeightlifterBadge()),
           ],
         ),
       ),
@@ -929,14 +964,17 @@ class _AnimatedFlameIcon extends StatefulWidget {
   State<_AnimatedFlameIcon> createState() => _AnimatedFlameIconState();
 }
 
-class _AnimatedFlameIconState extends State<_AnimatedFlameIcon> with SingleTickerProviderStateMixin {
+class _AnimatedFlameIconState extends State<_AnimatedFlameIcon>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 700))
-      ..repeat(reverse: true);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -956,7 +994,11 @@ class _AnimatedFlameIconState extends State<_AnimatedFlameIcon> with SingleTicke
           child: Icon(
             Icons.local_fire_department_rounded,
             size: 18,
-            color: Color.lerp(const Color(0xFFFFA726), const Color(0xFFE64A19), t),
+            color: Color.lerp(
+              const Color(0xFFFFA726),
+              const Color(0xFFE64A19),
+              t,
+            ),
           ),
         );
       },
@@ -975,14 +1017,17 @@ class _WeightlifterBadge extends StatefulWidget {
   State<_WeightlifterBadge> createState() => _WeightlifterBadgeState();
 }
 
-class _WeightlifterBadgeState extends State<_WeightlifterBadge> with SingleTickerProviderStateMixin {
+class _WeightlifterBadgeState extends State<_WeightlifterBadge>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
-      ..repeat(reverse: true);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -996,13 +1041,18 @@ class _WeightlifterBadgeState extends State<_WeightlifterBadge> with SingleTicke
     return Container(
       width: 32,
       height: 32,
-      decoration: const BoxDecoration(color: _WorkoutSection._borderColor, shape: BoxShape.circle),
+      decoration: const BoxDecoration(
+        color: _WorkoutSection._borderColor,
+        shape: BoxShape.circle,
+      ),
       alignment: Alignment.center,
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, _) => CustomPaint(
           size: const Size(20, 20),
-          painter: _WeightlifterPainter(lift: Curves.easeInOut.transform(_controller.value)),
+          painter: _WeightlifterPainter(
+            lift: Curves.easeInOut.transform(_controller.value),
+          ),
         ),
       ),
     );
@@ -1036,16 +1086,29 @@ class _WeightlifterPainter extends CustomPainter {
     canvas.drawLine(shoulder, hip, linePaint);
 
     // Legs, a slight stance for balance.
-    canvas.drawLine(hip, Offset(hip.dx - size.width * 0.18, size.height * 0.98), linePaint);
-    canvas.drawLine(hip, Offset(hip.dx + size.width * 0.14, size.height * 0.98), linePaint);
+    canvas.drawLine(
+      hip,
+      Offset(hip.dx - size.width * 0.18, size.height * 0.98),
+      linePaint,
+    );
+    canvas.drawLine(
+      hip,
+      Offset(hip.dx + size.width * 0.14, size.height * 0.98),
+      linePaint,
+    );
 
     // Bracing arm, static, opposite the lifting side.
-    canvas.drawLine(shoulder, Offset(shoulder.dx - size.width * 0.2, size.height * 0.5), linePaint);
+    canvas.drawLine(
+      shoulder,
+      Offset(shoulder.dx - size.width * 0.2, size.height * 0.5),
+      linePaint,
+    );
 
     // Lifting arm: sweeps from racked (near the shoulder) to overhead lockout.
     final angle = _lerp(2.0, -1.55, lift); // radians; down-ish -> up-and-back
     final armLength = size.width * 0.4;
-    final hand = shoulder + Offset(math.cos(angle), math.sin(angle)) * armLength;
+    final hand =
+        shoulder + Offset(math.cos(angle), math.sin(angle)) * armLength;
     canvas.drawLine(shoulder, hand, linePaint);
 
     // The dumbbell: a short bar through the hand, perpendicular to the
@@ -1065,5 +1128,6 @@ class _WeightlifterPainter extends CustomPainter {
   double _lerp(double a, double b, double t) => a + (b - a) * t;
 
   @override
-  bool shouldRepaint(covariant _WeightlifterPainter oldDelegate) => oldDelegate.lift != lift;
+  bool shouldRepaint(covariant _WeightlifterPainter oldDelegate) =>
+      oldDelegate.lift != lift;
 }

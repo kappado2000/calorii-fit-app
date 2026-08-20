@@ -50,12 +50,18 @@ class Recipe {
     required this.name,
     required this.servings,
     required this.ingredients,
+    this.icon = kDefaultRecipeIcon,
   });
 
   final String id;
   final String name;
   final int servings;
   final List<RecipeIngredient> ingredients;
+
+  /// Emoji chosen by the user to represent this recipe in lists — see
+  /// recipe_icon.dart for the curated set and the predominant-ingredient
+  /// suggestion heuristic.
+  final String icon;
 
   double get totalGrams => ingredients.fold(0, (sum, i) => sum + i.grams);
   double get totalCalories => ingredients.fold(0, (sum, i) => sum + i.calories);
@@ -88,6 +94,7 @@ class Recipe {
     'name': name,
     'servings': servings,
     'ingredients': ingredients.map((i) => i.toJson()).toList(),
+    'icon': icon,
   };
 
   factory Recipe.fromJson(Map<String, dynamic> json) => Recipe(
@@ -97,5 +104,10 @@ class Recipe {
     ingredients: (json['ingredients'] as List<dynamic>)
         .map((i) => RecipeIngredient.fromJson(i as Map<String, dynamic>))
         .toList(),
+    icon: json['icon'] as String? ?? kDefaultRecipeIcon,
   );
 }
+
+/// Fallback icon for recipes saved before the icon feature existed, and the
+/// starting point in the picker when nothing better can be suggested.
+const kDefaultRecipeIcon = '🍽️';

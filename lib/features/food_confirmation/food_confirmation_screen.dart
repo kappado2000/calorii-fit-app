@@ -4,10 +4,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/meal_type.dart';
+import '../../data/models/recipe.dart';
 import '../../l10n/app_localizations.dart';
 import '../camera_capture/camera_capture_state.dart';
 import '../food_log/food_log_providers.dart';
 import '../how_it_works/how_it_works_screen.dart';
+import '../recipes/recipe_icon.dart';
+import '../recipes/recipes_providers.dart';
+import '../recipes/save_as_recipe_dialog.dart';
 
 /// Mandatory confirmation/correction step before anything is saved — every
 /// serious competitor (Cal AI, BiteSnap, SnapCalorie) converges on this
@@ -59,6 +63,35 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
 
   double get _totalCalories => _items.fold(0, (sum, item) => sum + item.estimate.calories);
 
+  Future<void> _saveAsRecipe() async {
+    final byCalories = [..._items]..sort((a, b) => b.estimate.calories.compareTo(a.estimate.calories));
+    final suggested = suggestRecipeIcon(byCalories.map((item) => item.analyzed.label));
+
+    final result = await showSaveAsRecipeDialog(context, suggestedIcon: suggested);
+    if (result == null) return;
+
+    final ingredients = _items
+        .where((item) => item.estimate.grams > 0)
+        .map(
+          (item) => RecipeIngredient(
+            name: item.analyzed.label,
+            grams: item.estimate.grams,
+            kcalPer100g: item.estimate.calories / item.estimate.grams * 100,
+          ),
+        )
+        .toList();
+    if (ingredients.isEmpty) return;
+
+    await ref
+        .read(recipesProvider.notifier)
+        .saveRecipe(name: result.name, servings: 1, ingredients: ingredients, icon: result.icon);
+
+    if (mounted) {
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.recipeSavedConfirmation(result.name))));
+    }
+  }
+
   Future<void> _save() async {
     setState(() => _saving = true);
     final today = normalizeDate(DateTime.now());
@@ -88,6 +121,12 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
       appBar: AppBar(
         title: Text(l10n.confirmFoodsTitle),
         actions: [
+          if (_items.isNotEmpty)
+            IconButton(
+              tooltip: l10n.saveAsRecipeTooltip,
+              icon: const Icon(Icons.bookmark_add_outlined),
+              onPressed: _saveAsRecipe,
+            ),
           IconButton(
             tooltip: l10n.howItWorksTooltip,
             icon: const Icon(Icons.info_outline_rounded),

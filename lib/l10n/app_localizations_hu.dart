@@ -983,6 +983,26 @@ class AppLocalizationsHu extends AppLocalizations {
   String get addIngredientButton => 'Összetevő hozzáadása';
 
   @override
+  String get editIngredientQuantityTitle => 'Mennyiség szerkesztése';
+
+  @override
+  String get chooseRecipeIconTitle => 'Válassz ikont';
+
+  @override
+  String get recipeIconSuggested => 'Javasolt';
+
+  @override
+  String get saveAsRecipeTooltip => 'Mentés receptként';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Mentés új receptként';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '„$name” elmentve a receptjeid közé.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Étel hozzáadása — $meal';
   }
@@ -1045,4 +1065,109 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Nyelv';
+
+  @override
+  String get guideMenuEntry => 'Használati útmutató';
+
+  @override
+  String get guideScreenTitle => 'Használati útmutató';
+
+  @override
+  String get guideIntroTitle => 'Mi a Calorii Fit';
+
+  @override
+  String get guideIntroBody =>
+      'Egy táplálkozási alkalmazás, amely közvetlenül a tányérodról készült fotó alapján becsüli meg a kalóriákat, a telefonod mélységérzékelőjét használva — nem csak egy hétköznapi fotót. Emellett teljes naplót vezet: étkezések, sport, folyadékbevitel, testsúly és a célod felé tett előrehaladásod.';
+
+  @override
+  String get guidePhotoTitle => 'Becslés fotóból';
+
+  @override
+  String get guidePhotoBody =>
+      'Lefényképezed a tányérodat, a telefonod LiDAR, ARCore Depth vagy dupla kamera segítségével méri meg a térfogatát, az alkalmazás pedig azonosítja az ételeket és kiszámítja az adagot. Az eredményt csúszkával vagy előre beállított értékekkel erősíted meg vagy módosítod — semmi nem kerül automatikusan mentésre. Mélységérzékelő nélkül a tányér átmérője szolgál referenciaként, egyértelműen hozzávetőleges becslésként jelölve.';
+
+  @override
+  String get guideLogTitle => 'Napi napló';
+
+  @override
+  String get guideLogBody =>
+      'Napi négy étkezés — Reggeli, Ebéd, Vacsora, Nassolás. Adj hozzá ételeket fotóból, keresésből, vonalkód beolvasásával, kézzel, a receptjeidből, vagy gyorsan a megszokott ételeid pipálható listájából.';
+
+  @override
+  String get guideRecipesTitle => 'Receptjeim';
+
+  @override
+  String get guideRecipesBody =>
+      'Mentsd el az összetevők egy olyan kombinációját, amelyet gyakran eszel, és egyetlen érintéssel rögzítsd. Minden recepthez választhatsz ikont (vagy elfogadhatod az automatikus javaslatot), és bármikor szerkesztheted bármelyik összetevő mennyiségét. Amikor egyszerre több ételt adsz hozzá, azonnal elmentheted őket új receptként.';
+
+  @override
+  String get guideWorkoutsTitle => 'Fizikai tevékenység';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Válaszd ki a tevékenység típusát és időtartamát, az elégetett kalóriák automatikusan kiszámolódnak — vagy add meg közvetlenül, ha már ismered őket egy okosórából. Az elégetett kalóriák levonásra kerülnek a napi keretből.';
+
+  @override
+  String get guideProgressTitle => 'Előrehaladás';
+
+  @override
+  String get guideProgressBody =>
+      'Grafikonok 7 napra, 30 napra vagy a teljes programra: testsúly-alakulás (simított), a saját energiaegyensúlyodból számított adaptív TDEE, makrotápanyag-egyensúly és mikrotápanyag-lefedettség. Szinkronizál az Apple Health / Health Connect szolgáltatással és egy Bluetooth mérleggel.';
+
+  @override
+  String get guideHydrationTitle => 'Folyadékbevitel';
+
+  @override
+  String get guideHydrationBody =>
+      'Egyszerű napi vizespohár-számláló — egy érintés a hozzáadáshoz, egy érintés az utolsó visszavonásához.';
+
+  @override
+  String get guideStreaksTitle => 'Motiváció';
+
+  @override
+  String get guideStreaksBody =>
+      'Egy lángjelvény mutatja, hány egymást követő napon rögzítettél legalább egy étkezést.';
+
+  @override
+  String get guideRemindersTitle => 'Napi emlékeztető';
+
+  @override
+  String get guideRemindersBody =>
+      'Egy általad választott időpontban érkező értesítés, amely emlékeztet az étkezéseid rögzítésére — bármikor kikapcsolható a menüből.';
+
+  @override
+  String get guideProfileTitle => 'Profil és cél';
+
+  @override
+  String get guideProfileBody =>
+      'Kor, biológiai nem, testmagasság, testsúly, aktivitási szint és cél — bármikor szerkeszthető. Az alkalmazás minden változtatáskor automatikusan újraszámolja a kalóriacélodat.';
+
+  @override
+  String get guidePrivacyTitle => 'Adatvédelem';
+
+  @override
+  String get guidePrivacyBody =>
+      'Az adataid kizárólag a fiókodhoz vannak kötve, és más felhasználók számára nem láthatók. Bármikor törölheted a fiókodat és az összes hozzá tartozó adatot a menüből — a törlés végleges és azonnali.';
+
+  @override
+  String get guideLanguagesTitle => 'Elérhető nyelvek';
+
+  @override
+  String get guideLanguagesBody =>
+      'Az alkalmazás 13 nyelven érhető el, a menüből választhatók — nem csak automatikusan felismerve a telefon nyelve alapján.';
+
+  @override
+  String get guidePremiumTitle => 'Prémium és előfizetések';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Piszkozat, nem véglegesített — az alábbi terv még nem aktív az alkalmazásban. Jelenleg nincs alkalmazáson belüli fizetés vagy funkciókorlátozás.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Ingyenes, örökre: teljes étkezési napló, napi 20 fotóelemzés, korlátlan saját recept, alap előrehaladási grafikonok és Apple Health / Health Connect szinkronizálás.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Prémium (tájékoztató jellegű, nem megerősített ár): korlátlan fotóelemzés, adaptív TDEE és részletes mikrotápanyagok, adatexport és elsőbbségi támogatás.';
 }

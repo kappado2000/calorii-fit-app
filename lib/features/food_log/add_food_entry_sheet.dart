@@ -5,9 +5,13 @@ import '../../core/constants/micronutrient_reference.dart';
 import '../../data/models/custom_food.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
+import '../../data/models/recipe.dart';
 import '../../l10n/app_localizations.dart';
 import '../barcode_scan/barcode_scan_screen.dart';
+import '../recipes/recipe_icon.dart';
+import '../recipes/recipes_providers.dart';
 import '../recipes/recipes_screen.dart';
+import '../recipes/save_as_recipe_dialog.dart';
 import 'food_log_providers.dart';
 
 /// Bottom sheet for logging a product. The user types a name, the app
@@ -108,6 +112,43 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
       await ref.read(customFoodsProvider.notifier).incrementMealTypeUsage(food.id, widget.mealType);
     }
     if (mounted) Navigator.of(context).pop();
+  }
+
+  /// Saves the checked frequent foods as a new [Recipe] instead of logging
+  /// them — the same "several foods entered together" moment as
+  /// [_saveQuickAdd], just captured for reuse rather than for today's diary.
+  Future<void> _saveQuickAddAsRecipe(List<CustomFood> allFoods) async {
+    final selected = allFoods.where((food) => _quickAddSelectedIds.contains(food.id)).toList();
+    if (selected.isEmpty) return;
+
+    final byCalories = [...selected]
+      ..sort((a, b) => (b.kcalPer100g * (b.lastGramsUsed ?? 100)).compareTo(a.kcalPer100g * (a.lastGramsUsed ?? 100)));
+    final suggested = suggestRecipeIcon(byCalories.map((food) => food.name));
+
+    final result = await showSaveAsRecipeDialog(context, suggestedIcon: suggested);
+    if (result == null) return;
+
+    final ingredients = selected
+        .map(
+          (food) => RecipeIngredient(
+            name: food.name,
+            grams: food.lastGramsUsed ?? 100,
+            kcalPer100g: food.kcalPer100g,
+            proteinPer100g: food.proteinPer100g,
+            carbsPer100g: food.carbsPer100g,
+            fatPer100g: food.fatPer100g,
+          ),
+        )
+        .toList();
+
+    await ref
+        .read(recipesProvider.notifier)
+        .saveRecipe(name: result.name, servings: 1, ingredients: ingredients, icon: result.icon);
+
+    if (mounted) {
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.recipeSavedConfirmation(result.name))));
+    }
   }
 
   void _startManualEntry() {
@@ -253,15 +294,27 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
               ),
               if (_quickAddSelectedIds.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _saving ? null : () => _saveQuickAdd(frequentFoods),
-                  child: _saving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : Text(l10n.addCount(_quickAddSelectedIds.length)),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: _saving ? null : () => _saveQuickAdd(frequentFoods),
+                        child: _saving
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            : Text(l10n.addCount(_quickAddSelectedIds.length)),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton.filledTonal(
+                      tooltip: l10n.saveAsRecipeTooltip,
+                      icon: const Icon(Icons.bookmark_add_outlined),
+                      onPressed: _saving ? null : () => _saveQuickAddAsRecipe(frequentFoods),
+                    ),
+                  ],
                 ),
               ],
             ],

@@ -979,6 +979,26 @@ class AppLocalizationsRo extends AppLocalizations {
   String get addIngredientButton => 'Adaugă ingredientul';
 
   @override
+  String get editIngredientQuantityTitle => 'Editează cantitatea';
+
+  @override
+  String get chooseRecipeIconTitle => 'Alege o iconiță';
+
+  @override
+  String get recipeIconSuggested => 'Sugestie';
+
+  @override
+  String get saveAsRecipeTooltip => 'Salvează ca rețetă';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Salvează ca rețetă nouă';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '„$name” a fost salvată în rețetele tale.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Adaugă aliment — $meal';
   }
@@ -1041,4 +1061,109 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Limbă';
+
+  @override
+  String get guideMenuEntry => 'Ghid de utilizare';
+
+  @override
+  String get guideScreenTitle => 'Ghid de utilizare';
+
+  @override
+  String get guideIntroTitle => 'Ce este Calorii Fit';
+
+  @override
+  String get guideIntroBody =>
+      'O aplicație de nutriție care estimează caloriile direct dintr-o fotografie a farfuriei, folosind senzorul de adâncime al telefonului, nu doar o poză obișnuită. Pe lângă asta, ține jurnalul complet: mese, sport, hidratare, greutate și progresul spre obiectivul tău.';
+
+  @override
+  String get guidePhotoTitle => 'Estimarea din fotografie';
+
+  @override
+  String get guidePhotoBody =>
+      'Fotografiezi farfuria, telefonul îi măsoară volumul folosind LiDAR, ARCore Depth sau camera duală, iar aplicația identifică alimentele și calculează porția. Tu confirmi sau ajustezi rezultatul cu un slider sau presetări — nimic nu se salvează automat. Fără senzor de adâncime, se folosește diametrul farfuriei ca reper, marcat clar drept estimare aproximativă.';
+
+  @override
+  String get guideLogTitle => 'Jurnalul zilnic';
+
+  @override
+  String get guideLogBody =>
+      'Patru mese pe zi — Dimineață, Prânz, Seară, Gustare. Adaugi alimente din fotografie, din căutare, prin scanarea codului de bare, manual, din rețetele tale sau rapid dintr-o listă de bifat cu alimentele obișnuite.';
+
+  @override
+  String get guideRecipesTitle => 'Rețetele mele';
+
+  @override
+  String get guideRecipesBody =>
+      'Salvezi o combinație de ingrediente pe care o mănânci des și o loghezi dintr-o singură atingere. Poți alege o iconiță pentru fiecare rețetă (sau accepți sugestia automată) și poți edita oricând cantitatea fiecărui ingredient. Când adaugi mai multe alimente deodată, le poți salva pe loc ca rețetă nouă.';
+
+  @override
+  String get guideWorkoutsTitle => 'Activitate fizică';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Alegi tipul de sport și durata, iar caloriile arse se calculează automat — sau le introduci direct, dacă le știi deja de la un ceas smart. Caloriile arse se scad din bugetul zilei.';
+
+  @override
+  String get guideProgressTitle => 'Progres';
+
+  @override
+  String get guideProgressBody =>
+      'Grafice pe 7 zile, 30 de zile sau tot programul: evoluția greutății (netezită), TDEE adaptiv calculat din propriul tău echilibru energetic, balanța macro-urilor și acoperirea micronutrienților. Se sincronizează cu Apple Health / Health Connect și cu un cântar Bluetooth.';
+
+  @override
+  String get guideHydrationTitle => 'Hidratare';
+
+  @override
+  String get guideHydrationBody =>
+      'Un contor simplu de pahare de apă pe zi — o atingere ca să adaugi, o atingere ca să anulezi ultimul.';
+
+  @override
+  String get guideStreaksTitle => 'Motivație';
+
+  @override
+  String get guideStreaksBody =>
+      'O insignă cu flacără arată câte zile la rând ai logat cel puțin o masă.';
+
+  @override
+  String get guideRemindersTitle => 'Memento zilnic';
+
+  @override
+  String get guideRemindersBody =>
+      'O notificare, la ora aleasă de tine, care îți amintește să-ți loghezi mesele — dezactivabilă oricând din meniu.';
+
+  @override
+  String get guideProfileTitle => 'Profil și obiectiv';
+
+  @override
+  String get guideProfileBody =>
+      'Vârstă, sex biologic, înălțime, greutate, nivel de activitate și obiectiv — editabile oricând. Aplicația recalculează automat ținta calorică la orice schimbare.';
+
+  @override
+  String get guidePrivacyTitle => 'Confidențialitate';
+
+  @override
+  String get guidePrivacyBody =>
+      'Datele tale sunt legate exclusiv de contul tău și nu sunt vizibile altor utilizatori. Poți șterge contul și toate datele asociate oricând, din meniu — ștergerea e permanentă și imediată.';
+
+  @override
+  String get guideLanguagesTitle => 'Limbi disponibile';
+
+  @override
+  String get guideLanguagesBody =>
+      'Aplicația e disponibilă în 13 limbi, alese din meniu — nu doar detectate automat din limba telefonului.';
+
+  @override
+  String get guidePremiumTitle => 'Premium și abonamente';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Ciornă, nefinalizată — planul de mai jos nu e încă activ în aplicație. Nu există plată în-app sau blocare de funcții momentan.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Gratuit, permanent: jurnal alimentar complet, 20 de analize foto pe zi, rețete proprii nelimitate, grafice de progres de bază și sincronizare cu Apple Health / Health Connect.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, export de date și suport prioritar.';
 }

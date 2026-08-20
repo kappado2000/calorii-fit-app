@@ -982,6 +982,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get addIngredientButton => 'Zutat hinzufügen';
 
   @override
+  String get editIngredientQuantityTitle => 'Menge bearbeiten';
+
+  @override
+  String get chooseRecipeIconTitle => 'Symbol wählen';
+
+  @override
+  String get recipeIconSuggested => 'Vorschlag';
+
+  @override
+  String get saveAsRecipeTooltip => 'Als Rezept speichern';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Als neues Rezept speichern';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '„$name“ wurde in deinen Rezepten gespeichert.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Lebensmittel hinzufügen — $meal';
   }
@@ -1044,4 +1064,109 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Sprache';
+
+  @override
+  String get guideMenuEntry => 'Bedienungsanleitung';
+
+  @override
+  String get guideScreenTitle => 'Bedienungsanleitung';
+
+  @override
+  String get guideIntroTitle => 'Was ist Calorii Fit';
+
+  @override
+  String get guideIntroBody =>
+      'Eine Ernährungs-App, die Kalorien direkt aus einem Foto deines Tellers schätzt, mithilfe des Tiefensensors deines Telefons — nicht nur eines gewöhnlichen Fotos. Außerdem führt sie ein vollständiges Tagebuch: Mahlzeiten, Sport, Flüssigkeitszufuhr, Gewicht und deinen Fortschritt zu deinem Ziel.';
+
+  @override
+  String get guidePhotoTitle => 'Foto-Schätzung';
+
+  @override
+  String get guidePhotoBody =>
+      'Du fotografierst deinen Teller, dein Telefon misst dessen Volumen mit LiDAR, ARCore Depth oder einer Dual-Kamera, und die App identifiziert die Lebensmittel und berechnet die Portion. Du bestätigst oder passt das Ergebnis mit einem Regler oder Voreinstellungen an — nichts wird automatisch gespeichert. Ohne Tiefensensor wird der Tellerdurchmesser als Referenz verwendet, deutlich als grobe Schätzung gekennzeichnet.';
+
+  @override
+  String get guideLogTitle => 'Tagesprotokoll';
+
+  @override
+  String get guideLogBody =>
+      'Vier Mahlzeiten pro Tag — Frühstück, Mittagessen, Abendessen, Snack. Füge Lebensmittel per Foto, Suche, Barcode-Scan, manuell, aus deinen Rezepten oder schnell über eine Checkliste deiner üblichen Lebensmittel hinzu.';
+
+  @override
+  String get guideRecipesTitle => 'Meine Rezepte';
+
+  @override
+  String get guideRecipesBody =>
+      'Speichere eine Kombination von Zutaten, die du oft isst, und trage sie mit einem Tipp ein. Du kannst für jedes Rezept ein Symbol wählen (oder den automatischen Vorschlag übernehmen) und die Menge jeder Zutat jederzeit bearbeiten. Wenn du mehrere Lebensmittel gleichzeitig hinzufügst, kannst du sie direkt als neues Rezept speichern.';
+
+  @override
+  String get guideWorkoutsTitle => 'Körperliche Aktivität';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Wähle die Aktivitätsart und Dauer, die verbrannten Kalorien werden automatisch berechnet — oder gib sie direkt ein, wenn du sie bereits von einer Smartwatch kennst. Verbrannte Kalorien werden vom Tagesbudget abgezogen.';
+
+  @override
+  String get guideProgressTitle => 'Fortschritt';
+
+  @override
+  String get guideProgressBody =>
+      'Diagramme über 7 Tage, 30 Tage oder das gesamte Programm: Gewichtsverlauf (geglättet), adaptiver Gesamtenergieumsatz aus deiner eigenen Energiebilanz, Makronährstoffbalance und Mikronährstoffabdeckung. Synchronisation mit Apple Health / Health Connect und einer Bluetooth-Waage.';
+
+  @override
+  String get guideHydrationTitle => 'Flüssigkeitszufuhr';
+
+  @override
+  String get guideHydrationBody =>
+      'Ein einfacher täglicher Wasserglaszähler — ein Tipp zum Hinzufügen, ein Tipp, um das letzte rückgängig zu machen.';
+
+  @override
+  String get guideStreaksTitle => 'Motivation';
+
+  @override
+  String get guideStreaksBody =>
+      'Ein Flammen-Abzeichen zeigt, wie viele Tage in Folge du mindestens eine Mahlzeit protokolliert hast.';
+
+  @override
+  String get guideRemindersTitle => 'Tägliche Erinnerung';
+
+  @override
+  String get guideRemindersBody =>
+      'Eine Benachrichtigung zur von dir gewählten Zeit, die dich erinnert, deine Mahlzeiten einzutragen — jederzeit über das Menü deaktivierbar.';
+
+  @override
+  String get guideProfileTitle => 'Profil und Ziel';
+
+  @override
+  String get guideProfileBody =>
+      'Alter, biologisches Geschlecht, Größe, Gewicht, Aktivitätsniveau und Ziel — jederzeit bearbeitbar. Die App berechnet dein Kalorienziel bei jeder Änderung automatisch neu.';
+
+  @override
+  String get guidePrivacyTitle => 'Datenschutz';
+
+  @override
+  String get guidePrivacyBody =>
+      'Deine Daten sind ausschließlich mit deinem Konto verknüpft und für andere Nutzer nicht sichtbar. Du kannst dein Konto und alle zugehörigen Daten jederzeit über das Menü löschen — die Löschung ist dauerhaft und sofort.';
+
+  @override
+  String get guideLanguagesTitle => 'Verfügbare Sprachen';
+
+  @override
+  String get guideLanguagesBody =>
+      'Die App ist in 13 Sprachen verfügbar, die über das Menü ausgewählt werden — nicht nur automatisch anhand der Telefonsprache erkannt.';
+
+  @override
+  String get guidePremiumTitle => 'Premium und Abonnements';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Entwurf, nicht abgeschlossen — der folgende Plan ist in der App noch nicht aktiv. Derzeit gibt es keine In-App-Zahlung oder Funktionseinschränkung.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Kostenlos, dauerhaft: vollständiges Ernährungstagebuch, 20 Foto-Analysen pro Tag, unbegrenzte eigene Rezepte, grundlegende Fortschrittsdiagramme und Apple Health / Health Connect-Synchronisierung.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Premium (Richtpreis, unbestätigt): unbegrenzte Foto-Analysen, adaptiver Gesamtenergieumsatz und detaillierte Mikronährstoffe, Datenexport und bevorzugter Support.';
 }

@@ -985,6 +985,26 @@ class AppLocalizationsIt extends AppLocalizations {
   String get addIngredientButton => 'Aggiungi ingrediente';
 
   @override
+  String get editIngredientQuantityTitle => 'Modifica quantità';
+
+  @override
+  String get chooseRecipeIconTitle => 'Scegli un\'icona';
+
+  @override
+  String get recipeIconSuggested => 'Suggerito';
+
+  @override
+  String get saveAsRecipeTooltip => 'Salva come ricetta';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Salva come nuova ricetta';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '\"$name\" è stata salvata tra le tue ricette.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Aggiungi alimento — $meal';
   }
@@ -1047,4 +1067,109 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Lingua';
+
+  @override
+  String get guideMenuEntry => 'Guida all\'uso';
+
+  @override
+  String get guideScreenTitle => 'Guida all\'uso';
+
+  @override
+  String get guideIntroTitle => 'Cos\'è Calorii Fit';
+
+  @override
+  String get guideIntroBody =>
+      'Un\'app di nutrizione che stima le calorie direttamente da una foto del tuo piatto, usando il sensore di profondità del telefono — non solo una foto normale. Tiene inoltre un diario completo: pasti, sport, idratazione, peso e i tuoi progressi verso l\'obiettivo.';
+
+  @override
+  String get guidePhotoTitle => 'Stima dalla fotografia';
+
+  @override
+  String get guidePhotoBody =>
+      'Fotografi il piatto, il telefono ne misura il volume usando LiDAR, ARCore Depth o una doppia fotocamera, e l\'app identifica gli alimenti e calcola la porzione. Confermi o correggi il risultato con uno slider o preimpostazioni — nulla viene salvato automaticamente. Senza sensore di profondità, si usa il diametro del piatto come riferimento, indicato chiaramente come stima approssimativa.';
+
+  @override
+  String get guideLogTitle => 'Diario giornaliero';
+
+  @override
+  String get guideLogBody =>
+      'Quattro pasti al giorno — Colazione, Pranzo, Cena, Spuntino. Aggiungi alimenti da foto, ricerca, scansione del codice a barre, manualmente, dalle tue ricette o rapidamente da una lista di alimenti abituali.';
+
+  @override
+  String get guideRecipesTitle => 'Le mie ricette';
+
+  @override
+  String get guideRecipesBody =>
+      'Salva una combinazione di ingredienti che mangi spesso e registrala con un solo tocco. Puoi scegliere un\'icona per ogni ricetta (o accettare il suggerimento automatico) e modificare la quantità di qualsiasi ingrediente in qualsiasi momento. Quando aggiungi più alimenti contemporaneamente, puoi salvarli subito come nuova ricetta.';
+
+  @override
+  String get guideWorkoutsTitle => 'Attività fisica';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Scegli il tipo di attività e la durata, le calorie bruciate vengono calcolate automaticamente — oppure inseriscile direttamente se le conosci già da uno smartwatch. Le calorie bruciate vengono sottratte dal budget della giornata.';
+
+  @override
+  String get guideProgressTitle => 'Progresso';
+
+  @override
+  String get guideProgressBody =>
+      'Grafici su 7 giorni, 30 giorni o l\'intero programma: evoluzione del peso (levigata), TDEE adattivo calcolato dal tuo bilancio energetico reale, bilancio dei macronutrienti e copertura dei micronutrienti. Sincronizzazione con Apple Salute / Health Connect e una bilancia Bluetooth.';
+
+  @override
+  String get guideHydrationTitle => 'Idratazione';
+
+  @override
+  String get guideHydrationBody =>
+      'Un semplice contatore giornaliero di bicchieri d\'acqua — un tocco per aggiungere, un tocco per annullare l\'ultimo.';
+
+  @override
+  String get guideStreaksTitle => 'Motivazione';
+
+  @override
+  String get guideStreaksBody =>
+      'Un distintivo a fiamma mostra per quanti giorni consecutivi hai registrato almeno un pasto.';
+
+  @override
+  String get guideRemindersTitle => 'Promemoria giornaliero';
+
+  @override
+  String get guideRemindersBody =>
+      'Una notifica, all\'orario scelto da te, che ti ricorda di registrare i pasti — disattivabile in qualsiasi momento dal menu.';
+
+  @override
+  String get guideProfileTitle => 'Profilo e obiettivo';
+
+  @override
+  String get guideProfileBody =>
+      'Età, sesso biologico, altezza, peso, livello di attività e obiettivo — modificabili in qualsiasi momento. L\'app ricalcola automaticamente l\'obiettivo calorico a ogni modifica.';
+
+  @override
+  String get guidePrivacyTitle => 'Privacy';
+
+  @override
+  String get guidePrivacyBody =>
+      'I tuoi dati sono collegati esclusivamente al tuo account e non sono visibili ad altri utenti. Puoi eliminare il tuo account e tutti i dati associati in qualsiasi momento, dal menu — l\'eliminazione è permanente e immediata.';
+
+  @override
+  String get guideLanguagesTitle => 'Lingue disponibili';
+
+  @override
+  String get guideLanguagesBody =>
+      'L\'app è disponibile in 13 lingue, scelte dal menu — non solo rilevate automaticamente dalla lingua del telefono.';
+
+  @override
+  String get guidePremiumTitle => 'Premium e abbonamenti';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Bozza, non definitiva — il piano seguente non è ancora attivo nell\'app. Al momento non ci sono pagamenti in-app né limitazioni delle funzionalità.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Gratuito, per sempre: diario alimentare completo, 20 analisi foto al giorno, ricette personali illimitate, grafici di progresso di base e sincronizzazione Apple Salute / Health Connect.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Premium (prezzo indicativo, non confermato): analisi foto illimitate, TDEE adattivo e micronutrienti dettagliati, esportazione dati e assistenza prioritaria.';
 }

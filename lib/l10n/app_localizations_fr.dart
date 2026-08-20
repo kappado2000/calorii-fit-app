@@ -986,6 +986,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addIngredientButton => 'Ajouter l\'ingrédient';
 
   @override
+  String get editIngredientQuantityTitle => 'Modifier la quantité';
+
+  @override
+  String get chooseRecipeIconTitle => 'Choisir une icône';
+
+  @override
+  String get recipeIconSuggested => 'Suggestion';
+
+  @override
+  String get saveAsRecipeTooltip => 'Enregistrer comme recette';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Enregistrer comme nouvelle recette';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '« $name » a été enregistré dans vos recettes.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Ajouter un aliment — $meal';
   }
@@ -1048,4 +1068,109 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Langue';
+
+  @override
+  String get guideMenuEntry => 'Guide d\'utilisation';
+
+  @override
+  String get guideScreenTitle => 'Guide d\'utilisation';
+
+  @override
+  String get guideIntroTitle => 'Qu\'est-ce que Calorii Fit';
+
+  @override
+  String get guideIntroBody =>
+      'Une application de nutrition qui estime les calories directement à partir d\'une photo de votre assiette, en utilisant le capteur de profondeur de votre téléphone — pas seulement une photo ordinaire. Elle tient aussi un journal complet : repas, sport, hydratation, poids et votre progression vers votre objectif.';
+
+  @override
+  String get guidePhotoTitle => 'Estimation par photo';
+
+  @override
+  String get guidePhotoBody =>
+      'Vous photographiez votre assiette, votre téléphone en mesure le volume grâce au LiDAR, à l\'ARCore Depth ou à une double caméra, et l\'application identifie les aliments et calcule la portion. Vous confirmez ou ajustez le résultat avec un curseur ou des préréglages — rien n\'est enregistré automatiquement. Sans capteur de profondeur, le diamètre de l\'assiette est utilisé comme référence, clairement indiqué comme une estimation approximative.';
+
+  @override
+  String get guideLogTitle => 'Journal quotidien';
+
+  @override
+  String get guideLogBody =>
+      'Quatre repas par jour — Petit-déjeuner, Déjeuner, Dîner, Collation. Ajoutez des aliments par photo, par recherche, en scannant un code-barres, manuellement, depuis vos recettes, ou rapidement depuis une liste à cocher de vos aliments habituels.';
+
+  @override
+  String get guideRecipesTitle => 'Mes recettes';
+
+  @override
+  String get guideRecipesBody =>
+      'Enregistrez une combinaison d\'ingrédients que vous mangez souvent et enregistrez-la en un seul geste. Vous pouvez choisir une icône pour chaque recette (ou accepter la suggestion automatique) et modifier la quantité de n\'importe quel ingrédient à tout moment. Lorsque vous ajoutez plusieurs aliments à la fois, vous pouvez les enregistrer immédiatement comme une nouvelle recette.';
+
+  @override
+  String get guideWorkoutsTitle => 'Activité physique';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Choisissez le type d\'activité et la durée, les calories brûlées sont calculées automatiquement — ou saisissez-les directement si vous les connaissez déjà grâce à une montre connectée. Les calories brûlées sont déduites du budget du jour.';
+
+  @override
+  String get guideProgressTitle => 'Progrès';
+
+  @override
+  String get guideProgressBody =>
+      'Graphiques sur 7 jours, 30 jours ou tout le programme : évolution du poids (lissée), DEJ adaptatif calculé à partir de votre propre bilan énergétique, équilibre des macronutriments et couverture des micronutriments. Synchronisation avec Apple Santé / Health Connect et une balance Bluetooth.';
+
+  @override
+  String get guideHydrationTitle => 'Hydratation';
+
+  @override
+  String get guideHydrationBody =>
+      'Un simple compteur de verres d\'eau quotidien — un geste pour ajouter, un geste pour annuler le dernier.';
+
+  @override
+  String get guideStreaksTitle => 'Motivation';
+
+  @override
+  String get guideStreaksBody =>
+      'Un badge flamme indique combien de jours consécutifs vous avez enregistré au moins un repas.';
+
+  @override
+  String get guideRemindersTitle => 'Rappel quotidien';
+
+  @override
+  String get guideRemindersBody =>
+      'Une notification, à l\'heure que vous choisissez, qui vous rappelle d\'enregistrer vos repas — désactivable à tout moment depuis le menu.';
+
+  @override
+  String get guideProfileTitle => 'Profil et objectif';
+
+  @override
+  String get guideProfileBody =>
+      'Âge, sexe biologique, taille, poids, niveau d\'activité et objectif — modifiables à tout moment. L\'application recalcule automatiquement votre objectif calorique à chaque changement.';
+
+  @override
+  String get guidePrivacyTitle => 'Confidentialité';
+
+  @override
+  String get guidePrivacyBody =>
+      'Vos données sont liées exclusivement à votre compte et ne sont visibles par aucun autre utilisateur. Vous pouvez supprimer votre compte et toutes les données associées à tout moment, depuis le menu — la suppression est permanente et immédiate.';
+
+  @override
+  String get guideLanguagesTitle => 'Langues disponibles';
+
+  @override
+  String get guideLanguagesBody =>
+      'L\'application est disponible en 13 langues, choisies depuis le menu — pas seulement détectées automatiquement à partir de la langue de votre téléphone.';
+
+  @override
+  String get guidePremiumTitle => 'Premium et abonnements';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Brouillon, non finalisé — le plan ci-dessous n\'est pas encore actif dans l\'application. Il n\'y a actuellement aucun paiement intégré ni limitation de fonctionnalités.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Gratuit, pour toujours : journal alimentaire complet, 20 analyses photo par jour, recettes personnelles illimitées, graphiques de progression de base et synchronisation Apple Santé / Health Connect.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Premium (prix indicatif, non confirmé) : analyses photo illimitées, DEJ adaptatif et micronutriments détaillés, export des données et support prioritaire.';
 }

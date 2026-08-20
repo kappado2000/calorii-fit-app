@@ -974,6 +974,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addIngredientButton => 'Add ingredient';
 
   @override
+  String get editIngredientQuantityTitle => 'Edit quantity';
+
+  @override
+  String get chooseRecipeIconTitle => 'Choose an icon';
+
+  @override
+  String get recipeIconSuggested => 'Suggested';
+
+  @override
+  String get saveAsRecipeTooltip => 'Save as recipe';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Save as new recipe';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '\"$name\" was saved to your recipes.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Add food — $meal';
   }
@@ -1036,4 +1056,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Language';
+
+  @override
+  String get guideMenuEntry => 'User guide';
+
+  @override
+  String get guideScreenTitle => 'User guide';
+
+  @override
+  String get guideIntroTitle => 'What Calorii Fit is';
+
+  @override
+  String get guideIntroBody =>
+      'A nutrition app that estimates calories directly from a photo of your plate, using your phone\'s depth sensor — not just an ordinary picture. It also keeps a full diary: meals, exercise, hydration, weight, and your progress toward your goal.';
+
+  @override
+  String get guidePhotoTitle => 'Photo estimation';
+
+  @override
+  String get guidePhotoBody =>
+      'You photograph your plate, your phone measures its volume using LiDAR, ARCore Depth, or a dual camera, and the app identifies the foods and calculates the portion. You confirm or adjust the result with a slider or presets — nothing is saved automatically. Without a depth sensor, the plate\'s diameter is used as a reference, clearly marked as a rough estimate.';
+
+  @override
+  String get guideLogTitle => 'Daily log';
+
+  @override
+  String get guideLogBody =>
+      'Four meals a day — Breakfast, Lunch, Dinner, Snack. Add foods from a photo, from search, by scanning a barcode, manually, from your recipes, or quickly from a checklist of your usual foods.';
+
+  @override
+  String get guideRecipesTitle => 'My recipes';
+
+  @override
+  String get guideRecipesBody =>
+      'Save a combination of ingredients you eat often and log it in a single tap. You can choose an icon for each recipe (or accept the automatic suggestion) and edit any ingredient\'s quantity at any time. When you add several foods at once, you can save them on the spot as a new recipe.';
+
+  @override
+  String get guideWorkoutsTitle => 'Physical activity';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Choose the activity type and duration, and calories burned are calculated automatically — or enter them directly if you already know them from a smartwatch. Calories burned are subtracted from the day\'s budget.';
+
+  @override
+  String get guideProgressTitle => 'Progress';
+
+  @override
+  String get guideProgressBody =>
+      'Charts over 7 days, 30 days, or the whole program: weight evolution (smoothed), adaptive TDEE calculated from your own energy balance, macronutrient balance, and micronutrient coverage. Syncs with Apple Health / Health Connect and a Bluetooth scale.';
+
+  @override
+  String get guideHydrationTitle => 'Hydration';
+
+  @override
+  String get guideHydrationBody =>
+      'A simple daily water-glass counter — one tap to add, one tap to undo the last one.';
+
+  @override
+  String get guideStreaksTitle => 'Motivation';
+
+  @override
+  String get guideStreaksBody =>
+      'A flame badge shows how many days in a row you\'ve logged at least one meal.';
+
+  @override
+  String get guideRemindersTitle => 'Daily reminder';
+
+  @override
+  String get guideRemindersBody =>
+      'A notification, at the time you choose, reminding you to log your meals — can be turned off anytime from the menu.';
+
+  @override
+  String get guideProfileTitle => 'Profile & goal';
+
+  @override
+  String get guideProfileBody =>
+      'Age, biological sex, height, weight, activity level, and goal — editable anytime. The app automatically recalculates your calorie target with any change.';
+
+  @override
+  String get guidePrivacyTitle => 'Privacy';
+
+  @override
+  String get guidePrivacyBody =>
+      'Your data is tied exclusively to your account and isn\'t visible to other users. You can delete your account and all associated data anytime, from the menu — deletion is permanent and immediate.';
+
+  @override
+  String get guideLanguagesTitle => 'Available languages';
+
+  @override
+  String get guideLanguagesBody =>
+      'The app is available in 13 languages, chosen from the menu — not just auto-detected from your phone\'s language.';
+
+  @override
+  String get guidePremiumTitle => 'Premium & subscriptions';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Draft, not finalized — the plan below isn\'t active in the app yet. There\'s no in-app payment or feature gating at this time.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Free, forever: full food diary, 20 photo analyses a day, unlimited saved recipes, basic progress charts, and Apple Health / Health Connect sync.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Premium (indicative price, unconfirmed): unlimited photo analyses, adaptive TDEE and detailed micronutrients, data export, and priority support.';
 }

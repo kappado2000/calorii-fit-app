@@ -1830,6 +1830,42 @@ abstract class AppLocalizations {
   /// **'Adaugă ingredientul'**
   String get addIngredientButton;
 
+  /// No description provided for @editIngredientQuantityTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Editează cantitatea'**
+  String get editIngredientQuantityTitle;
+
+  /// No description provided for @chooseRecipeIconTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Alege o iconiță'**
+  String get chooseRecipeIconTitle;
+
+  /// No description provided for @recipeIconSuggested.
+  ///
+  /// In ro, this message translates to:
+  /// **'Sugestie'**
+  String get recipeIconSuggested;
+
+  /// No description provided for @saveAsRecipeTooltip.
+  ///
+  /// In ro, this message translates to:
+  /// **'Salvează ca rețetă'**
+  String get saveAsRecipeTooltip;
+
+  /// No description provided for @saveAsRecipeDialogTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Salvează ca rețetă nouă'**
+  String get saveAsRecipeDialogTitle;
+
+  /// No description provided for @recipeSavedConfirmation.
+  ///
+  /// In ro, this message translates to:
+  /// **'„{name}” a fost salvată în rețetele tale.'**
+  String recipeSavedConfirmation(String name);
+
   /// No description provided for @addFoodTitle.
   ///
   /// In ro, this message translates to:
@@ -1943,6 +1979,186 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Limbă'**
   String get languageMenuEntry;
+
+  /// No description provided for @guideMenuEntry.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ghid de utilizare'**
+  String get guideMenuEntry;
+
+  /// No description provided for @guideScreenTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ghid de utilizare'**
+  String get guideScreenTitle;
+
+  /// No description provided for @guideIntroTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ce este Calorii Fit'**
+  String get guideIntroTitle;
+
+  /// No description provided for @guideIntroBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'O aplicație de nutriție care estimează caloriile direct dintr-o fotografie a farfuriei, folosind senzorul de adâncime al telefonului, nu doar o poză obișnuită. Pe lângă asta, ține jurnalul complet: mese, sport, hidratare, greutate și progresul spre obiectivul tău.'**
+  String get guideIntroBody;
+
+  /// No description provided for @guidePhotoTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Estimarea din fotografie'**
+  String get guidePhotoTitle;
+
+  /// No description provided for @guidePhotoBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Fotografiezi farfuria, telefonul îi măsoară volumul folosind LiDAR, ARCore Depth sau camera duală, iar aplicația identifică alimentele și calculează porția. Tu confirmi sau ajustezi rezultatul cu un slider sau presetări — nimic nu se salvează automat. Fără senzor de adâncime, se folosește diametrul farfuriei ca reper, marcat clar drept estimare aproximativă.'**
+  String get guidePhotoBody;
+
+  /// No description provided for @guideLogTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Jurnalul zilnic'**
+  String get guideLogTitle;
+
+  /// No description provided for @guideLogBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Patru mese pe zi — Dimineață, Prânz, Seară, Gustare. Adaugi alimente din fotografie, din căutare, prin scanarea codului de bare, manual, din rețetele tale sau rapid dintr-o listă de bifat cu alimentele obișnuite.'**
+  String get guideLogBody;
+
+  /// No description provided for @guideRecipesTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Rețetele mele'**
+  String get guideRecipesTitle;
+
+  /// No description provided for @guideRecipesBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Salvezi o combinație de ingrediente pe care o mănânci des și o loghezi dintr-o singură atingere. Poți alege o iconiță pentru fiecare rețetă (sau accepți sugestia automată) și poți edita oricând cantitatea fiecărui ingredient. Când adaugi mai multe alimente deodată, le poți salva pe loc ca rețetă nouă.'**
+  String get guideRecipesBody;
+
+  /// No description provided for @guideWorkoutsTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Activitate fizică'**
+  String get guideWorkoutsTitle;
+
+  /// No description provided for @guideWorkoutsBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Alegi tipul de sport și durata, iar caloriile arse se calculează automat — sau le introduci direct, dacă le știi deja de la un ceas smart. Caloriile arse se scad din bugetul zilei.'**
+  String get guideWorkoutsBody;
+
+  /// No description provided for @guideProgressTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Progres'**
+  String get guideProgressTitle;
+
+  /// No description provided for @guideProgressBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Grafice pe 7 zile, 30 de zile sau tot programul: evoluția greutății (netezită), TDEE adaptiv calculat din propriul tău echilibru energetic, balanța macro-urilor și acoperirea micronutrienților. Se sincronizează cu Apple Health / Health Connect și cu un cântar Bluetooth.'**
+  String get guideProgressBody;
+
+  /// No description provided for @guideHydrationTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Hidratare'**
+  String get guideHydrationTitle;
+
+  /// No description provided for @guideHydrationBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Un contor simplu de pahare de apă pe zi — o atingere ca să adaugi, o atingere ca să anulezi ultimul.'**
+  String get guideHydrationBody;
+
+  /// No description provided for @guideStreaksTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Motivație'**
+  String get guideStreaksTitle;
+
+  /// No description provided for @guideStreaksBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'O insignă cu flacără arată câte zile la rând ai logat cel puțin o masă.'**
+  String get guideStreaksBody;
+
+  /// No description provided for @guideRemindersTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Memento zilnic'**
+  String get guideRemindersTitle;
+
+  /// No description provided for @guideRemindersBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'O notificare, la ora aleasă de tine, care îți amintește să-ți loghezi mesele — dezactivabilă oricând din meniu.'**
+  String get guideRemindersBody;
+
+  /// No description provided for @guideProfileTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Profil și obiectiv'**
+  String get guideProfileTitle;
+
+  /// No description provided for @guideProfileBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Vârstă, sex biologic, înălțime, greutate, nivel de activitate și obiectiv — editabile oricând. Aplicația recalculează automat ținta calorică la orice schimbare.'**
+  String get guideProfileBody;
+
+  /// No description provided for @guidePrivacyTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Confidențialitate'**
+  String get guidePrivacyTitle;
+
+  /// No description provided for @guidePrivacyBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Datele tale sunt legate exclusiv de contul tău și nu sunt vizibile altor utilizatori. Poți șterge contul și toate datele asociate oricând, din meniu — ștergerea e permanentă și imediată.'**
+  String get guidePrivacyBody;
+
+  /// No description provided for @guideLanguagesTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Limbi disponibile'**
+  String get guideLanguagesTitle;
+
+  /// No description provided for @guideLanguagesBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Aplicația e disponibilă în 13 limbi, alese din meniu — nu doar detectate automat din limba telefonului.'**
+  String get guideLanguagesBody;
+
+  /// No description provided for @guidePremiumTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Premium și abonamente'**
+  String get guidePremiumTitle;
+
+  /// No description provided for @guidePremiumDraftNote.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ciornă, nefinalizată — planul de mai jos nu e încă activ în aplicație. Nu există plată în-app sau blocare de funcții momentan.'**
+  String get guidePremiumDraftNote;
+
+  /// No description provided for @guidePremiumFreeBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Gratuit, permanent: jurnal alimentar complet, 20 de analize foto pe zi, rețete proprii nelimitate, grafice de progres de bază și sincronizare cu Apple Health / Health Connect.'**
+  String get guidePremiumFreeBody;
+
+  /// No description provided for @guidePremiumPaidBody.
+  ///
+  /// In ro, this message translates to:
+  /// **'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, export de date și suport prioritar.'**
+  String get guidePremiumPaidBody;
 }
 
 class _AppLocalizationsDelegate

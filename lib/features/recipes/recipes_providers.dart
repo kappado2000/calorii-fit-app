@@ -25,9 +25,10 @@ class RecipesNotifier extends StateNotifier<List<Recipe>> {
     required String name,
     required int servings,
     required List<RecipeIngredient> ingredients,
+    String icon = kDefaultRecipeIcon,
   }) {
     return _dataSource.save(
-      Recipe(id: id ?? _uuid.v4(), name: name, servings: servings, ingredients: ingredients),
+      Recipe(id: id ?? _uuid.v4(), name: name, servings: servings, ingredients: ingredients, icon: icon),
     );
   }
 

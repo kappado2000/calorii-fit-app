@@ -982,6 +982,26 @@ class AppLocalizationsNl extends AppLocalizations {
   String get addIngredientButton => 'Ingrediënt toevoegen';
 
   @override
+  String get editIngredientQuantityTitle => 'Hoeveelheid bewerken';
+
+  @override
+  String get chooseRecipeIconTitle => 'Kies een icoon';
+
+  @override
+  String get recipeIconSuggested => 'Voorgesteld';
+
+  @override
+  String get saveAsRecipeTooltip => 'Opslaan als recept';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Opslaan als nieuw recept';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '\"$name\" is opgeslagen in je recepten.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Voedsel toevoegen — $meal';
   }
@@ -1044,4 +1064,109 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Taal';
+
+  @override
+  String get guideMenuEntry => 'Gebruikershandleiding';
+
+  @override
+  String get guideScreenTitle => 'Gebruikershandleiding';
+
+  @override
+  String get guideIntroTitle => 'Wat is Calorii Fit';
+
+  @override
+  String get guideIntroBody =>
+      'Een voedingsapp die calorieën rechtstreeks schat aan de hand van een foto van je bord, met behulp van de dieptesensor van je telefoon — niet zomaar een gewone foto. Daarnaast houdt de app een volledig dagboek bij: maaltijden, sport, hydratatie, gewicht en je voortgang richting je doel.';
+
+  @override
+  String get guidePhotoTitle => 'Schatting via foto';
+
+  @override
+  String get guidePhotoBody =>
+      'Je fotografeert je bord, je telefoon meet het volume met LiDAR, ARCore Depth of een dubbele camera, en de app identificeert de gerechten en berekent de portie. Je bevestigt of past het resultaat aan met een schuifregelaar of voorinstellingen — er wordt niets automatisch opgeslagen. Zonder dieptesensor wordt de diameter van het bord als referentie gebruikt, duidelijk gemarkeerd als ruwe schatting.';
+
+  @override
+  String get guideLogTitle => 'Dagelijks logboek';
+
+  @override
+  String get guideLogBody =>
+      'Vier maaltijden per dag — Ontbijt, Lunch, Avondeten, Snack. Voeg gerechten toe via foto, zoeken, het scannen van een barcode, handmatig, vanuit je recepten of snel via een afvinklijst met je gebruikelijke gerechten.';
+
+  @override
+  String get guideRecipesTitle => 'Mijn recepten';
+
+  @override
+  String get guideRecipesBody =>
+      'Sla een combinatie van ingrediënten op die je vaak eet en log ze met één tik. Je kunt voor elk recept een icoon kiezen (of de automatische suggestie overnemen) en de hoeveelheid van elk ingrediënt altijd bewerken. Wanneer je meerdere gerechten tegelijk toevoegt, kun je ze meteen opslaan als nieuw recept.';
+
+  @override
+  String get guideWorkoutsTitle => 'Lichamelijke activiteit';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Kies het type activiteit en de duur, de verbrande calorieën worden automatisch berekend — of voer ze rechtstreeks in als je ze al kent van een smartwatch. Verbrande calorieën worden afgetrokken van het dagbudget.';
+
+  @override
+  String get guideProgressTitle => 'Voortgang';
+
+  @override
+  String get guideProgressBody =>
+      'Grafieken over 7 dagen, 30 dagen of het hele programma: gewichtsverloop (afgevlakt), adaptief TDEE berekend uit je eigen energiebalans, macronutriëntenbalans en dekking van micronutriënten. Synchroniseert met Apple Gezondheid / Health Connect en een Bluetooth-weegschaal.';
+
+  @override
+  String get guideHydrationTitle => 'Hydratatie';
+
+  @override
+  String get guideHydrationBody =>
+      'Een eenvoudige dagelijkse teller voor glazen water — één tik om toe te voegen, één tik om de laatste ongedaan te maken.';
+
+  @override
+  String get guideStreaksTitle => 'Motivatie';
+
+  @override
+  String get guideStreaksBody =>
+      'Een vlambadge toont hoeveel dagen achter elkaar je minstens één maaltijd hebt geregistreerd.';
+
+  @override
+  String get guideRemindersTitle => 'Dagelijkse herinnering';
+
+  @override
+  String get guideRemindersBody =>
+      'Een melding, op het tijdstip dat jij kiest, die je eraan herinnert je maaltijden te registreren — op elk moment uit te schakelen via het menu.';
+
+  @override
+  String get guideProfileTitle => 'Profiel en doel';
+
+  @override
+  String get guideProfileBody =>
+      'Leeftijd, biologisch geslacht, lengte, gewicht, activiteitsniveau en doel — op elk moment bewerkbaar. De app herberekent je caloriedoel automatisch bij elke wijziging.';
+
+  @override
+  String get guidePrivacyTitle => 'Privacy';
+
+  @override
+  String get guidePrivacyBody =>
+      'Je gegevens zijn uitsluitend gekoppeld aan jouw account en niet zichtbaar voor andere gebruikers. Je kunt je account en alle bijbehorende gegevens op elk moment verwijderen via het menu — verwijdering is permanent en onmiddellijk.';
+
+  @override
+  String get guideLanguagesTitle => 'Beschikbare talen';
+
+  @override
+  String get guideLanguagesBody =>
+      'De app is beschikbaar in 13 talen, gekozen via het menu — niet alleen automatisch gedetecteerd op basis van de telefoontaal.';
+
+  @override
+  String get guidePremiumTitle => 'Premium en abonnementen';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Concept, niet definitief — het onderstaande plan is nog niet actief in de app. Er is momenteel geen in-app-betaling of functiebeperking.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Gratis, voor altijd: volledig voedingsdagboek, 20 fotoanalyses per dag, onbeperkt eigen recepten, basisvoortgangsgrafieken en synchronisatie met Apple Gezondheid / Health Connect.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Premium (indicatieve prijs, onbevestigd): onbeperkte fotoanalyses, adaptief TDEE en gedetailleerde micronutriënten, gegevensexport en prioritaire ondersteuning.';
 }

@@ -979,6 +979,26 @@ class AppLocalizationsDa extends AppLocalizations {
   String get addIngredientButton => 'Tilføj ingrediens';
 
   @override
+  String get editIngredientQuantityTitle => 'Rediger mængde';
+
+  @override
+  String get chooseRecipeIconTitle => 'Vælg et ikon';
+
+  @override
+  String get recipeIconSuggested => 'Forslag';
+
+  @override
+  String get saveAsRecipeTooltip => 'Gem som opskrift';
+
+  @override
+  String get saveAsRecipeDialogTitle => 'Gem som ny opskrift';
+
+  @override
+  String recipeSavedConfirmation(String name) {
+    return '\"$name\" blev gemt i dine opskrifter.';
+  }
+
+  @override
   String addFoodTitle(String meal) {
     return 'Tilføj mad — $meal';
   }
@@ -1041,4 +1061,109 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get languageMenuEntry => 'Sprog';
+
+  @override
+  String get guideMenuEntry => 'Brugervejledning';
+
+  @override
+  String get guideScreenTitle => 'Brugervejledning';
+
+  @override
+  String get guideIntroTitle => 'Hvad er Calorii Fit';
+
+  @override
+  String get guideIntroBody =>
+      'En ernæringsapp, der estimerer kalorier direkte ud fra et billede af din tallerken, ved hjælp af telefonens dybdesensor — ikke bare et almindeligt billede. Den fører også en fuldstændig dagbog: måltider, motion, væskeindtag, vægt og din fremgang mod dit mål.';
+
+  @override
+  String get guidePhotoTitle => 'Estimering fra billede';
+
+  @override
+  String get guidePhotoBody =>
+      'Du fotograferer din tallerken, telefonen måler dens volumen ved hjælp af LiDAR, ARCore Depth eller et dobbeltkamera, og appen identificerer maden og beregner portionen. Du bekræfter eller justerer resultatet med en skyder eller forudindstillinger — intet gemmes automatisk. Uden dybdesensor bruges tallerkenens diameter som reference, tydeligt markeret som et groft estimat.';
+
+  @override
+  String get guideLogTitle => 'Daglig log';
+
+  @override
+  String get guideLogBody =>
+      'Fire måltider om dagen — Morgenmad, Frokost, Aftensmad, Snack. Tilføj mad via billede, søgning, stregkodescanning, manuelt, fra dine opskrifter eller hurtigt fra en afkrydsningsliste med din sædvanlige mad.';
+
+  @override
+  String get guideRecipesTitle => 'Mine opskrifter';
+
+  @override
+  String get guideRecipesBody =>
+      'Gem en kombination af ingredienser, du ofte spiser, og registrer den med ét tryk. Du kan vælge et ikon til hver opskrift (eller acceptere det automatiske forslag) og redigere mængden af enhver ingrediens når som helst. Når du tilføjer flere fødevarer på én gang, kan du med det samme gemme dem som en ny opskrift.';
+
+  @override
+  String get guideWorkoutsTitle => 'Fysisk aktivitet';
+
+  @override
+  String get guideWorkoutsBody =>
+      'Vælg aktivitetstype og varighed, så beregnes forbrændte kalorier automatisk — eller indtast dem direkte, hvis du allerede kender dem fra et smartwatch. Forbrændte kalorier trækkes fra dagens budget.';
+
+  @override
+  String get guideProgressTitle => 'Fremskridt';
+
+  @override
+  String get guideProgressBody =>
+      'Grafer over 7 dage, 30 dage eller hele programmet: vægtudvikling (udjævnet), adaptivt TDEE beregnet ud fra din egen energibalance, makronæringsbalance og dækning af mikronæringsstoffer. Synkroniserer med Apple Health / Health Connect og en Bluetooth-vægt.';
+
+  @override
+  String get guideHydrationTitle => 'Væskeindtag';
+
+  @override
+  String get guideHydrationBody =>
+      'En simpel daglig tæller for glas vand — ét tryk for at tilføje, ét tryk for at fortryde det seneste.';
+
+  @override
+  String get guideStreaksTitle => 'Motivation';
+
+  @override
+  String get guideStreaksBody =>
+      'Et flammemærke viser, hvor mange dage i træk du har registreret mindst ét måltid.';
+
+  @override
+  String get guideRemindersTitle => 'Daglig påmindelse';
+
+  @override
+  String get guideRemindersBody =>
+      'En notifikation, på det tidspunkt du vælger, der minder dig om at registrere dine måltider — kan slås fra når som helst fra menuen.';
+
+  @override
+  String get guideProfileTitle => 'Profil og mål';
+
+  @override
+  String get guideProfileBody =>
+      'Alder, biologisk køn, højde, vægt, aktivitetsniveau og mål — kan redigeres når som helst. Appen genberegner automatisk dit kaloriemål ved enhver ændring.';
+
+  @override
+  String get guidePrivacyTitle => 'Privatliv';
+
+  @override
+  String get guidePrivacyBody =>
+      'Dine data er udelukkende knyttet til din konto og er ikke synlige for andre brugere. Du kan slette din konto og alle tilknyttede data når som helst, fra menuen — sletning er permanent og øjeblikkelig.';
+
+  @override
+  String get guideLanguagesTitle => 'Tilgængelige sprog';
+
+  @override
+  String get guideLanguagesBody =>
+      'Appen er tilgængelig på 13 sprog, valgt fra menuen — ikke kun registreret automatisk ud fra telefonens sprog.';
+
+  @override
+  String get guidePremiumTitle => 'Premium og abonnementer';
+
+  @override
+  String get guidePremiumDraftNote =>
+      'Udkast, ikke færdiggjort — planen nedenfor er endnu ikke aktiv i appen. Der er i øjeblikket ingen betaling i appen eller funktionsbegrænsning.';
+
+  @override
+  String get guidePremiumFreeBody =>
+      'Gratis, for altid: fuldstændig maddagbog, 20 fotoanalyser om dagen, ubegrænsede egne opskrifter, grundlæggende fremskridtsgrafer og synkronisering med Apple Health / Health Connect.';
+
+  @override
+  String get guidePremiumPaidBody =>
+      'Premium (vejledende pris, ubekræftet): ubegrænsede fotoanalyser, adaptivt TDEE og detaljerede mikronæringsstoffer, dataeksport og prioriteret support.';
 }
