@@ -859,10 +859,17 @@ class _WorkoutSection extends ConsumerWidget {
                       'Activitate sportivă',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    trailing: Text(
-                      '${formatThousands(totalBurned.round())} kcal arse',
-                      style: Theme.of(context).textTheme.titleSmall
-                          ?.copyWith(fontWeight: FontWeight.w700),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${formatThousands(totalBurned.round())} kcal',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(width: 4),
+                        const _AnimatedFlameIcon(),
+                      ],
                     ),
                   ),
                   for (final workout in workouts)
@@ -906,6 +913,51 @@ class _WorkoutSection extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// A flickering flame — pulses in size and shifts between orange and
+/// deep red-orange, standing in for the word "arse" next to the burned
+/// calories.
+class _AnimatedFlameIcon extends StatefulWidget {
+  const _AnimatedFlameIcon();
+
+  @override
+  State<_AnimatedFlameIcon> createState() => _AnimatedFlameIconState();
+}
+
+class _AnimatedFlameIconState extends State<_AnimatedFlameIcon> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 700))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final t = _controller.value;
+        return Transform.scale(
+          scale: 1.0 + t * 0.18,
+          child: Icon(
+            Icons.local_fire_department_rounded,
+            size: 18,
+            color: Color.lerp(const Color(0xFFFFA726), const Color(0xFFE64A19), t),
+          ),
+        );
+      },
     );
   }
 }
