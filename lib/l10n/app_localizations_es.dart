@@ -1171,4 +1171,19 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get guidePremiumPaidBody =>
       'Premium (precio orientativo, sin confirmar): análisis de fotos ilimitados, GET adaptativo y micronutrientes detallados, exportación de datos y soporte prioritario.';
+
+  @override
+  String get themeDialogTitle => 'Tema';
+
+  @override
+  String get themeSystemDefault => 'Tema del teléfono (predeterminado)';
+
+  @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Oscuro';
+
+  @override
+  String get themeMenuEntry => 'Tema';
 }

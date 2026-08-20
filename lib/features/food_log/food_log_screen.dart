@@ -31,6 +31,7 @@ import '../progress/progress_screen.dart';
 import '../recipes/recipes_screen.dart';
 import '../reminders/reminder_settings_dialog.dart';
 import '../settings/language_picker_dialog.dart';
+import '../settings/theme_picker_dialog.dart';
 import '../streaks/streak_badge.dart';
 import '../workout_log/add_workout_sheet.dart';
 import '../workout_log/workout_log_providers.dart';
@@ -161,6 +162,14 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.language_rounded),
                   title: Text(l10n.languageMenuEntry),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: () => ThemePickerDialog.show(context),
+                child: ListTile(
+                  leading: const Icon(Icons.dark_mode_outlined),
+                  title: Text(l10n.themeMenuEntry),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

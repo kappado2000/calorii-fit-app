@@ -131,12 +131,24 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     alignment: Alignment.center,
                     child: const Icon(Icons.restaurant_rounded, size: 40, color: Colors.white),
                   ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
-                  Text(
-                    l10n.appTitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                  const SizedBox(height: 4),
+                  ShaderMask(
+                    shaderCallback: (bounds) => context.appColors.heroGradient.createShader(bounds),
+                    child: Text(
+                      l10n.appTitle,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 34,
+                        letterSpacing: -0.5,
+                        height: 1.0,
+                        // ShaderMask paints the gradient through this color's
+                        // alpha channel, so it must stay opaque white, not
+                        // the theme's normal text color.
+                        color: Colors.white,
+                      ),
+                    ),
+                  ).animate().fadeIn(delay: 150.ms, duration: 400.ms).slideY(begin: 0.25, end: 0, curve: Curves.easeOutCubic),
+                  const SizedBox(height: 6),
                   Text(
                     isSignIn ? l10n.authWelcomeBack : l10n.authLetsStart,
                     textAlign: TextAlign.center,

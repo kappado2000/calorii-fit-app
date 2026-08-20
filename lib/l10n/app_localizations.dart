@@ -2159,6 +2159,36 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, export de date și suport prioritar.'**
   String get guidePremiumPaidBody;
+
+  /// No description provided for @themeDialogTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Temă'**
+  String get themeDialogTitle;
+
+  /// No description provided for @themeSystemDefault.
+  ///
+  /// In ro, this message translates to:
+  /// **'Tema telefonului (implicit)'**
+  String get themeSystemDefault;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In ro, this message translates to:
+  /// **'Luminoasă'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In ro, this message translates to:
+  /// **'Întunecată'**
+  String get themeDark;
+
+  /// No description provided for @themeMenuEntry.
+  ///
+  /// In ro, this message translates to:
+  /// **'Temă'**
+  String get themeMenuEntry;
 }
 
 class _AppLocalizationsDelegate

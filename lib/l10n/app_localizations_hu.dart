@@ -1170,4 +1170,19 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get guidePremiumPaidBody =>
       'Prémium (tájékoztató jellegű, nem megerősített ár): korlátlan fotóelemzés, adaptív TDEE és részletes mikrotápanyagok, adatexport és elsőbbségi támogatás.';
+
+  @override
+  String get themeDialogTitle => 'Téma';
+
+  @override
+  String get themeSystemDefault => 'Telefon témája (alapértelmezett)';
+
+  @override
+  String get themeLight => 'Világos';
+
+  @override
+  String get themeDark => 'Sötét';
+
+  @override
+  String get themeMenuEntry => 'Téma';
 }

@@ -415,5 +415,11 @@
   "guidePremiumTitle": "Prémium és előfizetések",
   "guidePremiumDraftNote": "Piszkozat, nem véglegesített — az alábbi terv még nem aktív az alkalmazásban. Jelenleg nincs alkalmazáson belüli fizetés vagy funkciókorlátozás.",
   "guidePremiumFreeBody": "Ingyenes, örökre: teljes étkezési napló, napi 20 fotóelemzés, korlátlan saját recept, alap előrehaladási grafikonok és Apple Health / Health Connect szinkronizálás.",
-  "guidePremiumPaidBody": "Prémium (tájékoztató jellegű, nem megerősített ár): korlátlan fotóelemzés, adaptív TDEE és részletes mikrotápanyagok, adatexport és elsőbbségi támogatás."
+  "guidePremiumPaidBody": "Prémium (tájékoztató jellegű, nem megerősített ár): korlátlan fotóelemzés, adaptív TDEE és részletes mikrotápanyagok, adatexport és elsőbbségi támogatás.",
+
+  "themeDialogTitle": "Téma",
+  "themeSystemDefault": "Telefon témája (alapértelmezett)",
+  "themeLight": "Világos",
+  "themeDark": "Sötét",
+  "themeMenuEntry": "Téma"
 }

@@ -415,5 +415,11 @@
   "guidePremiumTitle": "Premium e abbonamenti",
   "guidePremiumDraftNote": "Bozza, non definitiva — il piano seguente non è ancora attivo nell'app. Al momento non ci sono pagamenti in-app né limitazioni delle funzionalità.",
   "guidePremiumFreeBody": "Gratuito, per sempre: diario alimentare completo, 20 analisi foto al giorno, ricette personali illimitate, grafici di progresso di base e sincronizzazione Apple Salute / Health Connect.",
-  "guidePremiumPaidBody": "Premium (prezzo indicativo, non confermato): analisi foto illimitate, TDEE adattivo e micronutrienti dettagliati, esportazione dati e assistenza prioritaria."
+  "guidePremiumPaidBody": "Premium (prezzo indicativo, non confermato): analisi foto illimitate, TDEE adattivo e micronutrienti dettagliati, esportazione dati e assistenza prioritaria.",
+
+  "themeDialogTitle": "Tema",
+  "themeSystemDefault": "Tema del telefono (predefinito)",
+  "themeLight": "Chiaro",
+  "themeDark": "Scuro",
+  "themeMenuEntry": "Tema"
 }

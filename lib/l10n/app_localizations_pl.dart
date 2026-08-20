@@ -1168,4 +1168,19 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get guidePremiumPaidBody =>
       'Premium (cena orientacyjna, niepotwierdzona): nieograniczone analizy zdjęć, adaptacyjne TDEE i szczegółowe mikroskładniki, eksport danych i priorytetowe wsparcie.';
+
+  @override
+  String get themeDialogTitle => 'Motyw';
+
+  @override
+  String get themeSystemDefault => 'Motyw telefonu (domyślny)';
+
+  @override
+  String get themeLight => 'Jasny';
+
+  @override
+  String get themeDark => 'Ciemny';
+
+  @override
+  String get themeMenuEntry => 'Motyw';
 }

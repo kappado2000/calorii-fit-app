@@ -1166,4 +1166,19 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get guidePremiumPaidBody =>
       'Premium (vägledande pris, obekräftat): obegränsade fotoanalyser, adaptivt TDEE och detaljerade mikronäringsämnen, dataexport och prioriterad support.';
+
+  @override
+  String get themeDialogTitle => 'Tema';
+
+  @override
+  String get themeSystemDefault => 'Telefonens tema (standard)';
+
+  @override
+  String get themeLight => 'Ljust';
+
+  @override
+  String get themeDark => 'Mörkt';
+
+  @override
+  String get themeMenuEntry => 'Tema';
 }

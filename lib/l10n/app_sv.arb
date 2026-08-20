@@ -415,5 +415,11 @@
   "guidePremiumTitle": "Premium och prenumerationer",
   "guidePremiumDraftNote": "Utkast, ej färdigställt — planen nedan är ännu inte aktiv i appen. Det finns för närvarande ingen betalning i appen eller funktionsbegränsning.",
   "guidePremiumFreeBody": "Gratis, för alltid: fullständig matdagbok, 20 fotoanalyser om dagen, obegränsat med egna recept, grundläggande framstegsdiagram och synkronisering med Apple Hälsa / Health Connect.",
-  "guidePremiumPaidBody": "Premium (vägledande pris, obekräftat): obegränsade fotoanalyser, adaptivt TDEE och detaljerade mikronäringsämnen, dataexport och prioriterad support."
+  "guidePremiumPaidBody": "Premium (vägledande pris, obekräftat): obegränsade fotoanalyser, adaptivt TDEE och detaljerade mikronäringsämnen, dataexport och prioriterad support.",
+
+  "themeDialogTitle": "Tema",
+  "themeSystemDefault": "Telefonens tema (standard)",
+  "themeLight": "Ljust",
+  "themeDark": "Mörkt",
+  "themeMenuEntry": "Tema"
 }

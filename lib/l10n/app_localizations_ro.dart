@@ -1166,4 +1166,19 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get guidePremiumPaidBody =>
       'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, export de date și suport prioritar.';
+
+  @override
+  String get themeDialogTitle => 'Temă';
+
+  @override
+  String get themeSystemDefault => 'Tema telefonului (implicit)';
+
+  @override
+  String get themeLight => 'Luminoasă';
+
+  @override
+  String get themeDark => 'Întunecată';
+
+  @override
+  String get themeMenuEntry => 'Temă';
 }

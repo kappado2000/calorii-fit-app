@@ -1167,4 +1167,19 @@ class AppLocalizationsNb extends AppLocalizations {
   @override
   String get guidePremiumPaidBody =>
       'Premium (veiledende pris, ubekreftet): ubegrensede bildeanalyser, adaptivt TDEE og detaljerte mikronæringsstoffer, dataeksport og prioritert støtte.';
+
+  @override
+  String get themeDialogTitle => 'Tema';
+
+  @override
+  String get themeSystemDefault => 'Telefonens tema (standard)';
+
+  @override
+  String get themeLight => 'Lyst';
+
+  @override
+  String get themeDark => 'Mørkt';
+
+  @override
+  String get themeMenuEntry => 'Tema';
 }
