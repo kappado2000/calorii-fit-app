@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 
@@ -47,10 +48,22 @@ class AnalyzePhotoApiClient {
   /// populate `request.auth` server-side.
   Future<AnalyzePhotoResponse> analyze(File photoFile, {required String idToken}) async {
     final bytes = await _compressedBytes(photoFile);
+    final headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $idToken'};
+
+    // Not yet required server-side (see the comment in main.dart next to
+    // FirebaseAppCheck.instance.activate) — attached when available so the
+    // function can start logging real-world coverage before enforcement is
+    // ever turned on. A missing/failed token must never block the request.
+    try {
+      final appCheckToken = await FirebaseAppCheck.instance.getToken();
+      if (appCheckToken != null) headers['X-Firebase-AppCheck'] = appCheckToken;
+    } catch (_) {
+      // Ignored — analysis proceeds without the header.
+    }
 
     final response = await _httpClient.post(
       Uri.parse(AppConfig.analyzePhotoUrl),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $idToken'},
+      headers: headers,
       body: jsonEncode({
         // Compression always outputs JPEG, regardless of the source format.
         'data': {'imageBase64': base64Encode(bytes), 'mediaType': 'image/jpeg'},

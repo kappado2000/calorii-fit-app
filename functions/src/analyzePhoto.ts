@@ -1,5 +1,6 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
+import * as logger from "firebase-functions/logger";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getApps, initializeApp } from "firebase-admin/app";
 import Anthropic from "@anthropic-ai/sdk";
@@ -178,13 +179,21 @@ function buildReportTool() {
   };
 }
 
-// TODO(Phase 2): also require an App Check token — see "Cloud Functions"
-// section of the project plan. Auth + daily quota are handled below now.
+// TODO(Phase 2): once the app is registered with real attestation providers
+// in the Firebase console (Play Integrity for Android; App Attest, which
+// needs a paid Apple Developer account, for iOS), turn on
+// `enforceAppCheck: true` below. Until then this only *logs* whether a
+// request carried a valid App Check token (request.app), to see real-world
+// coverage before enforcement can safely go on without locking out the
+// app's own Sideloadly test builds. Auth + daily quota are handled below now.
 export const analyzePhoto = onCall<AnalyzePhotoRequest>(
   { secrets: [ANTHROPIC_API_KEY], region: "europe-west1", cpu: 1, memory: "512MiB" },
   async (request): Promise<AnalyzePhotoResult> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Trebuie să fii autentificat pentru a analiza o fotografie.");
+    }
+    if (!request.app) {
+      logger.info("analyzePhoto called without a valid App Check token", { uid: request.auth.uid });
     }
     const { imageBase64, mediaType } = request.data;
     if (!imageBase64 || !mediaType) {
