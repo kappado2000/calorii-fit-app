@@ -22,13 +22,6 @@ analyzer:
     - linux/**
     - '**/*.g.dart'
     - '**/*.freezed.dart'
-    # A separate scaffolded Flutter project with its own pubspec/deps, not
-    # part of the app itself — analyzing it from the root only works when
-    # its own `flutter pub get` happens to have already been run locally
-    # (e.g. leftover .dart_tool from earlier plugin development), which a
-    # clean CI checkout never has, so it fails there with unresolved
-    # `integration_test` imports unrelated to any real app code.
-    - packages/depth_capture/example/**
 
 linter:
   # The lint rules applied to this project can be customized in the
