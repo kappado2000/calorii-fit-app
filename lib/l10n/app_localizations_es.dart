@@ -1182,7 +1182,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (precio orientativo, sin confirmar): análisis de fotos ilimitados, GET adaptativo y micronutrientes detallados, exportación de datos y soporte prioritario.';
+      'Premium (precio orientativo, sin confirmar): análisis de fotos ilimitados, GET adaptativo y micronutrientes detallados, más soporte prioritario.';
 
   @override
   String get themeDialogTitle => 'Tema';

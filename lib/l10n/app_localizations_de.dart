@@ -1180,7 +1180,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (Richtpreis, unbestätigt): unbegrenzte Foto-Analysen, adaptiver Gesamtenergieumsatz und detaillierte Mikronährstoffe, Datenexport und bevorzugter Support.';
+      'Premium (Richtpreis, unbestätigt): unbegrenzte Foto-Analysen, adaptiver Gesamtenergieumsatz und detaillierte Mikronährstoffe, plus bevorzugter Support.';
 
   @override
   String get themeDialogTitle => 'Design';

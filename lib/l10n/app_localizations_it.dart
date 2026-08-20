@@ -1183,7 +1183,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (prezzo indicativo, non confermato): analisi foto illimitate, TDEE adattivo e micronutrienti dettagliati, esportazione dati e assistenza prioritaria.';
+      'Premium (prezzo indicativo, non confermato): analisi foto illimitate, TDEE adattivo e micronutrienti dettagliati, più assistenza prioritaria.';
 
   @override
   String get themeDialogTitle => 'Tema';

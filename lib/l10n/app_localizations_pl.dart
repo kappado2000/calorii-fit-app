@@ -1179,7 +1179,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (cena orientacyjna, niepotwierdzona): nieograniczone analizy zdjęć, adaptacyjne TDEE i szczegółowe mikroskładniki, eksport danych i priorytetowe wsparcie.';
+      'Premium (cena orientacyjna, niepotwierdzona): nieograniczone analizy zdjęć, adaptacyjne TDEE i szczegółowe mikroskładniki, a także priorytetowe wsparcie.';
 
   @override
   String get themeDialogTitle => 'Motyw';

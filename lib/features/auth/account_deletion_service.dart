@@ -22,6 +22,13 @@ const _userSubcollections = [
 /// account deletion requirements"). No photos are stored server-side (they
 /// go straight from the device to the analyzePhoto Cloud Function and are
 /// never persisted), so Firestore + the Auth user are the whole surface.
+///
+/// One thing this class deliberately does *not* delete: the top-level
+/// `photoAnalysisQuota/{uid}_{date}` counter docs. Firestore rules deny
+/// clients all access to that collection (see firestore.rules), so this
+/// code physically cannot touch it — cleanup happens server-side, in the
+/// `onUserDeleted` Cloud Function (functions/src/onUserDeleted.ts), which
+/// fires on the Auth user-delete event this method triggers below.
 class AccountDeletionService {
   const AccountDeletionService(this._firestore, this._auth);
 

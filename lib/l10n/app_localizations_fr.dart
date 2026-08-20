@@ -1184,7 +1184,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (prix indicatif, non confirmé) : analyses photo illimitées, DEJ adaptatif et micronutriments détaillés, export des données et support prioritaire.';
+      'Premium (prix indicatif, non confirmé) : analyses photo illimitées, DEJ adaptatif et micronutriments détaillés, plus un support prioritaire.';
 
   @override
   String get themeDialogTitle => 'Thème';

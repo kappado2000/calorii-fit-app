@@ -1,10 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../core/constants/app_config.dart';
 import '../../../models/analyzed_food_item.dart';
+
+/// Anthropic downsamples images above this on its own side anyway (see
+/// Claude vision docs), so sending anything larger only wastes upload
+/// bandwidth and base64 overhead (~33%) for no accuracy gain.
+const _maxUploadDimension = 1568;
+const _jpegQuality = 82;
 
 class AnalyzePhotoException implements Exception {
   AnalyzePhotoException(this.message, {this.status});
@@ -39,14 +46,14 @@ class AnalyzePhotoApiClient {
   /// `Authorization: Bearer <token>` header is all `onCall` needs to
   /// populate `request.auth` server-side.
   Future<AnalyzePhotoResponse> analyze(File photoFile, {required String idToken}) async {
-    final bytes = await photoFile.readAsBytes();
-    final mediaType = _mediaTypeForPath(photoFile.path);
+    final bytes = await _compressedBytes(photoFile);
 
     final response = await _httpClient.post(
       Uri.parse(AppConfig.analyzePhotoUrl),
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $idToken'},
       body: jsonEncode({
-        'data': {'imageBase64': base64Encode(bytes), 'mediaType': mediaType},
+        // Compression always outputs JPEG, regardless of the source format.
+        'data': {'imageBase64': base64Encode(bytes), 'mediaType': 'image/jpeg'},
       }),
     );
 
@@ -67,11 +74,27 @@ class AnalyzePhotoApiClient {
     return AnalyzePhotoResponse.fromJson(result);
   }
 
-  String _mediaTypeForPath(String path) {
-    final lower = path.toLowerCase();
-    if (lower.endsWith('.png')) return 'image/png';
-    if (lower.endsWith('.webp')) return 'image/webp';
-    return 'image/jpeg';
+  /// Resizes/recompresses the captured photo before upload — the native
+  /// capture pipeline writes a full-resolution photo, far larger than
+  /// Claude's vision input actually needs (see [_maxUploadDimension]),
+  /// which wastes bandwidth and base64 overhead (~33% larger than raw
+  /// bytes) for zero accuracy gain. Falls back to the original bytes if
+  /// compression fails for any reason, rather than blocking analysis on a
+  /// non-essential optimization.
+  Future<List<int>> _compressedBytes(File photoFile) async {
+    try {
+      final compressed = await FlutterImageCompress.compressWithFile(
+        photoFile.absolute.path,
+        minWidth: _maxUploadDimension,
+        minHeight: _maxUploadDimension,
+        quality: _jpegQuality,
+        format: CompressFormat.jpeg,
+      );
+      if (compressed != null && compressed.isNotEmpty) return compressed;
+    } catch (_) {
+      // Fall through to the uncompressed original below.
+    }
+    return photoFile.readAsBytes();
   }
 
   void dispose() => _httpClient.close();

@@ -1181,7 +1181,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get guidePremiumPaidBody =>
-      'Prémium (tájékoztató jellegű, nem megerősített ár): korlátlan fotóelemzés, adaptív TDEE és részletes mikrotápanyagok, adatexport és elsőbbségi támogatás.';
+      'Prémium (tájékoztató jellegű, nem megerősített ár): korlátlan fotóelemzés, adaptív TDEE és részletes mikrotápanyagok, valamint elsőbbségi támogatás.';
 
   @override
   String get themeDialogTitle => 'Téma';

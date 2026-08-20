@@ -2175,7 +2175,7 @@ abstract class AppLocalizations {
   /// No description provided for @guidePremiumPaidBody.
   ///
   /// In ro, this message translates to:
-  /// **'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, export de date și suport prioritar.'**
+  /// **'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, plus suport prioritar.'**
   String get guidePremiumPaidBody;
 
   /// No description provided for @themeDialogTitle.

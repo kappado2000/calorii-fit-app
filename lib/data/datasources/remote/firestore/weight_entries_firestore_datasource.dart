@@ -8,18 +8,29 @@ class WeightEntriesFirestoreDataSource {
   final FirebaseFirestore _firestore;
   final String _uid;
 
+  /// Generous ceiling (~4 years of daily weigh-ins) on a real-time listener
+  /// that would otherwise grow unbounded — `date` exists on every
+  /// document since it's required at creation, so ordering by it (unlike
+  /// the migration concern in CustomFoods/RecipesFirestoreDataSource)
+  /// never silently excludes older entries, only the ones beyond the cap.
+  static const _maxWatched = 1500;
+
   CollectionReference<Map<String, dynamic>> get _collection =>
       _firestore.collection('users').doc(_uid).collection('weightEntries');
 
-  /// All entries ordered oldest-first — convenient both for "most recent
-  /// weight" (`.last`) and for feeding a chart directly.
+  /// The most recent [_maxWatched] entries, oldest-first — convenient both
+  /// for "most recent weight" (`.last`) and for feeding a chart directly.
   Stream<List<WeightEntry>> watchAll() {
-    return _collection.orderBy('date').snapshots().map(
-      (snapshot) => snapshot.docs.map((doc) {
-        final data = doc.data();
-        final date = (data['date'] as Timestamp).toDate();
-        return WeightEntry.fromJson({...data, 'id': doc.id}, date: date);
-      }).toList(growable: false),
+    return _collection.orderBy('date', descending: true).limit(_maxWatched).snapshots().map(
+      (snapshot) => snapshot.docs
+          .map((doc) {
+            final data = doc.data();
+            final date = (data['date'] as Timestamp).toDate();
+            return WeightEntry.fromJson({...data, 'id': doc.id}, date: date);
+          })
+          .toList(growable: false)
+          .reversed
+          .toList(growable: false),
     );
   }
 

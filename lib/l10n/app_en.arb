@@ -418,7 +418,7 @@
   "guidePremiumTitle": "Premium & subscriptions",
   "guidePremiumDraftNote": "Draft, not finalized — the plan below isn't active in the app yet. There's no in-app payment or feature gating at this time.",
   "guidePremiumFreeBody": "Free, forever: full food diary, 20 photo analyses a day, unlimited saved recipes, basic progress charts, and Apple Health / Health Connect sync.",
-  "guidePremiumPaidBody": "Premium (indicative price, unconfirmed): unlimited photo analyses, adaptive TDEE and detailed micronutrients, data export, and priority support.",
+  "guidePremiumPaidBody": "Premium (indicative price, unconfirmed): unlimited photo analyses, adaptive TDEE and detailed micronutrients, plus priority support.",
 
   "themeDialogTitle": "Theme",
   "themeSystemDefault": "Phone theme (default)",

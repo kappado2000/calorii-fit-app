@@ -1172,7 +1172,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (indicative price, unconfirmed): unlimited photo analyses, adaptive TDEE and detailed micronutrients, data export, and priority support.';
+      'Premium (indicative price, unconfirmed): unlimited photo analyses, adaptive TDEE and detailed micronutrients, plus priority support.';
 
   @override
   String get themeDialogTitle => 'Theme';
