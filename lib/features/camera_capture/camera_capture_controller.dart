@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/datasources/remote/cloud_functions/analyze_photo_api_client.dart';
-import '../../data/models/analyzed_food_item.dart';
 import '../../domain/usecases/volume_to_calorie_calculator.dart';
 import '../../platform/depth_capture_channel.dart';
 import '../auth/auth_providers.dart';
@@ -30,13 +29,14 @@ class CameraCaptureController extends StateNotifier<CameraCaptureState> {
         state = CaptureFailed('Not authenticated', reason: CaptureFailureReason.unauthenticated);
         return;
       }
-      final apiClient = AnalyzePhotoApiClient();
-      final AnalyzePhotoResponse analysis;
-      try {
-        analysis = await apiClient.analyze(File(capture.photoPath), idToken: idToken);
-      } finally {
-        apiClient.dispose();
-      }
+      // Read from the provider, not instantiated here directly — lets
+      // tests substitute a fake HTTP client via ProviderScope overrides
+      // (see camera_capture_controller_test.dart), and means the client
+      // (and its underlying http.Client) is shared/reused across calls
+      // rather than a fresh one per capture, so it must never be disposed
+      // here — analyzePhotoApiClientProvider owns its lifecycle.
+      final apiClient = _ref.read(analyzePhotoApiClientProvider);
+      final analysis = await apiClient.analyze(File(capture.photoPath), idToken: idToken);
 
       final items = analysis.items.map((item) {
         final estimate = _calculator.estimate(

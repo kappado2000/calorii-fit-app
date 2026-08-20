@@ -3,10 +3,17 @@ import 'dart:io';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../core/constants/app_config.dart';
 import '../../../models/analyzed_food_item.dart';
+
+/// Overridden in tests with a client built on `http.testing.MockClient`, so
+/// CameraCaptureController's network-dependent state transitions (success,
+/// quota exceeded, network failure) are exercisable without a real network
+/// call — see camera_capture_controller_test.dart.
+final analyzePhotoApiClientProvider = Provider<AnalyzePhotoApiClient>((ref) => AnalyzePhotoApiClient());
 
 /// Anthropic downsamples images above this on its own side anyway (see
 /// Claude vision docs), so sending anything larger only wastes upload
