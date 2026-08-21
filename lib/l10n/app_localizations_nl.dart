@@ -268,6 +268,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String get password => 'Wachtwoord';
 
   @override
+  String get showPassword => 'Wachtwoord tonen';
+
+  @override
+  String get hidePassword => 'Wachtwoord verbergen';
+
+  @override
   String get cancel => 'Annuleren';
 
   @override

@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Excluir conta",
   "deleteAccountExplanation": "Isso exclui permanentemente sua conta e todos os seus dados (perfil, diário alimentar, treinos, pesos, alimentos memorizados). Esta ação não pode ser desfeita.",
   "password": "Senha",
+  "showPassword": "Mostrar palavra-passe",
+  "hidePassword": "Ocultar palavra-passe",
   "cancel": "Cancelar",
   "deleteAccountConfirm": "Excluir permanentemente",
 

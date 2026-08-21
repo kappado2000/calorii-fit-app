@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Ștergere cont",
   "deleteAccountExplanation": "Se șterg definitiv contul și toate datele tale (profil, jurnal de mese, antrenamente, greutăți, alimente memorate). Acțiunea nu poate fi anulată.",
   "password": "Parolă",
+  "showPassword": "Arată parola",
+  "hidePassword": "Ascunde parola",
   "cancel": "Anulează",
   "deleteAccountConfirm": "Șterge definitiv",
 

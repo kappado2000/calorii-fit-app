@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Account verwijderen",
   "deleteAccountExplanation": "Dit verwijdert je account en alle gegevens permanent (profiel, voedingsdagboek, workouts, gewichten, onthouden gerechten). Deze actie kan niet ongedaan worden gemaakt.",
   "password": "Wachtwoord",
+  "showPassword": "Wachtwoord tonen",
+  "hidePassword": "Wachtwoord verbergen",
   "cancel": "Annuleren",
   "deleteAccountConfirm": "Definitief verwijderen",
 

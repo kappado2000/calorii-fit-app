@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Konto löschen",
   "deleteAccountExplanation": "Dies löscht dein Konto und alle deine Daten dauerhaft (Profil, Ernährungstagebuch, Workouts, Gewichte, gemerkte Lebensmittel). Diese Aktion kann nicht rückgängig gemacht werden.",
   "password": "Passwort",
+  "showPassword": "Passwort anzeigen",
+  "hidePassword": "Passwort verbergen",
   "cancel": "Abbrechen",
   "deleteAccountConfirm": "Dauerhaft löschen",
 

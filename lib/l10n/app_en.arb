@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Delete account",
   "deleteAccountExplanation": "This permanently deletes your account and all your data (profile, meal log, workouts, weights, remembered foods). This action cannot be undone.",
   "password": "Password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
   "cancel": "Cancel",
   "deleteAccountConfirm": "Delete permanently",
 

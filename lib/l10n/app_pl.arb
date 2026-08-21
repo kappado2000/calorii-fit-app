@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Usuń konto",
   "deleteAccountExplanation": "To trwale usuwa twoje konto i wszystkie twoje dane (profil, dziennik posiłków, treningi, wagi, zapamiętane produkty). Tej czynności nie można cofnąć.",
   "password": "Hasło",
+  "showPassword": "Pokaż hasło",
+  "hidePassword": "Ukryj hasło",
   "cancel": "Anuluj",
   "deleteAccountConfirm": "Usuń trwale",
 

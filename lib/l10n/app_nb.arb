@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Slett konto",
   "deleteAccountExplanation": "Dette sletter kontoen din og alle dataene dine permanent (profil, matdagbok, treningsøkter, vekter, husket mat). Denne handlingen kan ikke angres.",
   "password": "Passord",
+  "showPassword": "Vis passord",
+  "hidePassword": "Skjul passord",
   "cancel": "Avbryt",
   "deleteAccountConfirm": "Slett permanent",
 

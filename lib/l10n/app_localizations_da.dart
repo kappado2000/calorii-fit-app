@@ -268,6 +268,12 @@ class AppLocalizationsDa extends AppLocalizations {
   String get password => 'Adgangskode';
 
   @override
+  String get showPassword => 'Vis adgangskode';
+
+  @override
+  String get hidePassword => 'Skjul adgangskode';
+
+  @override
   String get cancel => 'Annuller';
 
   @override

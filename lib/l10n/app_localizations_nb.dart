@@ -268,6 +268,12 @@ class AppLocalizationsNb extends AppLocalizations {
   String get password => 'Passord';
 
   @override
+  String get showPassword => 'Vis passord';
+
+  @override
+  String get hidePassword => 'Skjul passord';
+
+  @override
   String get cancel => 'Avbryt';
 
   @override

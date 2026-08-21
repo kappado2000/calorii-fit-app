@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Eliminar cuenta",
   "deleteAccountExplanation": "Esto elimina permanentemente tu cuenta y todos tus datos (perfil, registro de comidas, entrenamientos, pesos, alimentos recordados). Esta acción no se puede deshacer.",
   "password": "Contraseña",
+  "showPassword": "Mostrar contraseña",
+  "hidePassword": "Ocultar contraseña",
   "cancel": "Cancelar",
   "deleteAccountConfirm": "Eliminar permanentemente",
 

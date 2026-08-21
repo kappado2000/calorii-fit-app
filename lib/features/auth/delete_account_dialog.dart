@@ -24,6 +24,7 @@ class DeleteAccountDialog extends ConsumerStatefulWidget {
 class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
   final _passwordController = TextEditingController();
   bool _deleting = false;
+  bool _passwordVisible = false;
   String? _error;
 
   @override
@@ -78,11 +79,16 @@ class _DeleteAccountDialogState extends ConsumerState<DeleteAccountDialog> {
           const SizedBox(height: 16),
           TextField(
             controller: _passwordController,
-            obscureText: true,
+            obscureText: !_passwordVisible,
             autofocus: true,
             decoration: InputDecoration(
               labelText: l10n.password,
               errorText: _error,
+              suffixIcon: IconButton(
+                tooltip: _passwordVisible ? l10n.hidePassword : l10n.showPassword,
+                icon: Icon(_passwordVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+              ),
             ),
             onSubmitted: (_) => _deleting ? null : _confirm(),
           ),

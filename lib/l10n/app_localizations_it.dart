@@ -269,6 +269,12 @@ class AppLocalizationsIt extends AppLocalizations {
   String get password => 'Password';
 
   @override
+  String get showPassword => 'Mostra password';
+
+  @override
+  String get hidePassword => 'Nascondi password';
+
+  @override
   String get cancel => 'Annulla';
 
   @override

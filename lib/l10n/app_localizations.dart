@@ -558,6 +558,18 @@ abstract class AppLocalizations {
   /// **'Parolă'**
   String get password;
 
+  /// No description provided for @showPassword.
+  ///
+  /// In ro, this message translates to:
+  /// **'Arată parola'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In ro, this message translates to:
+  /// **'Ascunde parola'**
+  String get hidePassword;
+
   /// No description provided for @cancel.
   ///
   /// In ro, this message translates to:

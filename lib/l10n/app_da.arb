@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Slet konto",
   "deleteAccountExplanation": "Dette sletter permanent din konto og alle dine data (profil, madlog, træningspas, vægte, huskede fødevarer). Denne handling kan ikke fortrydes.",
   "password": "Adgangskode",
+  "showPassword": "Vis adgangskode",
+  "hidePassword": "Skjul adgangskode",
   "cancel": "Annuller",
   "deleteAccountConfirm": "Slet permanent",
 

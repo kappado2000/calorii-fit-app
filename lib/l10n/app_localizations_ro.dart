@@ -268,6 +268,12 @@ class AppLocalizationsRo extends AppLocalizations {
   String get password => 'Parolă';
 
   @override
+  String get showPassword => 'Arată parola';
+
+  @override
+  String get hidePassword => 'Ascunde parola';
+
+  @override
   String get cancel => 'Anulează';
 
   @override

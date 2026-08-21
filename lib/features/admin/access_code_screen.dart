@@ -24,6 +24,7 @@ class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
   bool _showAdminField = false;
   bool _redeeming = false;
   bool _activatingAdmin = false;
+  bool _passwordVisible = false;
 
   @override
   void dispose() {
@@ -110,8 +111,15 @@ class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
             const SizedBox(height: 8),
             TextField(
               controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: l10n.adminPasswordFieldLabel),
+              obscureText: !_passwordVisible,
+              decoration: InputDecoration(
+                labelText: l10n.adminPasswordFieldLabel,
+                suffixIcon: IconButton(
+                  tooltip: _passwordVisible ? l10n.hidePassword : l10n.showPassword,
+                  icon: Icon(_passwordVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                  onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+                ),
+              ),
             ),
             const SizedBox(height: 12),
             Text(l10n.adminTotpFieldLabel, style: Theme.of(context).textTheme.titleMedium),

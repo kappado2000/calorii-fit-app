@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Supprimer le compte",
   "deleteAccountExplanation": "Cette action supprime définitivement votre compte et toutes vos données (profil, journal alimentaire, séances, poids, aliments mémorisés). Cette action est irréversible.",
   "password": "Mot de passe",
+  "showPassword": "Afficher le mot de passe",
+  "hidePassword": "Masquer le mot de passe",
   "cancel": "Annuler",
   "deleteAccountConfirm": "Supprimer définitivement",
 

@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Ta bort konto",
   "deleteAccountExplanation": "Detta tar permanent bort ditt konto och all din data (profil, matdagbok, träningspass, vikter, sparade livsmedel). Denna åtgärd kan inte ångras.",
   "password": "Lösenord",
+  "showPassword": "Visa lösenord",
+  "hidePassword": "Dölj lösenord",
   "cancel": "Avbryt",
   "deleteAccountConfirm": "Ta bort permanent",
 

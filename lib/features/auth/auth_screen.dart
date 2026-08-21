@@ -22,6 +22,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _passwordController = TextEditingController();
   _AuthMode _mode = _AuthMode.signIn;
   bool _submitting = false;
+  bool _passwordVisible = false;
   String? _errorMessage;
 
   @override
@@ -170,10 +171,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: !_passwordVisible,
                     decoration: InputDecoration(
                       labelText: l10n.password,
                       prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      suffixIcon: IconButton(
+                        tooltip: _passwordVisible ? l10n.hidePassword : l10n.showPassword,
+                        icon: Icon(_passwordVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                        onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+                      ),
                     ),
                     validator: (value) =>
                         (value == null || value.length < 6) ? l10n.authPasswordMinLength : null,

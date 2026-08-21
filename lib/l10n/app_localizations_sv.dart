@@ -267,6 +267,12 @@ class AppLocalizationsSv extends AppLocalizations {
   String get password => 'Lösenord';
 
   @override
+  String get showPassword => 'Visa lösenord';
+
+  @override
+  String get hidePassword => 'Dölj lösenord';
+
+  @override
   String get cancel => 'Avbryt';
 
   @override

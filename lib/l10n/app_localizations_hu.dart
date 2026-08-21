@@ -267,6 +267,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get password => 'Jelszó';
 
   @override
+  String get showPassword => 'Jelszó megjelenítése';
+
+  @override
+  String get hidePassword => 'Jelszó elrejtése';
+
+  @override
   String get cancel => 'Mégse';
 
   @override

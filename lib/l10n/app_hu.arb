@@ -93,6 +93,8 @@
   "deleteAccountTitle": "Fiók törlése",
   "deleteAccountExplanation": "Ez véglegesen törli a fiókodat és minden adatodat (profil, étkezési napló, edzések, testsúlyok, megjegyzett ételek). Ez a művelet nem vonható vissza.",
   "password": "Jelszó",
+  "showPassword": "Jelszó megjelenítése",
+  "hidePassword": "Jelszó elrejtése",
   "cancel": "Mégse",
   "deleteAccountConfirm": "Végleges törlés",
 
