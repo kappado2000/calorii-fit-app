@@ -25,7 +25,12 @@ class ProgressScreen extends ConsumerStatefulWidget {
 }
 
 class _ProgressScreenState extends ConsumerState<ProgressScreen> {
-  ProgressPeriod _period = ProgressPeriod.last7Days;
+  // Defaults to the diet-start-anchored period rather than a fixed 7-day
+  // window — the whole point of a user-settable programStartDate (see
+  // onboarding_screen.dart) is that "how am I doing" means "since I
+  // actually started", not an arbitrary rolling week, unless the user
+  // explicitly picks a shorter period.
+  ProgressPeriod _period = ProgressPeriod.sinceProgramStart;
 
   @override
   Widget build(BuildContext context) {
