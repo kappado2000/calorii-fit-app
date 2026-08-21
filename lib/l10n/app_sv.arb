@@ -121,7 +121,7 @@
   "cameraFrameHint": "Rama in tallriken och tryck på slutaren",
   "cameraErrorPrefixed": "Det gick inte att starta/analysera fotot:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
-  "cameraQuotaExceededMessage": "Du har nått gränsen på 20 fotoanalyser per dag. Försök igen imorgon.",
+  "cameraQuotaExceededMessage": "Du har nått dagens gräns för fotoanalyser. Aktivera premium för fler analyser per dag.",
   "cameraUnauthenticatedMessage": "Du måste vara inloggad för att analysera ett foto.",
   "cameraNetworkErrorMessage": "Det gick inte att ansluta. Kontrollera din internetanslutning och försök igen.",
   "retry": "Försök igen",
@@ -463,5 +463,18 @@
   "codeStatusRedeemed": "använd",
   "codeStatusRevoked": "återkallad",
   "durationDaysValue": "{days} dagar",
-  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}},
+
+  "completeNutritionWithAiTooltip": "Komplettera med AI",
+  "nutritionCompletedMessage": "Näringsdata kompletterad.",
+  "aiCompletionNoResult": "AI kunde inte hitta säker data för det här livsmedlet.",
+
+  "bulkNutritionCompletionButton": "Komplettera med AI ({count})",
+  "@bulkNutritionCompletionButton": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionProgress": "{done}/{total}...",
+  "@bulkNutritionCompletionProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "bulkNutritionCompletionPremiumLocked": "Premiumfunktion ({count} livsmedel)",
+  "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionResult": "Kompletterade {completed} av {total} livsmedel.",
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
 }

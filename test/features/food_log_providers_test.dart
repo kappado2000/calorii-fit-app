@@ -192,6 +192,96 @@ void main() {
     expect(updated.protein, closeTo(77.5, 0.001));
   });
 
+  test('completeNutritionWithAi fills in macros for an entry that had none, leaving grams/kcal untouched', () async {
+    final aiClient = AiFoodLookupApiClient(
+      httpClient: MockClient(
+        (request) async => http.Response(
+          jsonEncode({
+            'result': {
+              'product': {
+                'barcode': null,
+                'name': 'Tripe soup',
+                'brand': null,
+                'kcalPer100g': 999, // must be ignored — kcalPer100g stays what was logged
+                'proteinPer100g': 6.0,
+                'carbsPer100g': 4.0,
+                'fatPer100g': 8.0,
+                'imageUrl': null,
+                'micronutrients': null,
+              },
+              'confidence': 0.75,
+            },
+          }),
+          200,
+        ),
+      ),
+    );
+    addTearDown(aiClient.dispose);
+    final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
+    final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: true);
+    final fakeFirestore = FakeFirebaseFirestore();
+    final container = ProviderContainer(
+      overrides: [
+        firebaseAuthProvider.overrideWithValue(mockAuth),
+        firestoreProvider.overrideWithValue(fakeFirestore),
+        aiFoodLookupApiClientProvider.overrideWithValue(aiClient),
+      ],
+    );
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final date = DateTime(2026, 1, 25);
+    final notifier = container.read(dailyLogProvider(date).notifier);
+
+    await notifier.addEntry(mealType: MealType.lunch, foodName: 'Ciorbă de burtă', grams: 300, kcalPer100g: 110);
+    await pumpEventQueue();
+    final original = container.read(dailyLogProvider(date)).single;
+    expect(original.proteinPer100g, isNull);
+
+    final completed = await container.read(foodNutritionCompletionControllerProvider).complete(original);
+    await pumpEventQueue();
+
+    expect(completed, isTrue);
+    final updated = container.read(dailyLogProvider(date)).single;
+    expect(updated.grams, 300); // untouched
+    expect(updated.kcalPer100g, 110); // untouched — the user's own logged calories stay authoritative
+    expect(updated.proteinPer100g, 6.0);
+    expect(updated.carbsPer100g, 4.0);
+    expect(updated.fatPer100g, 8.0);
+  });
+
+  test('completeNutritionWithAi leaves the entry unchanged when Claude has no confident match', () async {
+    final aiClient = AiFoodLookupApiClient(
+      httpClient: MockClient(
+        (request) async => http.Response(jsonEncode({'result': {'product': null, 'confidence': 0.0}}), 200),
+      ),
+    );
+    addTearDown(aiClient.dispose);
+    final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
+    final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: true);
+    final fakeFirestore = FakeFirebaseFirestore();
+    final container = ProviderContainer(
+      overrides: [
+        firebaseAuthProvider.overrideWithValue(mockAuth),
+        firestoreProvider.overrideWithValue(fakeFirestore),
+        aiFoodLookupApiClientProvider.overrideWithValue(aiClient),
+      ],
+    );
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final date = DateTime(2026, 1, 26);
+    final notifier = container.read(dailyLogProvider(date).notifier);
+
+    await notifier.addEntry(mealType: MealType.lunch, foodName: 'asdkjhaskjdh', grams: 200, kcalPer100g: 100);
+    await pumpEventQueue();
+    final original = container.read(dailyLogProvider(date)).single;
+
+    final completed = await container.read(foodNutritionCompletionControllerProvider).complete(original);
+    await pumpEventQueue();
+
+    expect(completed, isFalse);
+    expect(container.read(dailyLogProvider(date)).single.proteinPer100g, isNull);
+  });
+
   test('dailyLogProvider only returns entries for the requested date', () async {
     final container = _buildContainer();
     addTearDown(container.dispose);

@@ -121,7 +121,7 @@
   "cameraFrameHint": "Keretezd be a tányért, és koppints a zárkioldóra",
   "cameraErrorPrefixed": "Nem sikerült elindítani/elemezni a fotót:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
-  "cameraQuotaExceededMessage": "Elérted a napi 20 fotóelemzés limitet. Próbáld újra holnap.",
+  "cameraQuotaExceededMessage": "Elérted a napi fotóelemzési limitet. Aktiváld a prémiumot a több napi elemzésért.",
   "cameraUnauthenticatedMessage": "Be kell jelentkezned egy fotó elemzéséhez.",
   "cameraNetworkErrorMessage": "Nem sikerült csatlakozni. Ellenőrizd az internetkapcsolatot, és próbáld újra.",
   "retry": "Újra",
@@ -463,5 +463,18 @@
   "codeStatusRedeemed": "felhasznált",
   "codeStatusRevoked": "visszavonva",
   "durationDaysValue": "{days} nap",
-  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}},
+
+  "completeNutritionWithAiTooltip": "Kiegészítés AI-val",
+  "nutritionCompletedMessage": "Tápanyagadatok kiegészítve.",
+  "aiCompletionNoResult": "Az AI nem talált biztos adatot ehhez az ételhez.",
+
+  "bulkNutritionCompletionButton": "Kiegészítés AI-val ({count})",
+  "@bulkNutritionCompletionButton": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionProgress": "{done}/{total}...",
+  "@bulkNutritionCompletionProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "bulkNutritionCompletionPremiumLocked": "Prémium funkció ({count} étel)",
+  "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionResult": "{completed}/{total} étel kiegészítve.",
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
 }

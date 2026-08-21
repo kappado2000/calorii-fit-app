@@ -693,7 +693,7 @@ abstract class AppLocalizations {
   /// No description provided for @cameraQuotaExceededMessage.
   ///
   /// In ro, this message translates to:
-  /// **'Ai atins limita de 20 de analize foto pe zi. Încearcă din nou mâine.'**
+  /// **'Ai atins limita zilnică de analize foto. Activează premium pentru mai multe analize pe zi.'**
   String get cameraQuotaExceededMessage;
 
   /// No description provided for @cameraUnauthenticatedMessage.
@@ -2411,6 +2411,48 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'{days} zile'**
   String durationDaysValue(int days);
+
+  /// No description provided for @completeNutritionWithAiTooltip.
+  ///
+  /// In ro, this message translates to:
+  /// **'Completează cu AI'**
+  String get completeNutritionWithAiTooltip;
+
+  /// No description provided for @nutritionCompletedMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Date nutriționale completate.'**
+  String get nutritionCompletedMessage;
+
+  /// No description provided for @aiCompletionNoResult.
+  ///
+  /// In ro, this message translates to:
+  /// **'AI nu a găsit date sigure pentru acest aliment.'**
+  String get aiCompletionNoResult;
+
+  /// No description provided for @bulkNutritionCompletionButton.
+  ///
+  /// In ro, this message translates to:
+  /// **'Completează cu AI ({count})'**
+  String bulkNutritionCompletionButton(int count);
+
+  /// No description provided for @bulkNutritionCompletionProgress.
+  ///
+  /// In ro, this message translates to:
+  /// **'{done}/{total}...'**
+  String bulkNutritionCompletionProgress(int done, int total);
+
+  /// No description provided for @bulkNutritionCompletionPremiumLocked.
+  ///
+  /// In ro, this message translates to:
+  /// **'Funcție premium ({count} alimente)'**
+  String bulkNutritionCompletionPremiumLocked(int count);
+
+  /// No description provided for @bulkNutritionCompletionResult.
+  ///
+  /// In ro, this message translates to:
+  /// **'Completat {completed} din {total} alimente.'**
+  String bulkNutritionCompletionResult(int completed, int total);
 }
 
 class _AppLocalizationsDelegate

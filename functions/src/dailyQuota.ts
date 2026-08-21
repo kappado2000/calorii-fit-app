@@ -32,3 +32,28 @@ export async function checkAndIncrementDailyQuota(
     transaction.set(docRef, { count: count + 1, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
   });
 }
+
+/**
+ * Same anti-abuse mechanism as [checkAndIncrementDailyQuota], but the
+ * counter (`{collection}/{uid}`, no date suffix) never resets — for the
+ * trial period's cumulative caps (see isInTrial in premiumAccess.ts),
+ * which are "N total for the whole 14-day trial", not "N per day".
+ */
+export async function checkAndIncrementCumulativeQuota(
+  collection: string,
+  uid: string,
+  limit: number,
+  exceededMessage: string,
+): Promise<void> {
+  const db = getFirestore();
+  const docRef = db.collection(collection).doc(uid);
+
+  await db.runTransaction(async (transaction) => {
+    const snapshot = await transaction.get(docRef);
+    const count = (snapshot.data()?.count as number | undefined) ?? 0;
+    if (count >= limit) {
+      throw new HttpsError("resource-exhausted", exceededMessage);
+    }
+    transaction.set(docRef, { count: count + 1, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  });
+}

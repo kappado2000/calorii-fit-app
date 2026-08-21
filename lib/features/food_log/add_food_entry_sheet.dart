@@ -7,6 +7,8 @@ import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
 import '../../data/models/recipe.dart';
 import '../../l10n/app_localizations.dart';
+import '../admin/access_code_screen.dart';
+import '../admin/admin_providers.dart';
 import '../barcode_scan/barcode_scan_screen.dart';
 import '../recipes/recipe_icon.dart';
 import '../recipes/recipes_providers.dart';
@@ -325,6 +327,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                 onSelect: _selectProduct,
                 onManualEntry: _startManualEntry,
                 onSearchWithAi: () => ref.read(foodSearchProvider.notifier).searchWithAi(),
+                canUseAi: ref.watch(canUseAiFeaturesProvider),
               ),
             ],
             if (_selectedProduct != null) ...[
@@ -480,12 +483,14 @@ class _SearchResultsList extends StatelessWidget {
     required this.onSelect,
     required this.onManualEntry,
     required this.onSearchWithAi,
+    required this.canUseAi,
   });
 
   final FoodSearchState state;
   final ValueChanged<FoodProduct> onSelect;
   final VoidCallback onManualEntry;
   final VoidCallback onSearchWithAi;
+  final bool canUseAi;
 
   @override
   Widget build(BuildContext context) {
@@ -535,11 +540,19 @@ class _SearchResultsList extends StatelessWidget {
                       spacing: 8,
                       children: [
                         if (!state.hadRemoteError && !state.aiSearchAttempted)
-                          OutlinedButton.icon(
-                            onPressed: onSearchWithAi,
-                            icon: const Icon(Icons.auto_awesome_rounded, size: 16),
-                            label: Text(l10n.searchWithAiButton),
-                          ),
+                          canUseAi
+                              ? OutlinedButton.icon(
+                                  onPressed: onSearchWithAi,
+                                  icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                                  label: Text(l10n.searchWithAiButton),
+                                )
+                              : OutlinedButton.icon(
+                                  onPressed: () => Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => const AccessCodeScreen()),
+                                  ),
+                                  icon: const Icon(Icons.lock_outline_rounded, size: 16),
+                                  label: Text(l10n.searchWithAiButton),
+                                ),
                         TextButton(onPressed: onManualEntry, child: Text(l10n.addProductManually)),
                       ],
                     ),

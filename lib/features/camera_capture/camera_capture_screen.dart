@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../admin/access_code_screen.dart';
 import '../food_confirmation/food_confirmation_screen.dart';
 import 'camera_capture_controller.dart';
 import 'camera_capture_state.dart';
@@ -219,7 +220,17 @@ class _ErrorPrompt extends StatelessWidget {
           const SizedBox(height: 12),
           Text(friendlyMessage, textAlign: TextAlign.center),
           const SizedBox(height: 20),
-          FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
+          if (reason == CaptureFailureReason.quotaExceeded) ...[
+            FilledButton.icon(
+              onPressed: () =>
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AccessCodeScreen())),
+              icon: const Icon(Icons.workspace_premium_outlined),
+              label: Text(l10n.activatePremiumButton),
+            ),
+            const SizedBox(height: 8),
+            TextButton(onPressed: onRetry, child: Text(l10n.retry)),
+          ] else
+            FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

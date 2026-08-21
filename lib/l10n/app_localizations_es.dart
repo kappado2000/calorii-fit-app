@@ -345,7 +345,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cameraQuotaExceededMessage =>
-      'Has alcanzado el límite de 20 análisis de fotos al día. Inténtalo de nuevo mañana.';
+      'Has alcanzado el límite diario de análisis de fotos. Activa premium para más análisis al día.';
 
   @override
   String get cameraUnauthenticatedMessage =>
@@ -1307,5 +1307,35 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String durationDaysValue(int days) {
     return '$days días';
+  }
+
+  @override
+  String get completeNutritionWithAiTooltip => 'Completar con IA';
+
+  @override
+  String get nutritionCompletedMessage => 'Datos nutricionales completados.';
+
+  @override
+  String get aiCompletionNoResult =>
+      'La IA no encontró datos fiables para este alimento.';
+
+  @override
+  String bulkNutritionCompletionButton(int count) {
+    return 'Completar con IA ($count)';
+  }
+
+  @override
+  String bulkNutritionCompletionProgress(int done, int total) {
+    return '$done/$total...';
+  }
+
+  @override
+  String bulkNutritionCompletionPremiumLocked(int count) {
+    return 'Función premium ($count alimentos)';
+  }
+
+  @override
+  String bulkNutritionCompletionResult(int completed, int total) {
+    return 'Completados $completed de $total alimentos.';
   }
 }

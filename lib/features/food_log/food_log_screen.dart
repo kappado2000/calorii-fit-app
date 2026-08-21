@@ -721,6 +721,27 @@ class _MealSectionState extends ConsumerState<_MealSection> {
   bool _expanded = true;
   bool _selectionMode = false;
   final Set<String> _selectedEntryIds = {};
+  String? _completingNutritionForId;
+
+  bool _missingMacros(FoodLogEntry entry) =>
+      entry.proteinPer100g == null && entry.carbsPer100g == null && entry.fatPer100g == null;
+
+  Future<void> _completeNutritionWithAi(FoodLogEntry entry) async {
+    final l10n = AppLocalizations.of(context);
+    setState(() => _completingNutritionForId = entry.id);
+    try {
+      final found = await ref.read(foodNutritionCompletionControllerProvider).complete(entry);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(found ? l10n.nutritionCompletedMessage : l10n.aiCompletionNoResult)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _completingNutritionForId = null);
+    }
+  }
 
   void _toggleSelectionMode() {
     setState(() {
@@ -777,6 +798,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final canUseAi = ref.watch(canUseAiFeaturesProvider);
     final subtotal = widget.entries.fold<double>(
       0,
       (sum, entry) => sum + entry.calories,
@@ -928,10 +950,39 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                             ),
                       title: Text(entry.foodName),
                       subtitle: Text('${_formatGrams(entry.grams)} g'),
-                      trailing: Text(
-                        '${formatThousands(entry.calories.round())} kcal',
-                        style: Theme.of(context).textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (!_selectionMode && _missingMacros(entry))
+                            canUseAi
+                                ? IconButton(
+                                    tooltip: l10n.completeNutritionWithAiTooltip,
+                                    visualDensity: VisualDensity.compact,
+                                    icon: _completingNutritionForId == entry.id
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          )
+                                        : const Icon(Icons.auto_awesome_rounded, size: 18),
+                                    onPressed: _completingNutritionForId == null
+                                        ? () => _completeNutritionWithAi(entry)
+                                        : null,
+                                  )
+                                : IconButton(
+                                    tooltip: l10n.completeNutritionWithAiTooltip,
+                                    visualDensity: VisualDensity.compact,
+                                    icon: const Icon(Icons.lock_outline_rounded, size: 18),
+                                    onPressed: () => Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (_) => const AccessCodeScreen()),
+                                    ),
+                                  ),
+                          Text(
+                            '${formatThousands(entry.calories.round())} kcal',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
                     ),
                   ),

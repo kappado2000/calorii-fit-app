@@ -335,8 +335,54 @@ class DailyLogNotifier extends StateNotifier<List<FoodLogEntry>> {
 final dailyLogProvider =
     StateNotifierProvider.family<DailyLogNotifier, List<FoodLogEntry>, DateTime>((ref, date) {
       final uid = ref.watch(currentUidProvider);
-      return DailyLogNotifier(
-        FoodLogFirestoreDataSource(ref.watch(firestoreProvider), uid),
-        normalizeDate(date),
-      );
+      return DailyLogNotifier(FoodLogFirestoreDataSource(ref.watch(firestoreProvider), uid), normalizeDate(date));
     });
+
+/// Fills in protein/carbs/fat/micronutrients for a FoodLogEntry that has
+/// none (see foodName lookup in AiFoodLookupApiClient) — for entries
+/// logged via manual entry (calorie index only) or a database match too
+/// sparse to carry macros, so the macro/micronutrient analysis on
+/// ProgressScreen isn't permanently blind to them. Never touches grams or
+/// kcalPer100g — the calorie the user already confirmed when logging stays
+/// authoritative. Deliberately date-independent (unlike DailyLogNotifier)
+/// since it's used both for a single entry (food log screen, one date) and
+/// for a whole period's worth of entries spanning many dates (Progress
+/// screen's bulk "Completează cu AI", premium-gated — see admin_providers.dart).
+class FoodNutritionCompletionController {
+  FoodNutritionCompletionController(this._dataSource, this._aiApiClient, this._getIdToken);
+
+  final FoodLogFirestoreDataSource _dataSource;
+  final AiFoodLookupApiClient _aiApiClient;
+  final Future<String?> Function() _getIdToken;
+
+  /// Returns false (leaving the entry unchanged) when Claude itself wasn't
+  /// confident enough to offer anything, same "never guess" discipline as
+  /// the search fallback. Propagates AiFoodLookupException (e.g. quota
+  /// exceeded) rather than swallowing it — callers doing a bulk pass need
+  /// to know to stop, not just treat it as "no match".
+  Future<bool> complete(FoodLogEntry entry) async {
+    final idToken = await _getIdToken();
+    if (idToken == null) return false;
+
+    final match = await _aiApiClient.lookup(entry.foodName, idToken: idToken);
+    if (match == null) return false;
+
+    await _dataSource.updateNutrition(
+      entry.id,
+      proteinPer100g: match.proteinPer100g,
+      carbsPer100g: match.carbsPer100g,
+      fatPer100g: match.fatPer100g,
+      micronutrients: match.micronutrients,
+    );
+    return true;
+  }
+}
+
+final foodNutritionCompletionControllerProvider = Provider<FoodNutritionCompletionController>((ref) {
+  final uid = ref.watch(currentUidProvider);
+  return FoodNutritionCompletionController(
+    FoodLogFirestoreDataSource(ref.watch(firestoreProvider), uid),
+    ref.watch(aiFoodLookupApiClientProvider),
+    () async => ref.read(firebaseAuthProvider).currentUser?.getIdToken(),
+  );
+});

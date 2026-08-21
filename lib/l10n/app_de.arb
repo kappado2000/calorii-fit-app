@@ -121,7 +121,7 @@
   "cameraFrameHint": "Rahme den Teller ein und tippe auf den Auslöser",
   "cameraErrorPrefixed": "Foto konnte nicht gestartet/analysiert werden:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
-  "cameraQuotaExceededMessage": "Du hast das Tageslimit von 20 Foto-Analysen erreicht. Versuche es morgen erneut.",
+  "cameraQuotaExceededMessage": "Du hast das Tageslimit für Foto-Analysen erreicht. Aktiviere Premium für mehr Analysen pro Tag.",
   "cameraUnauthenticatedMessage": "Du musst angemeldet sein, um ein Foto zu analysieren.",
   "cameraNetworkErrorMessage": "Verbindung fehlgeschlagen. Überprüfe deine Internetverbindung und versuche es erneut.",
   "retry": "Erneut versuchen",
@@ -463,5 +463,18 @@
   "codeStatusRedeemed": "benutzt",
   "codeStatusRevoked": "widerrufen",
   "durationDaysValue": "{days} Tage",
-  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}},
+
+  "completeNutritionWithAiTooltip": "Mit KI ergänzen",
+  "nutritionCompletedMessage": "Nährwertdaten ergänzt.",
+  "aiCompletionNoResult": "Die KI konnte keine verlässlichen Daten für dieses Lebensmittel finden.",
+
+  "bulkNutritionCompletionButton": "Mit KI ergänzen ({count})",
+  "@bulkNutritionCompletionButton": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionProgress": "{done}/{total} ...",
+  "@bulkNutritionCompletionProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "bulkNutritionCompletionPremiumLocked": "Premium-Funktion ({count} Lebensmittel)",
+  "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionResult": "{completed} von {total} Lebensmitteln ergänzt.",
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
 }

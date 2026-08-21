@@ -121,7 +121,7 @@
   "cameraFrameHint": "Încadrează farfuria și apasă declanșatorul",
   "cameraErrorPrefixed": "Nu am putut porni/analiza fotografia:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
-  "cameraQuotaExceededMessage": "Ai atins limita de 20 de analize foto pe zi. Încearcă din nou mâine.",
+  "cameraQuotaExceededMessage": "Ai atins limita zilnică de analize foto. Activează premium pentru mai multe analize pe zi.",
   "cameraUnauthenticatedMessage": "Trebuie să fii autentificat pentru a analiza o fotografie.",
   "cameraNetworkErrorMessage": "Nu s-a putut realiza conexiunea. Verifică internetul și încearcă din nou.",
   "retry": "Încearcă din nou",
@@ -463,5 +463,18 @@
   "codeStatusRedeemed": "folosit",
   "codeStatusRevoked": "revocat",
   "durationDaysValue": "{days} zile",
-  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}},
+
+  "completeNutritionWithAiTooltip": "Completează cu AI",
+  "nutritionCompletedMessage": "Date nutriționale completate.",
+  "aiCompletionNoResult": "AI nu a găsit date sigure pentru acest aliment.",
+
+  "bulkNutritionCompletionButton": "Completează cu AI ({count})",
+  "@bulkNutritionCompletionButton": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionProgress": "{done}/{total}...",
+  "@bulkNutritionCompletionProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "bulkNutritionCompletionPremiumLocked": "Funcție premium ({count} alimente)",
+  "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionResult": "Completat {completed} din {total} alimente.",
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
 }

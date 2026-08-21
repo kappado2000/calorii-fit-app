@@ -7,6 +7,7 @@ import { densityTableAsPromptText } from "./densityTable";
 import { findBestNutritionMatch } from "./foodMatching";
 import { FoodProductResult } from "./foodProduct";
 import { checkAndIncrementDailyQuota } from "./dailyQuota";
+import { isPremiumOrAdmin, isInTrial } from "./premiumAccess";
 
 if (getApps().length === 0) {
   initializeApp();
@@ -14,7 +15,14 @@ if (getApps().length === 0) {
 
 const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 
-const DAILY_PHOTO_ANALYSIS_LIMIT = 20;
+/** Three tiers: a settled free account gets one photo analysis a day —
+ * enough to try the feature, not enough to replace premium for daily use.
+ * A free account still within its trial window (see isInTrial) gets a
+ * higher taste-of-premium allowance. Premium keeps the original standard
+ * allowance; admin bypasses this entirely (see below). */
+const DAILY_PHOTO_ANALYSIS_LIMIT_FREE = 1;
+const DAILY_PHOTO_ANALYSIS_LIMIT_TRIAL = 3;
+const DAILY_PHOTO_ANALYSIS_LIMIT_PREMIUM = 20;
 
 const DENSITY_CATEGORY_KEYS = [
   "cookedRice",
@@ -185,13 +193,23 @@ export const analyzePhoto = onCall<AnalyzePhotoRequest>(
 
     // The admin account (see activateAdmin.ts) has unlimited access to
     // every quota-gated function — that's the entire point of the role.
+    // Premium keeps the standard allowance rather than also going
+    // unlimited (see the "1 pentru admin, 3 pentru coduri" decision). A
+    // free account still within its 14-day trial gets a higher allowance
+    // than the permanent free tier — see isInTrial.
     if (request.auth.token.admin !== true) {
-      await checkAndIncrementDailyQuota(
-        "photoAnalysisQuota",
-        request.auth.uid,
-        DAILY_PHOTO_ANALYSIS_LIMIT,
-        `Ai atins limita de ${DAILY_PHOTO_ANALYSIS_LIMIT} analize foto pe zi. Încearcă din nou mâine.`,
-      );
+      const premium = await isPremiumOrAdmin(request.auth);
+      let limit: number;
+      let message: string;
+      if (premium) {
+        limit = DAILY_PHOTO_ANALYSIS_LIMIT_PREMIUM;
+        message = `Ai atins limita de ${limit} analize foto pe zi. Încearcă din nou mâine.`;
+      } else {
+        const trial = await isInTrial(request.auth.uid);
+        limit = trial ? DAILY_PHOTO_ANALYSIS_LIMIT_TRIAL : DAILY_PHOTO_ANALYSIS_LIMIT_FREE;
+        message = "Ai folosit deja analizele foto gratuite pe azi. Activează premium pentru mai multe analize pe zi.";
+      }
+      await checkAndIncrementDailyQuota("photoAnalysisQuota", request.auth.uid, limit, message);
     }
 
     const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY.value() });

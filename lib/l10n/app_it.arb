@@ -121,7 +121,7 @@
   "cameraFrameHint": "Inquadra il piatto e tocca lo scatto",
   "cameraErrorPrefixed": "Impossibile avviare/analizzare la foto:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
-  "cameraQuotaExceededMessage": "Hai raggiunto il limite di 20 analisi foto al giorno. Riprova domani.",
+  "cameraQuotaExceededMessage": "Hai raggiunto il limite giornaliero di analisi foto. Attiva premium per più analisi al giorno.",
   "cameraUnauthenticatedMessage": "Devi aver effettuato l'accesso per analizzare una foto.",
   "cameraNetworkErrorMessage": "Impossibile connettersi. Controlla la tua connessione internet e riprova.",
   "retry": "Riprova",
@@ -463,5 +463,18 @@
   "codeStatusRedeemed": "utilizzato",
   "codeStatusRevoked": "revocato",
   "durationDaysValue": "{days} giorni",
-  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}},
+
+  "completeNutritionWithAiTooltip": "Completa con l'IA",
+  "nutritionCompletedMessage": "Dati nutrizionali completati.",
+  "aiCompletionNoResult": "L'IA non ha trovato dati affidabili per questo alimento.",
+
+  "bulkNutritionCompletionButton": "Completa con l'IA ({count})",
+  "@bulkNutritionCompletionButton": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionProgress": "{done}/{total}...",
+  "@bulkNutritionCompletionProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "bulkNutritionCompletionPremiumLocked": "Funzione premium ({count} alimenti)",
+  "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionResult": "Completati {completed} di {total} alimenti.",
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
 }

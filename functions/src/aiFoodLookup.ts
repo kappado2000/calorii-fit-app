@@ -3,7 +3,8 @@ import { defineSecret } from "firebase-functions/params";
 import { getApps, initializeApp } from "firebase-admin/app";
 import Anthropic from "@anthropic-ai/sdk";
 import { FoodProductResult, MicronutrientsResult } from "./foodProduct";
-import { checkAndIncrementDailyQuota } from "./dailyQuota";
+import { checkAndIncrementDailyQuota, checkAndIncrementCumulativeQuota } from "./dailyQuota";
+import { isPremiumOrAdmin, isInTrial } from "./premiumAccess";
 
 if (getApps().length === 0) {
   initializeApp();
@@ -12,6 +13,11 @@ if (getApps().length === 0) {
 const ANTHROPIC_API_KEY = defineSecret("ANTHROPIC_API_KEY");
 
 const DAILY_AI_LOOKUP_LIMIT = 20;
+/** Total (not per-day) AI searches a free account gets across its whole
+ * 14-day trial (see isInTrial) — a taste of the feature, not a recurring
+ * allowance. Once used up, or once the trial ends, a free account gets
+ * none until it goes premium. */
+const TRIAL_AI_LOOKUP_LIMIT = 10;
 
 interface AiFoodLookupRequest {
   query: string;
@@ -106,14 +112,31 @@ export const aiFoodLookup = onCall<AiFoodLookupRequest>(
       throw new HttpsError("invalid-argument", "query must be at least 2 characters.");
     }
 
-    // The admin account (see activateAdmin.ts) has unlimited access to
-    // every quota-gated function — that's the entire point of the role.
-    if (request.auth.token.admin !== true) {
+    // Every AI-based nutrition-analysis feature (this search fallback, and
+    // the per-entry/bulk macro completion on the client, which both also
+    // call this same function) is premium-only for a *settled* free
+    // account — but a free account still inside its 14-day trial gets a
+    // taste of it too, capped cumulatively rather than daily.
+    if (request.auth.token.admin === true) {
+      // Unlimited — falls through to the call below.
+    } else if (await isPremiumOrAdmin(request.auth)) {
       await checkAndIncrementDailyQuota(
         "aiFoodLookupQuota",
         request.auth.uid,
         DAILY_AI_LOOKUP_LIMIT,
         `Ai atins limita de ${DAILY_AI_LOOKUP_LIMIT} căutări AI pe zi. Încearcă din nou mâine.`,
+      );
+    } else if (await isInTrial(request.auth.uid)) {
+      await checkAndIncrementCumulativeQuota(
+        "aiFoodLookupTrialQuota",
+        request.auth.uid,
+        TRIAL_AI_LOOKUP_LIMIT,
+        `Ai folosit toate cele ${TRIAL_AI_LOOKUP_LIMIT} căutări AI incluse în perioada de probă. Activează premium pentru mai multe.`,
+      );
+    } else {
+      throw new HttpsError(
+        "permission-denied",
+        "Căutarea AI este disponibilă doar pentru conturile premium (perioada ta de probă s-a încheiat).",
       );
     }
 

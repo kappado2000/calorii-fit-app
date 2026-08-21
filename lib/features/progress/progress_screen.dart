@@ -8,9 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/micronutrient_reference.dart';
 import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
+import '../../data/datasources/remote/cloud_functions/ai_food_lookup_api_client.dart';
+import '../../data/models/food_log_entry.dart';
 import '../../domain/usecases/tdee_calculator.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
+import '../admin/access_code_screen.dart';
+import '../admin/admin_providers.dart';
+import '../food_log/food_log_providers.dart';
 import '../profile/profile_providers.dart';
 import 'adaptive_tdee_card.dart';
 import 'progress_providers.dart';
@@ -137,6 +142,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                       tdee: tdeeValue,
                     ),
                   ).animate(delay: 100.ms).fadeIn(duration: 350.ms).slideY(begin: 0.05, end: 0),
+                  _BulkCompleteNutritionButton(period: _period),
                   const SizedBox(height: 16),
                   _MacroBalanceCard(
                     summary: nutritionSummary,
@@ -308,6 +314,98 @@ class _StatTile extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Bulk-fills macro/micronutrient data for every entry in the selected
+/// period that has none (manual entries, or a database match too sparse
+/// to carry macros) — premium-gated (see admin_providers.dart's "1 pentru
+/// admin, 3 pentru coduri" decision: premium unlocks the *feature*, not a
+/// higher/unlimited quota, so this still runs against the same daily AI
+/// quota as everything else and simply stops early if that's hit).
+/// Sequential, not parallel — gentler on that shared quota and lets the
+/// UI show real progress instead of an opaque spinner.
+class _BulkCompleteNutritionButton extends ConsumerStatefulWidget {
+  const _BulkCompleteNutritionButton({required this.period});
+
+  final ProgressPeriod period;
+
+  @override
+  ConsumerState<_BulkCompleteNutritionButton> createState() => _BulkCompleteNutritionButtonState();
+}
+
+class _BulkCompleteNutritionButtonState extends ConsumerState<_BulkCompleteNutritionButton> {
+  bool _running = false;
+  int _done = 0;
+  int _total = 0;
+
+  Future<void> _run(List<FoodLogEntry> entries) async {
+    final l10n = AppLocalizations.of(context);
+    setState(() {
+      _running = true;
+      _done = 0;
+      _total = entries.length;
+    });
+
+    final controller = ref.read(foodNutritionCompletionControllerProvider);
+    var completedCount = 0;
+    String? stoppedEarlyMessage;
+    for (final entry in entries) {
+      try {
+        if (await controller.complete(entry)) completedCount++;
+      } on AiFoodLookupException catch (e) {
+        if (e.isQuotaExceeded) {
+          stoppedEarlyMessage = e.message;
+          break;
+        }
+        // Any other single-entry failure shouldn't abort the whole batch.
+      } catch (_) {
+        // Ignored — continue with the rest of the batch.
+      }
+      if (!mounted) return;
+      setState(() => _done++);
+    }
+
+    if (!mounted) return;
+    setState(() => _running = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          stoppedEarlyMessage ?? l10n.bulkNutritionCompletionResult(completedCount, entries.length),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final missing = ref.watch(periodEntriesMissingMacrosProvider(widget.period)).valueOrNull ?? const [];
+    if (missing.isEmpty) return const SizedBox.shrink();
+
+    final canUseAi = ref.watch(canUseAiFeaturesProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    if (!canUseAi) {
+      return OutlinedButton.icon(
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AccessCodeScreen())),
+        icon: const Icon(Icons.lock_outline_rounded, size: 18),
+        label: Text(l10n.bulkNutritionCompletionPremiumLocked(missing.length)),
+        style: OutlinedButton.styleFrom(foregroundColor: colorScheme.onSurfaceVariant),
+      );
+    }
+
+    return FilledButton.icon(
+      onPressed: _running ? null : () => _run(missing),
+      icon: _running
+          ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+          : const Icon(Icons.auto_awesome_rounded, size: 18),
+      label: Text(
+        _running
+            ? l10n.bulkNutritionCompletionProgress(_done, _total)
+            : l10n.bulkNutritionCompletionButton(missing.length),
       ),
     );
   }

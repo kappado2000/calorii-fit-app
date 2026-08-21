@@ -7,8 +7,14 @@ if (getApps().length === 0) {
 }
 
 /** Every top-level daily-quota collection that keys docs by "{uid}_{date}"
- * (see dailyQuota.ts) — each needs the same cleanup on account deletion. */
-const QUOTA_COLLECTIONS = ["photoAnalysisQuota", "aiFoodLookupQuota"];
+ * (see dailyQuota.ts's checkAndIncrementDailyQuota) — each needs the same
+ * prefix-range cleanup on account deletion. */
+const DAILY_QUOTA_COLLECTIONS = ["photoAnalysisQuota", "aiFoodLookupQuota"];
+
+/** Cumulative (non-date-keyed) quota collections — one doc per uid, no
+ * suffix (see dailyQuota.ts's checkAndIncrementCumulativeQuota) — deleted
+ * directly by id rather than a prefix-range query. */
+const CUMULATIVE_QUOTA_COLLECTIONS = ["aiFoodLookupTrialQuota"];
 
 /**
  * Quota docs (see dailyQuota.ts) live outside users/{uid} specifically so
@@ -28,7 +34,7 @@ export const onUserDeleted = functionsV1.auth.user().onDelete(async (user) => {
   // query, without reaching for an exotic Unicode code point.
   const prefixUpperBound = prefix + "z";
 
-  for (const collection of QUOTA_COLLECTIONS) {
+  for (const collection of DAILY_QUOTA_COLLECTIONS) {
     const snapshot = await db
       .collection(collection)
       .where(FieldPath.documentId(), ">=", prefix)
@@ -40,5 +46,9 @@ export const onUserDeleted = functionsV1.auth.user().onDelete(async (user) => {
     const batch = db.batch();
     snapshot.docs.forEach((doc) => batch.delete(doc.ref));
     await batch.commit();
+  }
+
+  for (const collection of CUMULATIVE_QUOTA_COLLECTIONS) {
+    await db.collection(collection).doc(user.uid).delete();
   }
 });

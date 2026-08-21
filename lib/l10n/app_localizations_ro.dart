@@ -344,7 +344,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get cameraQuotaExceededMessage =>
-      'Ai atins limita de 20 de analize foto pe zi. Încearcă din nou mâine.';
+      'Ai atins limita zilnică de analize foto. Activează premium pentru mai multe analize pe zi.';
 
   @override
   String get cameraUnauthenticatedMessage =>
@@ -1302,5 +1302,35 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String durationDaysValue(int days) {
     return '$days zile';
+  }
+
+  @override
+  String get completeNutritionWithAiTooltip => 'Completează cu AI';
+
+  @override
+  String get nutritionCompletedMessage => 'Date nutriționale completate.';
+
+  @override
+  String get aiCompletionNoResult =>
+      'AI nu a găsit date sigure pentru acest aliment.';
+
+  @override
+  String bulkNutritionCompletionButton(int count) {
+    return 'Completează cu AI ($count)';
+  }
+
+  @override
+  String bulkNutritionCompletionProgress(int done, int total) {
+    return '$done/$total...';
+  }
+
+  @override
+  String bulkNutritionCompletionPremiumLocked(int count) {
+    return 'Funcție premium ($count alimente)';
+  }
+
+  @override
+  String bulkNutritionCompletionResult(int completed, int total) {
+    return 'Completat $completed din $total alimente.';
   }
 }

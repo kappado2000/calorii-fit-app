@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/constants/micronutrient_reference.dart';
 import '../../../models/food_log_entry.dart';
 
 /// Firestore-backed replacement for the Phase 1 SharedPreferences store —
@@ -34,6 +35,25 @@ class FoodLogFirestoreDataSource {
   }
 
   Future<void> delete(String id) => _collection.doc(id).delete();
+
+  /// Fills in macro/micronutrient data for an entry that was logged without
+  /// it (see DailyLogNotifier.completeNutritionWithAi) — a partial update,
+  /// unlike [add]'s full overwrite, so it never touches `date`, `grams`, or
+  /// the calorie index the user already confirmed when they logged it.
+  Future<void> updateNutrition(
+    String id, {
+    required double? proteinPer100g,
+    required double? carbsPer100g,
+    required double? fatPer100g,
+    required MicronutrientProfile? micronutrients,
+  }) {
+    return _collection.doc(id).update({
+      'proteinPer100g': proteinPer100g,
+      'carbsPer100g': carbsPer100g,
+      'fatPer100g': fatPer100g,
+      'micronutrients': micronutrients?.toJson(),
+    });
+  }
 
   /// Every logged entry within [start, end] (inclusive of both ends'
   /// calendar days), unaggregated — what the macro/micronutrient analysis

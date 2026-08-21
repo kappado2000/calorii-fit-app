@@ -343,7 +343,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get cameraQuotaExceededMessage =>
-      'Elérted a napi 20 fotóelemzés limitet. Próbáld újra holnap.';
+      'Elérted a napi fotóelemzési limitet. Aktiváld a prémiumot a több napi elemzésért.';
 
   @override
   String get cameraUnauthenticatedMessage =>
@@ -1306,5 +1306,35 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String durationDaysValue(int days) {
     return '$days nap';
+  }
+
+  @override
+  String get completeNutritionWithAiTooltip => 'Kiegészítés AI-val';
+
+  @override
+  String get nutritionCompletedMessage => 'Tápanyagadatok kiegészítve.';
+
+  @override
+  String get aiCompletionNoResult =>
+      'Az AI nem talált biztos adatot ehhez az ételhez.';
+
+  @override
+  String bulkNutritionCompletionButton(int count) {
+    return 'Kiegészítés AI-val ($count)';
+  }
+
+  @override
+  String bulkNutritionCompletionProgress(int done, int total) {
+    return '$done/$total...';
+  }
+
+  @override
+  String bulkNutritionCompletionPremiumLocked(int count) {
+    return 'Prémium funkció ($count étel)';
+  }
+
+  @override
+  String bulkNutritionCompletionResult(int completed, int total) {
+    return '$completed/$total étel kiegészítve.';
   }
 }

@@ -121,7 +121,7 @@
   "cameraFrameHint": "Indram tallerkenen og tryk på udløseren",
   "cameraErrorPrefixed": "Kunne ikke starte/analysere billedet:\n{message}",
   "@cameraErrorPrefixed": {"placeholders": {"message": {"type": "String"}}},
-  "cameraQuotaExceededMessage": "Du har nået grænsen på 20 fotoanalyser om dagen. Prøv igen i morgen.",
+  "cameraQuotaExceededMessage": "Du har nået dagens grænse for fotoanalyser. Aktivér premium for flere analyser om dagen.",
   "cameraUnauthenticatedMessage": "Du skal være logget ind for at analysere et billede.",
   "cameraNetworkErrorMessage": "Kunne ikke oprette forbindelse. Tjek din internetforbindelse, og prøv igen.",
   "retry": "Prøv igen",
@@ -463,5 +463,18 @@
   "codeStatusRedeemed": "brugt",
   "codeStatusRevoked": "tilbagekaldt",
   "durationDaysValue": "{days} dage",
-  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}},
+
+  "completeNutritionWithAiTooltip": "Udfyld med AI",
+  "nutritionCompletedMessage": "Ernæringsdata udfyldt.",
+  "aiCompletionNoResult": "AI fandt ikke sikre data for denne fødevare.",
+
+  "bulkNutritionCompletionButton": "Udfyld med AI ({count})",
+  "@bulkNutritionCompletionButton": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionProgress": "{done}/{total}...",
+  "@bulkNutritionCompletionProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "bulkNutritionCompletionPremiumLocked": "Premiumfunktion ({count} fødevarer)",
+  "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
+  "bulkNutritionCompletionResult": "Udfyldte {completed} af {total} fødevarer.",
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
 }
