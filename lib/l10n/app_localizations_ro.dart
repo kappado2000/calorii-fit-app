@@ -666,6 +666,13 @@ class AppLocalizationsRo extends AppLocalizations {
       'Recomandat: 0.25-0.75 kg/săptămână pentru un ritm sustenabil.';
 
   @override
+  String get programStartDateLabel => 'Data de start a dietei';
+
+  @override
+  String get programStartDateHint =>
+      'Diferă de data creării contului — e momentul de la care vrei să măsurăm progresul.';
+
+  @override
   String get disclaimerTitle => 'Înainte să începi';
 
   @override

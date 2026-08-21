@@ -237,6 +237,8 @@
   "onboardingGainRate": "Ritm de creștere dorit",
   "kgPerWeek": "kg/săptămână",
   "onboardingRateRecommendation": "Recomandat: 0.25-0.75 kg/săptămână pentru un ritm sustenabil.",
+  "programStartDateLabel": "Data de start a dietei",
+  "programStartDateHint": "Diferă de data creării contului — e momentul de la care vrei să măsurăm progresul.",
 
   "disclaimerTitle": "Înainte să începi",
   "disclaimerIntro": "Calorii Fit estimează necesarul caloric și ritmul de slăbit pe baza unor formule general acceptate (Mifflin-St Jeor), nu pe baza unei evaluări medicale individuale.",

@@ -1296,6 +1296,18 @@ abstract class AppLocalizations {
   /// **'Recomandat: 0.25-0.75 kg/săptămână pentru un ritm sustenabil.'**
   String get onboardingRateRecommendation;
 
+  /// No description provided for @programStartDateLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Data de start a dietei'**
+  String get programStartDateLabel;
+
+  /// No description provided for @programStartDateHint.
+  ///
+  /// In ro, this message translates to:
+  /// **'Diferă de data creării contului — e momentul de la care vrei să măsurăm progresul.'**
+  String get programStartDateHint;
+
   /// No description provided for @disclaimerTitle.
   ///
   /// In ro, this message translates to:

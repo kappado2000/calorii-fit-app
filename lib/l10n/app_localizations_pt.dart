@@ -666,6 +666,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Recomendado: 0,25-0,75 kg/semana para um ritmo sustentável.';
 
   @override
+  String get programStartDateLabel => 'Data de início da dieta';
+
+  @override
+  String get programStartDateHint =>
+      'Diferente da data de criação da conta — é o ponto a partir do qual queres medir o progresso.';
+
+  @override
   String get disclaimerTitle => 'Antes de começar';
 
   @override

@@ -237,6 +237,8 @@
   "onboardingGainRate": "Gewenst aankomtempo",
   "kgPerWeek": "kg/week",
   "onboardingRateRecommendation": "Aanbevolen: 0,25-0,75 kg/week voor een houdbaar tempo.",
+  "programStartDateLabel": "Startdatum van het dieet",
+  "programStartDateHint": "Anders dan de aanmaakdatum van je account — dit is het punt vanaf waar je de voortgang wilt meten.",
 
   "disclaimerTitle": "Voordat je begint",
   "disclaimerIntro": "Calorii Fit schat je caloriebehoefte en gewichtsverliestempo op basis van algemeen aanvaarde formules (Mifflin-St Jeor), geen individuele medische beoordeling.",

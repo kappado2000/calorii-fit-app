@@ -669,6 +669,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Empfohlen: 0,25-0,75 kg/Woche für ein nachhaltiges Tempo.';
 
   @override
+  String get programStartDateLabel => 'Startdatum der Diät';
+
+  @override
+  String get programStartDateHint =>
+      'Unterscheidet sich vom Erstellungsdatum des Kontos — ab hier soll der Fortschritt gemessen werden.';
+
+  @override
   String get disclaimerTitle => 'Bevor du beginnst';
 
   @override

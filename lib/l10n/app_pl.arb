@@ -237,6 +237,8 @@
   "onboardingGainRate": "Pożądane tempo przyrostu wagi",
   "kgPerWeek": "kg/tydzień",
   "onboardingRateRecommendation": "Zalecane: 0,25-0,75 kg/tydzień dla trwałego tempa.",
+  "programStartDateLabel": "Data rozpoczęcia diety",
+  "programStartDateHint": "Inna niż data utworzenia konta — to punkt, od którego chcesz mierzyć postępy.",
 
   "disclaimerTitle": "Zanim zaczniesz",
   "disclaimerIntro": "Calorii Fit szacuje twoje zapotrzebowanie kaloryczne i tempo utraty wagi na podstawie ogólnie przyjętych formuł (Mifflin-St Jeor), a nie indywidualnej oceny medycznej.",

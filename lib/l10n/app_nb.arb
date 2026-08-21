@@ -237,6 +237,8 @@
   "onboardingGainRate": "Ønsket økningstempo",
   "kgPerWeek": "kg/uke",
   "onboardingRateRecommendation": "Anbefalt: 0,25-0,75 kg/uke for et bærekraftig tempo.",
+  "programStartDateLabel": "Startdato for dietten",
+  "programStartDateHint": "Skiller seg fra datoen kontoen ble opprettet — dette er utgangspunktet du vil måle fremgangen fra.",
 
   "disclaimerTitle": "Før du starter",
   "disclaimerIntro": "Calorii Fit estimerer kaloribehovet ditt og vektnedgangstempoet basert på generelt aksepterte formler (Mifflin-St Jeor), ikke en individuell medisinsk vurdering.",

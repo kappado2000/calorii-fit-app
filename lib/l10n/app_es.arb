@@ -237,6 +237,8 @@
   "onboardingGainRate": "Ritmo de ganancia deseado",
   "kgPerWeek": "kg/semana",
   "onboardingRateRecommendation": "Recomendado: 0,25-0,75 kg/semana para un ritmo sostenible.",
+  "programStartDateLabel": "Fecha de inicio de la dieta",
+  "programStartDateHint": "Distinta de la fecha de creación de la cuenta — es el punto desde el que quieres medir el progreso.",
 
   "disclaimerTitle": "Antes de empezar",
   "disclaimerIntro": "Calorii Fit estima tus necesidades calóricas y ritmo de pérdida de peso según fórmulas generalmente aceptadas (Mifflin-St Jeor), no una evaluación médica individual.",

@@ -667,6 +667,13 @@ class AppLocalizationsNb extends AppLocalizations {
       'Anbefalt: 0,25-0,75 kg/uke for et bærekraftig tempo.';
 
   @override
+  String get programStartDateLabel => 'Startdato for dietten';
+
+  @override
+  String get programStartDateHint =>
+      'Skiller seg fra datoen kontoen ble opprettet — dette er utgangspunktet du vil måle fremgangen fra.';
+
+  @override
   String get disclaimerTitle => 'Før du starter';
 
   @override

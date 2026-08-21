@@ -668,6 +668,13 @@ class AppLocalizationsNl extends AppLocalizations {
       'Aanbevolen: 0,25-0,75 kg/week voor een houdbaar tempo.';
 
   @override
+  String get programStartDateLabel => 'Startdatum van het dieet';
+
+  @override
+  String get programStartDateHint =>
+      'Anders dan de aanmaakdatum van je account — dit is het punt vanaf waar je de voortgang wilt meten.';
+
+  @override
   String get disclaimerTitle => 'Voordat je begint';
 
   @override

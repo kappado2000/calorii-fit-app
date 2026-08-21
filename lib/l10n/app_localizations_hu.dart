@@ -669,6 +669,13 @@ class AppLocalizationsHu extends AppLocalizations {
       'Ajánlott: 0,25-0,75 kg/hét a fenntartható ütemhez.';
 
   @override
+  String get programStartDateLabel => 'A diéta kezdő dátuma';
+
+  @override
+  String get programStartDateHint =>
+      'Eltér a fiók létrehozásának dátumától — ettől a ponttól szeretnéd mérni a haladást.';
+
+  @override
   String get disclaimerTitle => 'Mielőtt elkezded';
 
   @override

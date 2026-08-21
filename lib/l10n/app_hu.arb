@@ -237,6 +237,8 @@
   "onboardingGainRate": "Kívánt hízási ütem",
   "kgPerWeek": "kg/hét",
   "onboardingRateRecommendation": "Ajánlott: 0,25-0,75 kg/hét a fenntartható ütemhez.",
+  "programStartDateLabel": "A diéta kezdő dátuma",
+  "programStartDateHint": "Eltér a fiók létrehozásának dátumától — ettől a ponttól szeretnéd mérni a haladást.",
 
   "disclaimerTitle": "Mielőtt elkezded",
   "disclaimerIntro": "A Calorii Fit az általánosan elfogadott képletek (Mifflin-St Jeor) alapján becsüli meg a kalóriaigényedet és a fogyás ütemét, nem egyéni orvosi felmérés alapján.",

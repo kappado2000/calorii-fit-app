@@ -666,6 +666,13 @@ class AppLocalizationsDa extends AppLocalizations {
       'Anbefalet: 0,25-0,75 kg/uge for et bæredygtigt tempo.';
 
   @override
+  String get programStartDateLabel => 'Startdato for kuren';
+
+  @override
+  String get programStartDateHint =>
+      'Adskiller sig fra datoen kontoen blev oprettet — det er udgangspunktet du vil måle fremskridt fra.';
+
+  @override
   String get disclaimerTitle => 'Før du starter';
 
   @override

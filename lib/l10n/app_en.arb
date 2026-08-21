@@ -237,6 +237,8 @@
   "onboardingGainRate": "Desired gain rate",
   "kgPerWeek": "kg/week",
   "onboardingRateRecommendation": "Recommended: 0.25-0.75 kg/week for a sustainable pace.",
+  "programStartDateLabel": "Diet start date",
+  "programStartDateHint": "Different from your account's creation date — this is the point you want progress measured from.",
 
   "disclaimerTitle": "Before you start",
   "disclaimerIntro": "Calorii Fit estimates your calorie needs and weight-loss pace based on generally accepted formulas (Mifflin-St Jeor), not an individual medical assessment.",

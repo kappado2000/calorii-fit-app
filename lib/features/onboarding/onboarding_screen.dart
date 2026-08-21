@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../data/models/user_profile.dart';
 import '../../l10n/app_localizations.dart';
@@ -63,15 +64,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       _sex = existing.sex;
       _activityLevel = existing.activityLevel;
       _goal = existing.goal;
-      _existingProgramStartDate = existing.programStartDate;
+      _programStartDate = existing.programStartDate;
       _existingDisclaimerAcceptedAt = existing.disclaimerAcceptedAt;
     }
   }
 
-  // Editing must keep the original program-start anchor — the "since
-  // program start" progress chart depends on it staying fixed, it isn't
-  // meant to reset every time the user tweaks their goal.
-  DateTime? _existingProgramStartDate;
+  // The anchor for "since program start" progress charts — deliberately a
+  // user-editable date, not silently pinned to whenever the profile
+  // happened to be created (a user might set up the app days after
+  // actually starting their diet, or want to correct it later). Defaults
+  // to today for first-time setup; editing an existing profile starts
+  // from whatever was saved rather than resetting.
+  DateTime _programStartDate = DateTime.now();
 
   String _formatNumber(double value) {
     return value == value.roundToDouble() ? value.toStringAsFixed(0) : value.toString();
@@ -131,7 +135,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       targetRateKgPerWeek: _goal == Goal.maintain
           ? 0
           : double.parse(_targetRateController.text.replaceAll(',', '.')),
-      programStartDate: _existingProgramStartDate ?? DateTime.now(),
+      programStartDate: _programStartDate,
       disclaimerAcceptedAt: _existingDisclaimerAcceptedAt ?? DateTime.now(),
     );
     final controller = ref.read(profileControllerProvider);
@@ -214,6 +218,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   targetRateController: _targetRateController,
                   onGoalChanged: (goal) => setState(() => _goal = goal),
                   onTextChanged: () => setState(() {}),
+                  programStartDate: _programStartDate,
+                  onProgramStartDateChanged: (date) => setState(() => _programStartDate = date),
                 ),
                 if (_isFirstTimeSetup)
                   _DisclaimerStep(
@@ -413,16 +419,33 @@ class _GoalStep extends StatelessWidget {
     required this.targetRateController,
     required this.onGoalChanged,
     required this.onTextChanged,
+    required this.programStartDate,
+    required this.onProgramStartDateChanged,
   });
 
   final Goal goal;
   final TextEditingController targetRateController;
   final ValueChanged<Goal> onGoalChanged;
   final VoidCallback onTextChanged;
+  final DateTime programStartDate;
+  final ValueChanged<DateTime> onProgramStartDateChanged;
+
+  Future<void> _pickStartDate(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: programStartDate,
+      firstDate: DateTime(2015),
+      lastDate: DateTime.now(),
+      helpText: l10n.programStartDateLabel,
+    );
+    if (picked != null) onProgramStartDateChanged(picked);
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     return _StepScaffold(
       title: l10n.onboardingGoalTitle,
       icon: Icons.flag_rounded,
@@ -449,6 +472,38 @@ class _GoalStep extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
+        const SizedBox(height: 24),
+        Text(l10n.programStartDateLabel, style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 8),
+        InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () => _pickStartDate(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.event_rounded, color: colorScheme.primary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    DateFormat('d MMMM y', l10n.localeName).format(programStartDate),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                Icon(Icons.expand_more_rounded, color: colorScheme.onSurfaceVariant),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.programStartDateHint,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
       ],
     );
   }

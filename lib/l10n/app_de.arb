@@ -237,6 +237,8 @@
   "onboardingGainRate": "Gewünschte Zunahmerate",
   "kgPerWeek": "kg/Woche",
   "onboardingRateRecommendation": "Empfohlen: 0,25-0,75 kg/Woche für ein nachhaltiges Tempo.",
+  "programStartDateLabel": "Startdatum der Diät",
+  "programStartDateHint": "Unterscheidet sich vom Erstellungsdatum des Kontos — ab hier soll der Fortschritt gemessen werden.",
 
   "disclaimerTitle": "Bevor du beginnst",
   "disclaimerIntro": "Calorii Fit schätzt deinen Kalorienbedarf und dein Gewichtsverlusttempo anhand allgemein anerkannter Formeln (Mifflin-St Jeor), nicht anhand einer individuellen medizinischen Beurteilung.",

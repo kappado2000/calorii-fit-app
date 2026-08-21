@@ -669,6 +669,13 @@ class AppLocalizationsPl extends AppLocalizations {
       'Zalecane: 0,25-0,75 kg/tydzień dla trwałego tempa.';
 
   @override
+  String get programStartDateLabel => 'Data rozpoczęcia diety';
+
+  @override
+  String get programStartDateHint =>
+      'Inna niż data utworzenia konta — to punkt, od którego chcesz mierzyć postępy.';
+
+  @override
   String get disclaimerTitle => 'Zanim zaczniesz';
 
   @override

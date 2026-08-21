@@ -237,6 +237,8 @@
   "onboardingGainRate": "Önskad viktökningstakt",
   "kgPerWeek": "kg/vecka",
   "onboardingRateRecommendation": "Rekommenderat: 0,25-0,75 kg/vecka för en hållbar takt.",
+  "programStartDateLabel": "Startdatum för dieten",
+  "programStartDateHint": "Skiljer sig från datumet då kontot skapades — det här är utgångspunkten du vill mäta framstegen från.",
 
   "disclaimerTitle": "Innan du börjar",
   "disclaimerIntro": "Calorii Fit uppskattar ditt kaloribehov och din viktnedgångstakt baserat på allmänt accepterade formler (Mifflin-St Jeor), inte en individuell medicinsk bedömning.",

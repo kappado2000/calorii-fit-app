@@ -667,6 +667,13 @@ class AppLocalizationsSv extends AppLocalizations {
       'Rekommenderat: 0,25-0,75 kg/vecka för en hållbar takt.';
 
   @override
+  String get programStartDateLabel => 'Startdatum för dieten';
+
+  @override
+  String get programStartDateHint =>
+      'Skiljer sig från datumet då kontot skapades — det här är utgångspunkten du vill mäta framstegen från.';
+
+  @override
   String get disclaimerTitle => 'Innan du börjar';
 
   @override
