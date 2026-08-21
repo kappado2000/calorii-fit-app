@@ -18,7 +18,13 @@ jobs:
         run: flutter pub get
 
       - name: Build unsigned iOS app
-        run: flutter build ios --release --no-codesign
+        # --build-number must change on every install or Sideloadly/iOS treats
+        # the IPA as "already installed" and skips replacing the binary on
+        # the device — pubspec.yaml's own build number (1.1.0+2) never
+        # changes between manual edits, so the workflow's own run number is
+        # used instead to guarantee every dispatch produces a genuinely new,
+        # installable version.
+        run: flutter build ios --release --no-codesign --build-number=${{ github.run_number }}
 
       - name: Package as unsigned IPA
         run: |
