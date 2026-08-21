@@ -2477,6 +2477,36 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Completat {completed} din {total} alimente.'**
   String bulkNutritionCompletionResult(int completed, int total);
+
+  /// No description provided for @nutrientSourcesTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Surse de nutrienți'**
+  String get nutrientSourcesTitle;
+
+  /// No description provided for @macroSourcesSectionTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Macronutrienți'**
+  String get macroSourcesSectionTitle;
+
+  /// No description provided for @micronutrientSourcesSectionTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Micronutrienți'**
+  String get micronutrientSourcesSectionTitle;
+
+  /// No description provided for @nutrientSourcesNoData.
+  ///
+  /// In ro, this message translates to:
+  /// **'Nu sunt suficiente date pentru această perioadă.'**
+  String get nutrientSourcesNoData;
+
+  /// No description provided for @nutrientSourcesOthers.
+  ///
+  /// In ro, this message translates to:
+  /// **'restul alimentelor'**
+  String get nutrientSourcesOthers;
 }
 
 class _AppLocalizationsDelegate

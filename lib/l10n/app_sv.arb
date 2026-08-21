@@ -480,5 +480,11 @@
   "bulkNutritionCompletionPremiumLocked": "Premiumfunktion ({count} livsmedel)",
   "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
   "bulkNutritionCompletionResult": "Kompletterade {completed} av {total} livsmedel.",
-  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
+
+  "nutrientSourcesTitle": "Näringskällor",
+  "macroSourcesSectionTitle": "Makronäringsämnen",
+  "micronutrientSourcesSectionTitle": "Mikronäringsämnen",
+  "nutrientSourcesNoData": "Inte tillräckligt med data för denna period.",
+  "nutrientSourcesOthers": "andra livsmedel"
 }

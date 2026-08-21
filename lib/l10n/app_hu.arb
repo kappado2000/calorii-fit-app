@@ -480,5 +480,11 @@
   "bulkNutritionCompletionPremiumLocked": "Prémium funkció ({count} étel)",
   "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
   "bulkNutritionCompletionResult": "{completed}/{total} étel kiegészítve.",
-  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
+
+  "nutrientSourcesTitle": "Tápanyagforrások",
+  "macroSourcesSectionTitle": "Makrotápanyagok",
+  "micronutrientSourcesSectionTitle": "Mikrotápanyagok",
+  "nutrientSourcesNoData": "Nincs elég adat erre az időszakra.",
+  "nutrientSourcesOthers": "egyéb ételek"
 }

@@ -480,5 +480,11 @@
   "bulkNutritionCompletionPremiumLocked": "Premium-Funktion ({count} Lebensmittel)",
   "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
   "bulkNutritionCompletionResult": "{completed} von {total} Lebensmitteln ergänzt.",
-  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
+
+  "nutrientSourcesTitle": "Nährstoffquellen",
+  "macroSourcesSectionTitle": "Makronährstoffe",
+  "micronutrientSourcesSectionTitle": "Mikronährstoffe",
+  "nutrientSourcesNoData": "Nicht genug Daten für diesen Zeitraum.",
+  "nutrientSourcesOthers": "andere Lebensmittel"
 }

@@ -1345,4 +1345,20 @@ class AppLocalizationsSv extends AppLocalizations {
   String bulkNutritionCompletionResult(int completed, int total) {
     return 'Kompletterade $completed av $total livsmedel.';
   }
+
+  @override
+  String get nutrientSourcesTitle => 'Näringskällor';
+
+  @override
+  String get macroSourcesSectionTitle => 'Makronäringsämnen';
+
+  @override
+  String get micronutrientSourcesSectionTitle => 'Mikronäringsämnen';
+
+  @override
+  String get nutrientSourcesNoData =>
+      'Inte tillräckligt med data för denna period.';
+
+  @override
+  String get nutrientSourcesOthers => 'andra livsmedel';
 }

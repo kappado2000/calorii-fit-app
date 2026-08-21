@@ -480,5 +480,11 @@
   "bulkNutritionCompletionPremiumLocked": "Funcție premium ({count} alimente)",
   "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
   "bulkNutritionCompletionResult": "Completat {completed} din {total} alimente.",
-  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
+
+  "nutrientSourcesTitle": "Surse de nutrienți",
+  "macroSourcesSectionTitle": "Macronutrienți",
+  "micronutrientSourcesSectionTitle": "Micronutrienți",
+  "nutrientSourcesNoData": "Nu sunt suficiente date pentru această perioadă.",
+  "nutrientSourcesOthers": "restul alimentelor"
 }

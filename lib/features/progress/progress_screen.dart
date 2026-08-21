@@ -18,6 +18,7 @@ import '../admin/admin_providers.dart';
 import '../food_log/food_log_providers.dart';
 import '../profile/profile_providers.dart';
 import 'adaptive_tdee_card.dart';
+import 'nutrient_sources_screen.dart';
 import 'progress_providers.dart';
 import 'weekly_summary_card.dart';
 import 'weight_evolution_card.dart';
@@ -48,7 +49,18 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         ref.watch(periodNutritionSummaryProvider(_period)).valueOrNull ?? PeriodNutritionSummary.empty;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.progress)),
+      appBar: AppBar(
+        title: Text(l10n.progress),
+        actions: [
+          IconButton(
+            tooltip: l10n.nutrientSourcesTitle,
+            icon: const Icon(Icons.source_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const NutrientSourcesScreen()),
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

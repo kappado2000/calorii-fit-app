@@ -480,5 +480,11 @@
   "bulkNutritionCompletionPremiumLocked": "Premiumfunksjon ({count} matvarer)",
   "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
   "bulkNutritionCompletionResult": "Fullførte {completed} av {total} matvarer.",
-  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
+
+  "nutrientSourcesTitle": "Næringskilder",
+  "macroSourcesSectionTitle": "Makronæringsstoffer",
+  "micronutrientSourcesSectionTitle": "Mikronæringsstoffer",
+  "nutrientSourcesNoData": "Ikke nok data for denne perioden.",
+  "nutrientSourcesOthers": "annen mat"
 }

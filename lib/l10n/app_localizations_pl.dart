@@ -1347,4 +1347,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String bulkNutritionCompletionResult(int completed, int total) {
     return 'Uzupełniono $completed z $total produktów.';
   }
+
+  @override
+  String get nutrientSourcesTitle => 'Źródła składników odżywczych';
+
+  @override
+  String get macroSourcesSectionTitle => 'Makroskładniki';
+
+  @override
+  String get micronutrientSourcesSectionTitle => 'Mikroskładniki';
+
+  @override
+  String get nutrientSourcesNoData => 'Za mało danych dla tego okresu.';
+
+  @override
+  String get nutrientSourcesOthers => 'inne produkty';
 }

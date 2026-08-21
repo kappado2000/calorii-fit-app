@@ -5,6 +5,7 @@ import '../../data/datasources/remote/firestore/food_log_firestore_datasource.da
 import '../../data/datasources/remote/firestore/workout_firestore_datasource.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/user_profile.dart';
+import '../../domain/usecases/nutrient_sources_calculator.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/uid_provider.dart';
 import '../food_log/food_log_providers.dart';
@@ -172,4 +173,17 @@ final periodEntriesMissingMacrosProvider = StreamProvider.family<List<FoodLogEnt
       .map(
         (entries) => entries.where((e) => e.needsNutritionCompletion).toList(growable: false),
       );
+});
+
+/// Which foods predominantly contributed each macro/micronutrient over the
+/// selected period, ranked by share — see NutrientSourcesScreen.
+final nutrientSourcesProvider = StreamProvider.family<NutrientSourcesSummary, ProgressPeriod>((ref, period) {
+  final uid = ref.watch(currentUidProvider);
+  final profile = ref.watch(userProfileProvider).valueOrNull;
+  final (start, end) = _dateRangeForPeriod(period, profile);
+
+  return FoodLogFirestoreDataSource(
+    ref.watch(firestoreProvider),
+    uid,
+  ).watchEntriesForRange(start, end).map(computeNutrientSources);
 });

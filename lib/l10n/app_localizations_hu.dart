@@ -1349,4 +1349,19 @@ class AppLocalizationsHu extends AppLocalizations {
   String bulkNutritionCompletionResult(int completed, int total) {
     return '$completed/$total étel kiegészítve.';
   }
+
+  @override
+  String get nutrientSourcesTitle => 'Tápanyagforrások';
+
+  @override
+  String get macroSourcesSectionTitle => 'Makrotápanyagok';
+
+  @override
+  String get micronutrientSourcesSectionTitle => 'Mikrotápanyagok';
+
+  @override
+  String get nutrientSourcesNoData => 'Nincs elég adat erre az időszakra.';
+
+  @override
+  String get nutrientSourcesOthers => 'egyéb ételek';
 }

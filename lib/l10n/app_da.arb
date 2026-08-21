@@ -480,5 +480,11 @@
   "bulkNutritionCompletionPremiumLocked": "Premiumfunktion ({count} fødevarer)",
   "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
   "bulkNutritionCompletionResult": "Udfyldte {completed} af {total} fødevarer.",
-  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
+
+  "nutrientSourcesTitle": "Næringskilder",
+  "macroSourcesSectionTitle": "Makronæringsstoffer",
+  "micronutrientSourcesSectionTitle": "Mikronæringsstoffer",
+  "nutrientSourcesNoData": "Ikke nok data for denne periode.",
+  "nutrientSourcesOthers": "andre fødevarer"
 }

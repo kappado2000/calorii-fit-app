@@ -1345,4 +1345,19 @@ class AppLocalizationsDa extends AppLocalizations {
   String bulkNutritionCompletionResult(int completed, int total) {
     return 'Udfyldte $completed af $total fødevarer.';
   }
+
+  @override
+  String get nutrientSourcesTitle => 'Næringskilder';
+
+  @override
+  String get macroSourcesSectionTitle => 'Makronæringsstoffer';
+
+  @override
+  String get micronutrientSourcesSectionTitle => 'Mikronæringsstoffer';
+
+  @override
+  String get nutrientSourcesNoData => 'Ikke nok data for denne periode.';
+
+  @override
+  String get nutrientSourcesOthers => 'andre fødevarer';
 }

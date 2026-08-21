@@ -1345,4 +1345,20 @@ class AppLocalizationsRo extends AppLocalizations {
   String bulkNutritionCompletionResult(int completed, int total) {
     return 'Completat $completed din $total alimente.';
   }
+
+  @override
+  String get nutrientSourcesTitle => 'Surse de nutrienți';
+
+  @override
+  String get macroSourcesSectionTitle => 'Macronutrienți';
+
+  @override
+  String get micronutrientSourcesSectionTitle => 'Micronutrienți';
+
+  @override
+  String get nutrientSourcesNoData =>
+      'Nu sunt suficiente date pentru această perioadă.';
+
+  @override
+  String get nutrientSourcesOthers => 'restul alimentelor';
 }

@@ -480,5 +480,11 @@
   "bulkNutritionCompletionPremiumLocked": "Premiumfunctie ({count} voedingsmiddelen)",
   "@bulkNutritionCompletionPremiumLocked": {"placeholders": {"count": {"type": "int"}}},
   "bulkNutritionCompletionResult": "{completed} van {total} voedingsmiddelen aangevuld.",
-  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}}
+  "@bulkNutritionCompletionResult": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
+
+  "nutrientSourcesTitle": "Voedingsstofbronnen",
+  "macroSourcesSectionTitle": "Macronutriënten",
+  "micronutrientSourcesSectionTitle": "Micronutriënten",
+  "nutrientSourcesNoData": "Niet genoeg gegevens voor deze periode.",
+  "nutrientSourcesOthers": "andere voedingsmiddelen"
 }
