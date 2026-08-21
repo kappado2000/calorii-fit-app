@@ -723,8 +723,6 @@ class _MealSectionState extends ConsumerState<_MealSection> {
   final Set<String> _selectedEntryIds = {};
   String? _completingNutritionForId;
 
-  bool _missingMacros(FoodLogEntry entry) =>
-      entry.proteinPer100g == null && entry.carbsPer100g == null && entry.fatPer100g == null;
 
   Future<void> _completeNutritionWithAi(FoodLogEntry entry) async {
     final l10n = AppLocalizations.of(context);
@@ -953,7 +951,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (!_selectionMode && _missingMacros(entry))
+                          if (!_selectionMode && entry.needsNutritionCompletion)
                             canUseAi
                                 ? IconButton(
                                     tooltip: l10n.completeNutritionWithAiTooltip,

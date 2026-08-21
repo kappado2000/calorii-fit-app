@@ -156,8 +156,9 @@ final periodNutritionSummaryProvider = StreamProvider.family<PeriodNutritionSumm
   ).watchEntriesForRange(start, end).map(_summarize);
 });
 
-/// Entries in the selected period with no macro data at all — feeds the
-/// premium-only bulk "Completează cu AI" action on ProgressScreen (see
+/// Entries in the selected period missing any macro/micronutrient data
+/// (see FoodLogEntry.needsNutritionCompletion) — feeds the premium-only
+/// bulk "Completează cu AI" action on ProgressScreen (see
 /// FoodNutritionCompletionController). A separate stream rather than
 /// folding a count into PeriodNutritionSummary because the bulk action
 /// needs each entry's id/foodName, not just a tally.
@@ -169,8 +170,6 @@ final periodEntriesMissingMacrosProvider = StreamProvider.family<List<FoodLogEnt
   return FoodLogFirestoreDataSource(ref.watch(firestoreProvider), uid)
       .watchEntriesForRange(start, end)
       .map(
-        (entries) => entries
-            .where((e) => e.proteinPer100g == null && e.carbsPer100g == null && e.fatPer100g == null)
-            .toList(growable: false),
+        (entries) => entries.where((e) => e.needsNutritionCompletion).toList(growable: false),
       );
 });

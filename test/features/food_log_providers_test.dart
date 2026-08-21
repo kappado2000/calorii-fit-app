@@ -282,6 +282,83 @@ void main() {
     expect(container.read(dailyLogProvider(date)).single.proteinPer100g, isNull);
   });
 
+  test('completeNutritionWithAi fills only the missing micronutrients, never overwriting real macros', () async {
+    final aiClient = AiFoodLookupApiClient(
+      httpClient: MockClient(
+        (request) async => http.Response(
+          jsonEncode({
+            'result': {
+              'product': {
+                'barcode': null,
+                'name': 'Chicken breast',
+                'brand': null,
+                'kcalPer100g': 500, // an AI guess wildly different from the real logged value
+                'proteinPer100g': 1.0, // must be ignored — a real database match is already stored
+                'carbsPer100g': 1.0,
+                'fatPer100g': 1.0,
+                'imageUrl': null,
+                'micronutrients': {
+                  'vitaminCMg': 0.0,
+                  'vitaminDMcg': 0.0,
+                  'calciumMg': 12.0,
+                  'ironMg': 0.9,
+                  'magnesiumMg': 27.0,
+                  'potassiumMg': 256.0,
+                },
+              },
+              'confidence': 0.9,
+            },
+          }),
+          200,
+        ),
+      ),
+    );
+    addTearDown(aiClient.dispose);
+    final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
+    final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: true);
+    final fakeFirestore = FakeFirebaseFirestore();
+    final container = ProviderContainer(
+      overrides: [
+        firebaseAuthProvider.overrideWithValue(mockAuth),
+        firestoreProvider.overrideWithValue(fakeFirestore),
+        aiFoodLookupApiClientProvider.overrideWithValue(aiClient),
+      ],
+    );
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final date = DateTime(2026, 1, 27);
+    final notifier = container.read(dailyLogProvider(date).notifier);
+
+    // A real database match: full macros already known, no micronutrients —
+    // exactly the common "home-cooked/most products" gap.
+    await notifier.addEntry(
+      mealType: MealType.dinner,
+      foodName: 'Piept de pui',
+      grams: 150,
+      kcalPer100g: 165,
+      proteinPer100g: 31,
+      carbsPer100g: 0,
+      fatPer100g: 3.6,
+    );
+    await pumpEventQueue();
+    final original = container.read(dailyLogProvider(date)).single;
+    expect(original.needsNutritionCompletion, isTrue); // missing micronutrients only
+
+    final completed = await container.read(foodNutritionCompletionControllerProvider).complete(original);
+    await pumpEventQueue();
+
+    expect(completed, isTrue);
+    final updated = container.read(dailyLogProvider(date)).single;
+    // Real macros untouched, despite the AI match carrying very different numbers.
+    expect(updated.kcalPer100g, 165);
+    expect(updated.proteinPer100g, 31);
+    expect(updated.carbsPer100g, 0);
+    expect(updated.fatPer100g, 3.6);
+    // Only the missing micronutrients got filled in.
+    expect(updated.micronutrients, isNotNull);
+    expect(updated.needsNutritionCompletion, isFalse);
+  });
+
   test('dailyLogProvider only returns entries for the requested date', () async {
     final container = _buildContainer();
     addTearDown(container.dispose);

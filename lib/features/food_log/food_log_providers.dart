@@ -360,6 +360,12 @@ class FoodNutritionCompletionController {
   /// the search fallback. Propagates AiFoodLookupException (e.g. quota
   /// exceeded) rather than swallowing it — callers doing a bulk pass need
   /// to know to stop, not just treat it as "no match".
+  ///
+  /// Only fills in whichever of [entry]'s fields are actually null — an
+  /// entry that already has real macros from a database match but no
+  /// micronutrients must keep those macros exactly as they are, not have
+  /// them replaced by a fresh (and likely less accurate) AI guess just
+  /// because the AI call also happens to return its own macro estimate.
   Future<bool> complete(FoodLogEntry entry) async {
     final idToken = await _getIdToken();
     if (idToken == null) return false;
@@ -369,10 +375,10 @@ class FoodNutritionCompletionController {
 
     await _dataSource.updateNutrition(
       entry.id,
-      proteinPer100g: match.proteinPer100g,
-      carbsPer100g: match.carbsPer100g,
-      fatPer100g: match.fatPer100g,
-      micronutrients: match.micronutrients,
+      proteinPer100g: entry.proteinPer100g ?? match.proteinPer100g,
+      carbsPer100g: entry.carbsPer100g ?? match.carbsPer100g,
+      fatPer100g: entry.fatPer100g ?? match.fatPer100g,
+      micronutrients: entry.micronutrients ?? match.micronutrients,
     );
     return true;
   }

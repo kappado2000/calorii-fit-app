@@ -36,6 +36,16 @@ class FoodLogEntry {
   double? get carbs => carbsPer100g == null ? null : grams / 100 * carbsPer100g!;
   double? get fat => fatPer100g == null ? null : grams / 100 * fatPer100g!;
 
+  /// True when any of macros/micronutrients is missing — not just when
+  /// *all* of them are (a fully manual entry). A real database match
+  /// commonly carries macros but no micronutrients (see the class doc),
+  /// which is just as much a gap the AI-completion feature should offer to
+  /// fill — see FoodNutritionCompletionController, which preserves
+  /// whichever of these fields are already non-null rather than
+  /// overwriting them with a fresh AI guess.
+  bool get needsNutritionCompletion =>
+      proteinPer100g == null || carbsPer100g == null || fatPer100g == null || micronutrients == null;
+
   /// The actual amount of [nutrient] contributed by this entry's portion,
   /// or null if this food has no known value for it.
   double? micronutrientAmount(Micronutrient nutrient) {
