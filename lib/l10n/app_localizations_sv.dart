@@ -1003,6 +1003,9 @@ class AppLocalizationsSv extends AppLocalizations {
   String get searchWithAiButton => 'Sök med AI';
 
   @override
+  String get notFindingWhatYouWant => 'Hittar du inte det du letar efter?';
+
+  @override
   String get aiSearchNoResult =>
       'AI kunde inte säkert hitta en produkt för den här sökningen.';
 
@@ -1253,6 +1256,9 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get adminPasswordFieldLabel => 'Adminlösenord';
+
+  @override
+  String get adminTotpFieldLabel => 'Kod från autentiseringsappen';
 
   @override
   String get activateAdminButton => 'Aktivera admin';

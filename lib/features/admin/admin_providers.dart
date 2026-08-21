@@ -97,9 +97,9 @@ class AdminController {
   final AdminApiClient _apiClient;
   final FirebaseAuth _auth;
 
-  Future<void> activateAdmin(String password) async {
+  Future<void> activateAdmin(String password, String totpCode) async {
     final idToken = await _requireIdToken();
-    await _apiClient.activateAdmin(password: password, idToken: idToken);
+    await _apiClient.activateAdmin(password: password, totpCode: totpCode, idToken: idToken);
     // Custom claims only take effect once the client holds a fresh ID
     // token — without this forced refresh, isAdminProvider (and every
     // subsequent Cloud Function call's request.auth.token.admin check)

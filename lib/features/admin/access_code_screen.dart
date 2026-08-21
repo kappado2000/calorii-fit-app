@@ -20,6 +20,7 @@ class AccessCodeScreen extends ConsumerStatefulWidget {
 class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
   final _codeController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _totpController = TextEditingController();
   bool _showAdminField = false;
   bool _redeeming = false;
   bool _activatingAdmin = false;
@@ -28,6 +29,7 @@ class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
   void dispose() {
     _codeController.dispose();
     _passwordController.dispose();
+    _totpController.dispose();
     super.dispose();
   }
 
@@ -52,14 +54,16 @@ class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
 
   Future<void> _activateAdmin() async {
     final password = _passwordController.text;
-    if (password.isEmpty) return;
+    final totpCode = _totpController.text.trim();
+    if (password.isEmpty || totpCode.isEmpty) return;
     final l10n = AppLocalizations.of(context);
     setState(() => _activatingAdmin = true);
     try {
-      await ref.read(adminControllerProvider).activateAdmin(password);
+      await ref.read(adminControllerProvider).activateAdmin(password, totpCode);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.adminActivatedMessage)));
       _passwordController.clear();
+      _totpController.clear();
       setState(() => _showAdminField = false);
     } catch (e) {
       if (!mounted) return;
@@ -108,6 +112,14 @@ class _AccessCodeScreenState extends ConsumerState<AccessCodeScreen> {
               controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(labelText: l10n.adminPasswordFieldLabel),
+            ),
+            const SizedBox(height: 12),
+            Text(l10n.adminTotpFieldLabel, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _totpController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: l10n.adminTotpFieldLabel),
               onSubmitted: (_) => _activateAdmin(),
             ),
             const SizedBox(height: 12),

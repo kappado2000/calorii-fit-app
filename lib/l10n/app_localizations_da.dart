@@ -1003,6 +1003,9 @@ class AppLocalizationsDa extends AppLocalizations {
   String get searchWithAiButton => 'Søg med AI';
 
   @override
+  String get notFindingWhatYouWant => 'Finder du ikke det, du leder efter?';
+
+  @override
   String get aiSearchNoResult =>
       'AI fandt ikke et sikkert produkt til denne søgning.';
 
@@ -1253,6 +1256,9 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get adminPasswordFieldLabel => 'Adminadgangskode';
+
+  @override
+  String get adminTotpFieldLabel => 'Kode fra autentificeringsappen';
 
   @override
   String get activateAdminButton => 'Aktivér admin';

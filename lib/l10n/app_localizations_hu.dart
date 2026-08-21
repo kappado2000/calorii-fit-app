@@ -1007,6 +1007,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get searchWithAiButton => 'Keresés AI-val';
 
   @override
+  String get notFindingWhatYouWant => 'Nem találod, amit keresel?';
+
+  @override
   String get aiSearchNoResult =>
       'Az AI nem talált biztos terméket erre a keresésre.';
 
@@ -1257,6 +1260,9 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get adminPasswordFieldLabel => 'Admin jelszó';
+
+  @override
+  String get adminTotpFieldLabel => 'Kód a hitelesítő alkalmazásból';
 
   @override
   String get activateAdminButton => 'Admin aktiválása';

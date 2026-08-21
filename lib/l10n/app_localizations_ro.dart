@@ -1003,6 +1003,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get searchWithAiButton => 'Caută cu AI';
 
   @override
+  String get notFindingWhatYouWant => 'Nu găsești ce cauți?';
+
+  @override
   String get aiSearchNoResult =>
       'AI nu a găsit un produs sigur pentru această căutare.';
 
@@ -1253,6 +1256,9 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get adminPasswordFieldLabel => 'Parolă admin';
+
+  @override
+  String get adminTotpFieldLabel => 'Cod din aplicația de autentificare';
 
   @override
   String get activateAdminButton => 'Activează admin';

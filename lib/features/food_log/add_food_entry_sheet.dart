@@ -501,7 +501,7 @@ class _SearchResultsList extends StatelessWidget {
     final items = [if (state.aiResult != null) state.aiResult!, ...state.results];
 
     return Container(
-      constraints: const BoxConstraints(maxHeight: 300),
+      constraints: const BoxConstraints(maxHeight: 340),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
@@ -529,37 +529,17 @@ class _SearchResultsList extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  if (state.isSearchingAi)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-                    )
-                  else
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 8,
-                      children: [
-                        if (!state.hadRemoteError && !state.aiSearchAttempted)
-                          canUseAi
-                              ? OutlinedButton.icon(
-                                  onPressed: onSearchWithAi,
-                                  icon: const Icon(Icons.auto_awesome_rounded, size: 16),
-                                  label: Text(l10n.searchWithAiButton),
-                                )
-                              : OutlinedButton.icon(
-                                  onPressed: () => Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (_) => const AccessCodeScreen()),
-                                  ),
-                                  icon: const Icon(Icons.lock_outline_rounded, size: 16),
-                                  label: Text(l10n.searchWithAiButton),
-                                ),
-                        TextButton(onPressed: onManualEntry, child: Text(l10n.addProductManually)),
-                      ],
+                  if (!state.hadRemoteError)
+                    _AiFallbackPrompt(
+                      state: state,
+                      canUseAi: canUseAi,
+                      onSearchWithAi: onSearchWithAi,
+                      onManualEntry: onManualEntry,
                     ),
                 ],
               ),
             )
-          else
+          else ...[
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
@@ -585,6 +565,22 @@ class _SearchResultsList extends StatelessWidget {
                 },
               ),
             ),
+            // Persistent even when the regular search found *something* —
+            // "dulceață de căpsuni" returning only blueberry/other jams is
+            // exactly the case this covers: a non-empty list that still
+            // doesn't have what the user actually wants.
+            if (!state.isSearchingRemote)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                child: _AiFallbackPrompt(
+                  state: state,
+                  canUseAi: canUseAi,
+                  onSearchWithAi: onSearchWithAi,
+                  onManualEntry: onManualEntry,
+                  label: l10n.notFindingWhatYouWant,
+                ),
+              ),
+          ],
         ],
       ),
     );
@@ -596,6 +592,77 @@ class _SearchResultsList extends StatelessWidget {
     if (product.carbsPer100g != null) parts.add('${l10n.macroCarbsShort} ${product.carbsPer100g!.round()}g');
     if (product.fatPer100g != null) parts.add('${l10n.macroFatShort} ${product.fatPer100g!.round()}g');
     return parts.isEmpty ? l10n.macrosUnavailable : parts.join(' · ');
+  }
+}
+
+/// The "Caută cu AI" trigger, shared between the fully-empty-results state
+/// and — just as importantly — the case where the regular search *did*
+/// return something, just not what the user was actually looking for (e.g.
+/// searching "dulceață de căpsuni" and only getting other jam flavors
+/// back). [label], when given, is a short "not finding it?" lead-in shown
+/// next to the button instead of the manual-entry fallback, which only
+/// makes sense when the results list is otherwise empty.
+class _AiFallbackPrompt extends StatelessWidget {
+  const _AiFallbackPrompt({
+    required this.state,
+    required this.canUseAi,
+    required this.onSearchWithAi,
+    required this.onManualEntry,
+    this.label,
+  });
+
+  final FoodSearchState state;
+  final bool canUseAi;
+  final VoidCallback onSearchWithAi;
+  final VoidCallback onManualEntry;
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (state.isSearchingAi) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 4),
+        child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+      );
+    }
+
+    if (state.aiSearchAttempted) {
+      // Either the AI result is already showing at the top of the list
+      // above (nothing more to say here), or it found nothing — say so
+      // once, quietly, rather than re-offering the same button forever.
+      if (state.aiResult != null) return const SizedBox.shrink();
+      return Text(
+        l10n.aiSearchNoResult,
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        textAlign: TextAlign.center,
+      );
+    }
+
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 8,
+      children: [
+        if (label != null) Text(label!, style: Theme.of(context).textTheme.bodySmall),
+        canUseAi
+            ? OutlinedButton.icon(
+                onPressed: onSearchWithAi,
+                icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                label: Text(l10n.searchWithAiButton),
+              )
+            : OutlinedButton.icon(
+                onPressed: () =>
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AccessCodeScreen())),
+                icon: const Icon(Icons.lock_outline_rounded, size: 16),
+                label: Text(l10n.searchWithAiButton),
+              ),
+        if (label == null) TextButton(onPressed: onManualEntry, child: Text(l10n.addProductManually)),
+      ],
+    );
   }
 }
 

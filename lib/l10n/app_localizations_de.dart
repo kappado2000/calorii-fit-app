@@ -1006,6 +1006,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get searchWithAiButton => 'Mit KI suchen';
 
   @override
+  String get notFindingWhatYouWant => 'Nicht gefunden, wonach du suchst?';
+
+  @override
   String get aiSearchNoResult =>
       'Die KI konnte für diese Suche kein verlässliches Produkt finden.';
 
@@ -1256,6 +1259,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get adminPasswordFieldLabel => 'Admin-Passwort';
+
+  @override
+  String get adminTotpFieldLabel => 'Code aus der Authenticator-App';
 
   @override
   String get activateAdminButton => 'Admin aktivieren';

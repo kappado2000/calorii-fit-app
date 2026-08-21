@@ -25,8 +25,12 @@ class AdminApiClient {
 
   final http.Client _httpClient;
 
-  Future<void> activateAdmin({required String password, required String idToken}) async {
-    await _call(AppConfig.activateAdminUrl, {'password': password}, idToken: idToken);
+  Future<void> activateAdmin({
+    required String password,
+    required String totpCode,
+    required String idToken,
+  }) async {
+    await _call(AppConfig.activateAdminUrl, {'password': password, 'totpCode': totpCode}, idToken: idToken);
   }
 
   /// Returns the generated code.

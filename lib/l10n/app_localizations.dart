@@ -1866,6 +1866,12 @@ abstract class AppLocalizations {
   /// **'Caută cu AI'**
   String get searchWithAiButton;
 
+  /// No description provided for @notFindingWhatYouWant.
+  ///
+  /// In ro, this message translates to:
+  /// **'Nu găsești ce cauți?'**
+  String get notFindingWhatYouWant;
+
   /// No description provided for @aiSearchNoResult.
   ///
   /// In ro, this message translates to:
@@ -2315,6 +2321,12 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Parolă admin'**
   String get adminPasswordFieldLabel;
+
+  /// No description provided for @adminTotpFieldLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cod din aplicația de autentificare'**
+  String get adminTotpFieldLabel;
 
   /// No description provided for @activateAdminButton.
   ///

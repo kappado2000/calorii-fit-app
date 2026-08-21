@@ -1009,6 +1009,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchWithAiButton => 'Cerca con l\'IA';
 
   @override
+  String get notFindingWhatYouWant => 'Non trovi quello che cerchi?';
+
+  @override
   String get aiSearchNoResult =>
       'L\'IA non ha trovato un prodotto affidabile per questa ricerca.';
 
@@ -1259,6 +1262,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get adminPasswordFieldLabel => 'Password admin';
+
+  @override
+  String get adminTotpFieldLabel => 'Codice dall\'app di autenticazione';
 
   @override
   String get activateAdminButton => 'Attiva admin';
