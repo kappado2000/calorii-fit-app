@@ -21,6 +21,9 @@ import '../../l10n/app_localizations.dart';
 import '../../shared_widgets/deficit_gauge.dart';
 import '../../shared_widgets/gradient_border_frame.dart';
 import '../activity_sync/activity_sync_screen.dart';
+import '../admin/access_code_screen.dart';
+import '../admin/admin_dashboard_screen.dart';
+import '../admin/admin_providers.dart';
 import '../auth/auth_providers.dart';
 import '../auth/delete_account_dialog.dart';
 import '../camera_capture/camera_capture_screen.dart';
@@ -76,6 +79,7 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isAdmin = ref.watch(isAdminProvider).valueOrNull ?? false;
     final today = _selectedDate;
     final entries = ref.watch(dailyLogProvider(today));
     final totalCalories = entries.fold<double>(
@@ -175,6 +179,27 @@ class _FoodLogScreenState extends ConsumerState<FoodLogScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
+              PopupMenuItem(
+                value: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AccessCodeScreen()),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.key_outlined),
+                  title: Text(l10n.accessCodeMenuEntry),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              if (isAdmin)
+                PopupMenuItem(
+                  value: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.admin_panel_settings_outlined),
+                    title: Text(l10n.adminDashboardMenuEntry),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
               PopupMenuItem(
                 value: () => LanguagePickerDialog.show(context),
                 child: ListTile(

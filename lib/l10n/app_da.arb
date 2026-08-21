@@ -436,5 +436,32 @@
   "themeMenuEntry": "Tema",
 
   "barcodeToggleTorch": "Skift blitz",
-  "clearSelection": "Ryd valg"
+  "clearSelection": "Ryd valg",
+
+  "accessCodeMenuEntry": "Aktiveringskode",
+  "adminDashboardMenuEntry": "Adminpanel",
+  "accessCodeScreenTitle": "Aktiveringskode",
+  "premiumCodeFieldLabel": "Premiumkode",
+  "activatePremiumButton": "Aktivér premium",
+  "premiumActivatedMessage": "Premiumadgang aktiveret indtil {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Jeg er admin",
+  "adminPasswordFieldLabel": "Adminadgangskode",
+  "activateAdminButton": "Aktivér admin",
+  "adminActivatedMessage": "Adminkonto aktiveret.",
+  "adminDashboardTitle": "Adminpanel",
+  "totalUsersLabel": "Brugere i alt",
+  "activePremiumLabel": "Aktiv premium",
+  "generateCodeSectionTitle": "Generér premiumkode",
+  "targetEmailLabel": "Kontoens e-mail",
+  "durationDaysLabel": "Varighed (dage)",
+  "generateCodeButton": "Generér kode",
+  "codeGeneratedTitle": "Kode genereret",
+  "generatedCodesSectionTitle": "Genererede koder",
+  "noCodesGeneratedYet": "Ingen koder genereret endnu.",
+  "codeStatusPending": "ubrugt",
+  "codeStatusRedeemed": "brugt",
+  "codeStatusRevoked": "tilbagekaldt",
+  "durationDaysValue": "{days} dage",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

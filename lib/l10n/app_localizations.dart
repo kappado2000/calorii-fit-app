@@ -2267,6 +2267,150 @@ abstract class AppLocalizations {
   /// In ro, this message translates to:
   /// **'Șterge selecția'**
   String get clearSelection;
+
+  /// No description provided for @accessCodeMenuEntry.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cod de acces'**
+  String get accessCodeMenuEntry;
+
+  /// No description provided for @adminDashboardMenuEntry.
+  ///
+  /// In ro, this message translates to:
+  /// **'Panou admin'**
+  String get adminDashboardMenuEntry;
+
+  /// No description provided for @accessCodeScreenTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cod de acces'**
+  String get accessCodeScreenTitle;
+
+  /// No description provided for @premiumCodeFieldLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cod premium'**
+  String get premiumCodeFieldLabel;
+
+  /// No description provided for @activatePremiumButton.
+  ///
+  /// In ro, this message translates to:
+  /// **'Activează premium'**
+  String get activatePremiumButton;
+
+  /// No description provided for @premiumActivatedMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Acces premium activat până la {date}.'**
+  String premiumActivatedMessage(String date);
+
+  /// No description provided for @iAmAdminLink.
+  ///
+  /// In ro, this message translates to:
+  /// **'Sunt admin'**
+  String get iAmAdminLink;
+
+  /// No description provided for @adminPasswordFieldLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Parolă admin'**
+  String get adminPasswordFieldLabel;
+
+  /// No description provided for @activateAdminButton.
+  ///
+  /// In ro, this message translates to:
+  /// **'Activează admin'**
+  String get activateAdminButton;
+
+  /// No description provided for @adminActivatedMessage.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cont admin activat.'**
+  String get adminActivatedMessage;
+
+  /// No description provided for @adminDashboardTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Panou admin'**
+  String get adminDashboardTitle;
+
+  /// No description provided for @totalUsersLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Utilizatori totali'**
+  String get totalUsersLabel;
+
+  /// No description provided for @activePremiumLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Premium activ'**
+  String get activePremiumLabel;
+
+  /// No description provided for @generateCodeSectionTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Generează cod premium'**
+  String get generateCodeSectionTitle;
+
+  /// No description provided for @targetEmailLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Email cont'**
+  String get targetEmailLabel;
+
+  /// No description provided for @durationDaysLabel.
+  ///
+  /// In ro, this message translates to:
+  /// **'Durată (zile)'**
+  String get durationDaysLabel;
+
+  /// No description provided for @generateCodeButton.
+  ///
+  /// In ro, this message translates to:
+  /// **'Generează cod'**
+  String get generateCodeButton;
+
+  /// No description provided for @codeGeneratedTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cod generat'**
+  String get codeGeneratedTitle;
+
+  /// No description provided for @generatedCodesSectionTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Coduri generate'**
+  String get generatedCodesSectionTitle;
+
+  /// No description provided for @noCodesGeneratedYet.
+  ///
+  /// In ro, this message translates to:
+  /// **'Niciun cod generat încă.'**
+  String get noCodesGeneratedYet;
+
+  /// No description provided for @codeStatusPending.
+  ///
+  /// In ro, this message translates to:
+  /// **'neutilizat'**
+  String get codeStatusPending;
+
+  /// No description provided for @codeStatusRedeemed.
+  ///
+  /// In ro, this message translates to:
+  /// **'folosit'**
+  String get codeStatusRedeemed;
+
+  /// No description provided for @codeStatusRevoked.
+  ///
+  /// In ro, this message translates to:
+  /// **'revocat'**
+  String get codeStatusRevoked;
+
+  /// No description provided for @durationDaysValue.
+  ///
+  /// In ro, this message translates to:
+  /// **'{days} zile'**
+  String durationDaysValue(int days);
 }
 
 class _AppLocalizationsDelegate

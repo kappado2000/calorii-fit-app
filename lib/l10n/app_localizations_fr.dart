@@ -1234,4 +1234,80 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get clearSelection => 'Effacer la sélection';
+
+  @override
+  String get accessCodeMenuEntry => 'Code d\'accès';
+
+  @override
+  String get adminDashboardMenuEntry => 'Tableau de bord admin';
+
+  @override
+  String get accessCodeScreenTitle => 'Code d\'accès';
+
+  @override
+  String get premiumCodeFieldLabel => 'Code premium';
+
+  @override
+  String get activatePremiumButton => 'Activer premium';
+
+  @override
+  String premiumActivatedMessage(String date) {
+    return 'Accès premium activé jusqu\'au $date.';
+  }
+
+  @override
+  String get iAmAdminLink => 'Je suis admin';
+
+  @override
+  String get adminPasswordFieldLabel => 'Mot de passe admin';
+
+  @override
+  String get activateAdminButton => 'Activer admin';
+
+  @override
+  String get adminActivatedMessage => 'Compte admin activé.';
+
+  @override
+  String get adminDashboardTitle => 'Tableau de bord admin';
+
+  @override
+  String get totalUsersLabel => 'Utilisateurs au total';
+
+  @override
+  String get activePremiumLabel => 'Premium actif';
+
+  @override
+  String get generateCodeSectionTitle => 'Générer un code premium';
+
+  @override
+  String get targetEmailLabel => 'E-mail du compte';
+
+  @override
+  String get durationDaysLabel => 'Durée (jours)';
+
+  @override
+  String get generateCodeButton => 'Générer le code';
+
+  @override
+  String get codeGeneratedTitle => 'Code généré';
+
+  @override
+  String get generatedCodesSectionTitle => 'Codes générés';
+
+  @override
+  String get noCodesGeneratedYet => 'Aucun code généré pour l\'instant.';
+
+  @override
+  String get codeStatusPending => 'non utilisé';
+
+  @override
+  String get codeStatusRedeemed => 'utilisé';
+
+  @override
+  String get codeStatusRevoked => 'révoqué';
+
+  @override
+  String durationDaysValue(int days) {
+    return '$days jours';
+  }
 }

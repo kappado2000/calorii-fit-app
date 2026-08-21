@@ -436,5 +436,32 @@
   "themeMenuEntry": "Design",
 
   "barcodeToggleTorch": "Blitz umschalten",
-  "clearSelection": "Auswahl löschen"
+  "clearSelection": "Auswahl löschen",
+
+  "accessCodeMenuEntry": "Zugangscode",
+  "adminDashboardMenuEntry": "Admin-Dashboard",
+  "accessCodeScreenTitle": "Zugangscode",
+  "premiumCodeFieldLabel": "Premium-Code",
+  "activatePremiumButton": "Premium aktivieren",
+  "premiumActivatedMessage": "Premium-Zugang aktiviert bis {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Ich bin Admin",
+  "adminPasswordFieldLabel": "Admin-Passwort",
+  "activateAdminButton": "Admin aktivieren",
+  "adminActivatedMessage": "Admin-Konto aktiviert.",
+  "adminDashboardTitle": "Admin-Dashboard",
+  "totalUsersLabel": "Nutzer insgesamt",
+  "activePremiumLabel": "Aktives Premium",
+  "generateCodeSectionTitle": "Premium-Code generieren",
+  "targetEmailLabel": "Konto-E-Mail",
+  "durationDaysLabel": "Dauer (Tage)",
+  "generateCodeButton": "Code generieren",
+  "codeGeneratedTitle": "Code generiert",
+  "generatedCodesSectionTitle": "Generierte Codes",
+  "noCodesGeneratedYet": "Noch keine Codes generiert.",
+  "codeStatusPending": "unbenutzt",
+  "codeStatusRedeemed": "benutzt",
+  "codeStatusRevoked": "widerrufen",
+  "durationDaysValue": "{days} Tage",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

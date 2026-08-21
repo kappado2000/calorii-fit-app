@@ -1227,4 +1227,80 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get clearSelection => 'Șterge selecția';
+
+  @override
+  String get accessCodeMenuEntry => 'Cod de acces';
+
+  @override
+  String get adminDashboardMenuEntry => 'Panou admin';
+
+  @override
+  String get accessCodeScreenTitle => 'Cod de acces';
+
+  @override
+  String get premiumCodeFieldLabel => 'Cod premium';
+
+  @override
+  String get activatePremiumButton => 'Activează premium';
+
+  @override
+  String premiumActivatedMessage(String date) {
+    return 'Acces premium activat până la $date.';
+  }
+
+  @override
+  String get iAmAdminLink => 'Sunt admin';
+
+  @override
+  String get adminPasswordFieldLabel => 'Parolă admin';
+
+  @override
+  String get activateAdminButton => 'Activează admin';
+
+  @override
+  String get adminActivatedMessage => 'Cont admin activat.';
+
+  @override
+  String get adminDashboardTitle => 'Panou admin';
+
+  @override
+  String get totalUsersLabel => 'Utilizatori totali';
+
+  @override
+  String get activePremiumLabel => 'Premium activ';
+
+  @override
+  String get generateCodeSectionTitle => 'Generează cod premium';
+
+  @override
+  String get targetEmailLabel => 'Email cont';
+
+  @override
+  String get durationDaysLabel => 'Durată (zile)';
+
+  @override
+  String get generateCodeButton => 'Generează cod';
+
+  @override
+  String get codeGeneratedTitle => 'Cod generat';
+
+  @override
+  String get generatedCodesSectionTitle => 'Coduri generate';
+
+  @override
+  String get noCodesGeneratedYet => 'Niciun cod generat încă.';
+
+  @override
+  String get codeStatusPending => 'neutilizat';
+
+  @override
+  String get codeStatusRedeemed => 'folosit';
+
+  @override
+  String get codeStatusRevoked => 'revocat';
+
+  @override
+  String durationDaysValue(int days) {
+    return '$days zile';
+  }
 }

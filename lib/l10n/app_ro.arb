@@ -436,5 +436,32 @@
   "themeMenuEntry": "Temă",
 
   "barcodeToggleTorch": "Comută blițul",
-  "clearSelection": "Șterge selecția"
+  "clearSelection": "Șterge selecția",
+
+  "accessCodeMenuEntry": "Cod de acces",
+  "adminDashboardMenuEntry": "Panou admin",
+  "accessCodeScreenTitle": "Cod de acces",
+  "premiumCodeFieldLabel": "Cod premium",
+  "activatePremiumButton": "Activează premium",
+  "premiumActivatedMessage": "Acces premium activat până la {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Sunt admin",
+  "adminPasswordFieldLabel": "Parolă admin",
+  "activateAdminButton": "Activează admin",
+  "adminActivatedMessage": "Cont admin activat.",
+  "adminDashboardTitle": "Panou admin",
+  "totalUsersLabel": "Utilizatori totali",
+  "activePremiumLabel": "Premium activ",
+  "generateCodeSectionTitle": "Generează cod premium",
+  "targetEmailLabel": "Email cont",
+  "durationDaysLabel": "Durată (zile)",
+  "generateCodeButton": "Generează cod",
+  "codeGeneratedTitle": "Cod generat",
+  "generatedCodesSectionTitle": "Coduri generate",
+  "noCodesGeneratedYet": "Niciun cod generat încă.",
+  "codeStatusPending": "neutilizat",
+  "codeStatusRedeemed": "folosit",
+  "codeStatusRevoked": "revocat",
+  "durationDaysValue": "{days} zile",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

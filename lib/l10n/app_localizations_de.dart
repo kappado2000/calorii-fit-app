@@ -1230,4 +1230,80 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get clearSelection => 'Auswahl löschen';
+
+  @override
+  String get accessCodeMenuEntry => 'Zugangscode';
+
+  @override
+  String get adminDashboardMenuEntry => 'Admin-Dashboard';
+
+  @override
+  String get accessCodeScreenTitle => 'Zugangscode';
+
+  @override
+  String get premiumCodeFieldLabel => 'Premium-Code';
+
+  @override
+  String get activatePremiumButton => 'Premium aktivieren';
+
+  @override
+  String premiumActivatedMessage(String date) {
+    return 'Premium-Zugang aktiviert bis $date.';
+  }
+
+  @override
+  String get iAmAdminLink => 'Ich bin Admin';
+
+  @override
+  String get adminPasswordFieldLabel => 'Admin-Passwort';
+
+  @override
+  String get activateAdminButton => 'Admin aktivieren';
+
+  @override
+  String get adminActivatedMessage => 'Admin-Konto aktiviert.';
+
+  @override
+  String get adminDashboardTitle => 'Admin-Dashboard';
+
+  @override
+  String get totalUsersLabel => 'Nutzer insgesamt';
+
+  @override
+  String get activePremiumLabel => 'Aktives Premium';
+
+  @override
+  String get generateCodeSectionTitle => 'Premium-Code generieren';
+
+  @override
+  String get targetEmailLabel => 'Konto-E-Mail';
+
+  @override
+  String get durationDaysLabel => 'Dauer (Tage)';
+
+  @override
+  String get generateCodeButton => 'Code generieren';
+
+  @override
+  String get codeGeneratedTitle => 'Code generiert';
+
+  @override
+  String get generatedCodesSectionTitle => 'Generierte Codes';
+
+  @override
+  String get noCodesGeneratedYet => 'Noch keine Codes generiert.';
+
+  @override
+  String get codeStatusPending => 'unbenutzt';
+
+  @override
+  String get codeStatusRedeemed => 'benutzt';
+
+  @override
+  String get codeStatusRevoked => 'widerrufen';
+
+  @override
+  String durationDaysValue(int days) {
+    return '$days Tage';
+  }
 }

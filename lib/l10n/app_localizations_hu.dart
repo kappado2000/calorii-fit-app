@@ -1231,4 +1231,80 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get clearSelection => 'Kijelölés törlése';
+
+  @override
+  String get accessCodeMenuEntry => 'Hozzáférési kód';
+
+  @override
+  String get adminDashboardMenuEntry => 'Admin irányítópult';
+
+  @override
+  String get accessCodeScreenTitle => 'Hozzáférési kód';
+
+  @override
+  String get premiumCodeFieldLabel => 'Prémium kód';
+
+  @override
+  String get activatePremiumButton => 'Prémium aktiválása';
+
+  @override
+  String premiumActivatedMessage(String date) {
+    return 'Prémium hozzáférés aktiválva eddig: $date.';
+  }
+
+  @override
+  String get iAmAdminLink => 'Admin vagyok';
+
+  @override
+  String get adminPasswordFieldLabel => 'Admin jelszó';
+
+  @override
+  String get activateAdminButton => 'Admin aktiválása';
+
+  @override
+  String get adminActivatedMessage => 'Admin fiók aktiválva.';
+
+  @override
+  String get adminDashboardTitle => 'Admin irányítópult';
+
+  @override
+  String get totalUsersLabel => 'Felhasználók összesen';
+
+  @override
+  String get activePremiumLabel => 'Aktív prémium';
+
+  @override
+  String get generateCodeSectionTitle => 'Prémium kód generálása';
+
+  @override
+  String get targetEmailLabel => 'Fiók email címe';
+
+  @override
+  String get durationDaysLabel => 'Időtartam (nap)';
+
+  @override
+  String get generateCodeButton => 'Kód generálása';
+
+  @override
+  String get codeGeneratedTitle => 'Kód generálva';
+
+  @override
+  String get generatedCodesSectionTitle => 'Generált kódok';
+
+  @override
+  String get noCodesGeneratedYet => 'Még nincs generált kód.';
+
+  @override
+  String get codeStatusPending => 'felhasználatlan';
+
+  @override
+  String get codeStatusRedeemed => 'felhasznált';
+
+  @override
+  String get codeStatusRevoked => 'visszavonva';
+
+  @override
+  String durationDaysValue(int days) {
+    return '$days nap';
+  }
 }

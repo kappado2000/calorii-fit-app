@@ -436,5 +436,32 @@
   "themeMenuEntry": "Thema",
 
   "barcodeToggleTorch": "Flitser aan/uit",
-  "clearSelection": "Selectie wissen"
+  "clearSelection": "Selectie wissen",
+
+  "accessCodeMenuEntry": "Toegangscode",
+  "adminDashboardMenuEntry": "Admin-dashboard",
+  "accessCodeScreenTitle": "Toegangscode",
+  "premiumCodeFieldLabel": "Premiumcode",
+  "activatePremiumButton": "Premium activeren",
+  "premiumActivatedMessage": "Premium toegang geactiveerd tot {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Ik ben admin",
+  "adminPasswordFieldLabel": "Adminwachtwoord",
+  "activateAdminButton": "Admin activeren",
+  "adminActivatedMessage": "Adminaccount geactiveerd.",
+  "adminDashboardTitle": "Admin-dashboard",
+  "totalUsersLabel": "Totaal aantal gebruikers",
+  "activePremiumLabel": "Actief premium",
+  "generateCodeSectionTitle": "Premiumcode genereren",
+  "targetEmailLabel": "E-mail van account",
+  "durationDaysLabel": "Duur (dagen)",
+  "generateCodeButton": "Code genereren",
+  "codeGeneratedTitle": "Code gegenereerd",
+  "generatedCodesSectionTitle": "Gegenereerde codes",
+  "noCodesGeneratedYet": "Nog geen codes gegenereerd.",
+  "codeStatusPending": "ongebruikt",
+  "codeStatusRedeemed": "gebruikt",
+  "codeStatusRevoked": "ingetrokken",
+  "durationDaysValue": "{days} dagen",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

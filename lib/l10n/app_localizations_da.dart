@@ -1227,4 +1227,80 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get clearSelection => 'Ryd valg';
+
+  @override
+  String get accessCodeMenuEntry => 'Aktiveringskode';
+
+  @override
+  String get adminDashboardMenuEntry => 'Adminpanel';
+
+  @override
+  String get accessCodeScreenTitle => 'Aktiveringskode';
+
+  @override
+  String get premiumCodeFieldLabel => 'Premiumkode';
+
+  @override
+  String get activatePremiumButton => 'Aktivér premium';
+
+  @override
+  String premiumActivatedMessage(String date) {
+    return 'Premiumadgang aktiveret indtil $date.';
+  }
+
+  @override
+  String get iAmAdminLink => 'Jeg er admin';
+
+  @override
+  String get adminPasswordFieldLabel => 'Adminadgangskode';
+
+  @override
+  String get activateAdminButton => 'Aktivér admin';
+
+  @override
+  String get adminActivatedMessage => 'Adminkonto aktiveret.';
+
+  @override
+  String get adminDashboardTitle => 'Adminpanel';
+
+  @override
+  String get totalUsersLabel => 'Brugere i alt';
+
+  @override
+  String get activePremiumLabel => 'Aktiv premium';
+
+  @override
+  String get generateCodeSectionTitle => 'Generér premiumkode';
+
+  @override
+  String get targetEmailLabel => 'Kontoens e-mail';
+
+  @override
+  String get durationDaysLabel => 'Varighed (dage)';
+
+  @override
+  String get generateCodeButton => 'Generér kode';
+
+  @override
+  String get codeGeneratedTitle => 'Kode genereret';
+
+  @override
+  String get generatedCodesSectionTitle => 'Genererede koder';
+
+  @override
+  String get noCodesGeneratedYet => 'Ingen koder genereret endnu.';
+
+  @override
+  String get codeStatusPending => 'ubrugt';
+
+  @override
+  String get codeStatusRedeemed => 'brugt';
+
+  @override
+  String get codeStatusRevoked => 'tilbagekaldt';
+
+  @override
+  String durationDaysValue(int days) {
+    return '$days dage';
+  }
 }

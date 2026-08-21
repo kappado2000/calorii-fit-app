@@ -106,12 +106,16 @@ export const aiFoodLookup = onCall<AiFoodLookupRequest>(
       throw new HttpsError("invalid-argument", "query must be at least 2 characters.");
     }
 
-    await checkAndIncrementDailyQuota(
-      "aiFoodLookupQuota",
-      request.auth.uid,
-      DAILY_AI_LOOKUP_LIMIT,
-      `Ai atins limita de ${DAILY_AI_LOOKUP_LIMIT} căutări AI pe zi. Încearcă din nou mâine.`,
-    );
+    // The admin account (see activateAdmin.ts) has unlimited access to
+    // every quota-gated function — that's the entire point of the role.
+    if (request.auth.token.admin !== true) {
+      await checkAndIncrementDailyQuota(
+        "aiFoodLookupQuota",
+        request.auth.uid,
+        DAILY_AI_LOOKUP_LIMIT,
+        `Ai atins limita de ${DAILY_AI_LOOKUP_LIMIT} căutări AI pe zi. Încearcă din nou mâine.`,
+      );
+    }
 
     const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY.value() });
 

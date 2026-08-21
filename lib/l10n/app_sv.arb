@@ -436,5 +436,32 @@
   "themeMenuEntry": "Tema",
 
   "barcodeToggleTorch": "Växla blixt",
-  "clearSelection": "Rensa val"
+  "clearSelection": "Rensa val",
+
+  "accessCodeMenuEntry": "Åtkomstkod",
+  "adminDashboardMenuEntry": "Adminpanel",
+  "accessCodeScreenTitle": "Åtkomstkod",
+  "premiumCodeFieldLabel": "Premiumkod",
+  "activatePremiumButton": "Aktivera premium",
+  "premiumActivatedMessage": "Premiumåtkomst aktiverad till {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Jag är admin",
+  "adminPasswordFieldLabel": "Adminlösenord",
+  "activateAdminButton": "Aktivera admin",
+  "adminActivatedMessage": "Adminkonto aktiverat.",
+  "adminDashboardTitle": "Adminpanel",
+  "totalUsersLabel": "Totalt antal användare",
+  "activePremiumLabel": "Aktiv premium",
+  "generateCodeSectionTitle": "Generera premiumkod",
+  "targetEmailLabel": "Kontots e-post",
+  "durationDaysLabel": "Varaktighet (dagar)",
+  "generateCodeButton": "Generera kod",
+  "codeGeneratedTitle": "Kod genererad",
+  "generatedCodesSectionTitle": "Genererade koder",
+  "noCodesGeneratedYet": "Inga koder genererade än.",
+  "codeStatusPending": "oanvänd",
+  "codeStatusRedeemed": "använd",
+  "codeStatusRevoked": "återkallad",
+  "durationDaysValue": "{days} dagar",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

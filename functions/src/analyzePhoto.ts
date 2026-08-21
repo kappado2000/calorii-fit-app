@@ -183,12 +183,16 @@ export const analyzePhoto = onCall<AnalyzePhotoRequest>(
       throw new HttpsError("invalid-argument", "imageBase64 and mediaType are required.");
     }
 
-    await checkAndIncrementDailyQuota(
-      "photoAnalysisQuota",
-      request.auth.uid,
-      DAILY_PHOTO_ANALYSIS_LIMIT,
-      `Ai atins limita de ${DAILY_PHOTO_ANALYSIS_LIMIT} analize foto pe zi. Încearcă din nou mâine.`,
-    );
+    // The admin account (see activateAdmin.ts) has unlimited access to
+    // every quota-gated function — that's the entire point of the role.
+    if (request.auth.token.admin !== true) {
+      await checkAndIncrementDailyQuota(
+        "photoAnalysisQuota",
+        request.auth.uid,
+        DAILY_PHOTO_ANALYSIS_LIMIT,
+        `Ai atins limita de ${DAILY_PHOTO_ANALYSIS_LIMIT} analize foto pe zi. Încearcă din nou mâine.`,
+      );
+    }
 
     const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY.value() });
 

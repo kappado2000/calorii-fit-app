@@ -436,5 +436,32 @@
   "themeMenuEntry": "Tema",
 
   "barcodeToggleTorch": "Attiva/disattiva flash",
-  "clearSelection": "Cancella selezione"
+  "clearSelection": "Cancella selezione",
+
+  "accessCodeMenuEntry": "Codice di accesso",
+  "adminDashboardMenuEntry": "Pannello admin",
+  "accessCodeScreenTitle": "Codice di accesso",
+  "premiumCodeFieldLabel": "Codice premium",
+  "activatePremiumButton": "Attiva premium",
+  "premiumActivatedMessage": "Accesso premium attivato fino al {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Sono admin",
+  "adminPasswordFieldLabel": "Password admin",
+  "activateAdminButton": "Attiva admin",
+  "adminActivatedMessage": "Account admin attivato.",
+  "adminDashboardTitle": "Pannello admin",
+  "totalUsersLabel": "Utenti totali",
+  "activePremiumLabel": "Premium attivo",
+  "generateCodeSectionTitle": "Genera codice premium",
+  "targetEmailLabel": "Email account",
+  "durationDaysLabel": "Durata (giorni)",
+  "generateCodeButton": "Genera codice",
+  "codeGeneratedTitle": "Codice generato",
+  "generatedCodesSectionTitle": "Codici generati",
+  "noCodesGeneratedYet": "Nessun codice generato ancora.",
+  "codeStatusPending": "non utilizzato",
+  "codeStatusRedeemed": "utilizzato",
+  "codeStatusRevoked": "revocato",
+  "durationDaysValue": "{days} giorni",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

@@ -436,5 +436,32 @@
   "themeMenuEntry": "Motyw",
 
   "barcodeToggleTorch": "Przełącz lampę błyskową",
-  "clearSelection": "Wyczyść wybór"
+  "clearSelection": "Wyczyść wybór",
+
+  "accessCodeMenuEntry": "Kod dostępu",
+  "adminDashboardMenuEntry": "Panel administratora",
+  "accessCodeScreenTitle": "Kod dostępu",
+  "premiumCodeFieldLabel": "Kod premium",
+  "activatePremiumButton": "Aktywuj premium",
+  "premiumActivatedMessage": "Dostęp premium aktywny do {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Jestem adminem",
+  "adminPasswordFieldLabel": "Hasło administratora",
+  "activateAdminButton": "Aktywuj admina",
+  "adminActivatedMessage": "Konto administratora aktywowane.",
+  "adminDashboardTitle": "Panel administratora",
+  "totalUsersLabel": "Łączna liczba użytkowników",
+  "activePremiumLabel": "Aktywne premium",
+  "generateCodeSectionTitle": "Generuj kod premium",
+  "targetEmailLabel": "Email konta",
+  "durationDaysLabel": "Czas trwania (dni)",
+  "generateCodeButton": "Generuj kod",
+  "codeGeneratedTitle": "Kod wygenerowany",
+  "generatedCodesSectionTitle": "Wygenerowane kody",
+  "noCodesGeneratedYet": "Nie wygenerowano jeszcze żadnych kodów.",
+  "codeStatusPending": "nieużyty",
+  "codeStatusRedeemed": "użyty",
+  "codeStatusRevoked": "unieważniony",
+  "durationDaysValue": "{days} dni",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

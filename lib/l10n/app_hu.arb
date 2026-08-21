@@ -436,5 +436,32 @@
   "themeMenuEntry": "Téma",
 
   "barcodeToggleTorch": "Vaku be/ki",
-  "clearSelection": "Kijelölés törlése"
+  "clearSelection": "Kijelölés törlése",
+
+  "accessCodeMenuEntry": "Hozzáférési kód",
+  "adminDashboardMenuEntry": "Admin irányítópult",
+  "accessCodeScreenTitle": "Hozzáférési kód",
+  "premiumCodeFieldLabel": "Prémium kód",
+  "activatePremiumButton": "Prémium aktiválása",
+  "premiumActivatedMessage": "Prémium hozzáférés aktiválva eddig: {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "Admin vagyok",
+  "adminPasswordFieldLabel": "Admin jelszó",
+  "activateAdminButton": "Admin aktiválása",
+  "adminActivatedMessage": "Admin fiók aktiválva.",
+  "adminDashboardTitle": "Admin irányítópult",
+  "totalUsersLabel": "Felhasználók összesen",
+  "activePremiumLabel": "Aktív prémium",
+  "generateCodeSectionTitle": "Prémium kód generálása",
+  "targetEmailLabel": "Fiók email címe",
+  "durationDaysLabel": "Időtartam (nap)",
+  "generateCodeButton": "Kód generálása",
+  "codeGeneratedTitle": "Kód generálva",
+  "generatedCodesSectionTitle": "Generált kódok",
+  "noCodesGeneratedYet": "Még nincs generált kód.",
+  "codeStatusPending": "felhasználatlan",
+  "codeStatusRedeemed": "felhasznált",
+  "codeStatusRevoked": "visszavonva",
+  "durationDaysValue": "{days} nap",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }

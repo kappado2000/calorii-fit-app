@@ -436,5 +436,32 @@
   "themeMenuEntry": "Theme",
 
   "barcodeToggleTorch": "Toggle flash",
-  "clearSelection": "Clear selection"
+  "clearSelection": "Clear selection",
+
+  "accessCodeMenuEntry": "Access code",
+  "adminDashboardMenuEntry": "Admin dashboard",
+  "accessCodeScreenTitle": "Access code",
+  "premiumCodeFieldLabel": "Premium code",
+  "activatePremiumButton": "Activate premium",
+  "premiumActivatedMessage": "Premium access activated until {date}.",
+  "@premiumActivatedMessage": {"placeholders": {"date": {"type": "String"}}},
+  "iAmAdminLink": "I'm an admin",
+  "adminPasswordFieldLabel": "Admin password",
+  "activateAdminButton": "Activate admin",
+  "adminActivatedMessage": "Admin account activated.",
+  "adminDashboardTitle": "Admin dashboard",
+  "totalUsersLabel": "Total users",
+  "activePremiumLabel": "Active premium",
+  "generateCodeSectionTitle": "Generate premium code",
+  "targetEmailLabel": "Account email",
+  "durationDaysLabel": "Duration (days)",
+  "generateCodeButton": "Generate code",
+  "codeGeneratedTitle": "Code generated",
+  "generatedCodesSectionTitle": "Generated codes",
+  "noCodesGeneratedYet": "No codes generated yet.",
+  "codeStatusPending": "unused",
+  "codeStatusRedeemed": "used",
+  "codeStatusRevoked": "revoked",
+  "durationDaysValue": "{days} days",
+  "@durationDaysValue": {"placeholders": {"days": {"type": "int"}}}
 }
