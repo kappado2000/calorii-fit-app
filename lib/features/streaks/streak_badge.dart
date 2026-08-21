@@ -6,9 +6,9 @@ import 'streak_providers.dart';
 
 /// A small flame + day-count chip — hidden entirely at zero (a "0" badge
 /// reads as a nag, not encouragement) rather than always showing. Filled
-/// with the app's own warm warning gradient (the same red-orange family
-/// used nowhere else yet) rather than a generic Material orange, so it
-/// reads as part of the app's own palette instead of a bolted-on chip.
+/// with the app's own hero gradient (the same green used for the daily
+/// progress card) rather than a generic Material orange, so it reads as
+/// part of the app's own palette instead of a bolted-on chip.
 class StreakBadge extends ConsumerWidget {
   const StreakBadge({super.key});
 
@@ -22,7 +22,7 @@ class StreakBadge extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
         decoration: BoxDecoration(
-          gradient: context.appColors.warningGradient,
+          gradient: context.appColors.heroGradient,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2)),
