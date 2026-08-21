@@ -1047,6 +1047,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get quantityEatenLabel => 'Gegeten hoeveelheid';
 
   @override
+  String get editGramsDialogTitle => 'Portie bewerken';
+
+  @override
   String get requiredField => 'Verplicht veld';
 
   @override

@@ -1044,6 +1044,9 @@ class AppLocalizationsDa extends AppLocalizations {
   String get quantityEatenLabel => 'Spist mængde';
 
   @override
+  String get editGramsDialogTitle => 'Rediger portion';
+
+  @override
   String get requiredField => 'Påkrævet felt';
 
   @override

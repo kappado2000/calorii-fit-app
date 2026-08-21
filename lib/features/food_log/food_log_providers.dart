@@ -249,6 +249,26 @@ class DailyLogNotifier extends StateNotifier<List<FoodLogEntry>> {
 
   Future<void> removeEntry(String id) => _dataSource.delete(id);
 
+  /// Corrects the portion of an already-logged entry — every other field
+  /// (name, per-100g calorie/macro/micronutrient values) stays exactly as
+  /// it was; only [grams] changes, which is why this doesn't go through
+  /// [addEntry]'s full parameter list. Firestore `.set()` on the existing
+  /// id overwrites the doc in place, same mechanism [addEntry] itself uses.
+  Future<void> updateGrams(FoodLogEntry entry, double grams) async {
+    final updated = FoodLogEntry(
+      id: entry.id,
+      mealType: entry.mealType,
+      foodName: entry.foodName,
+      grams: grams,
+      kcalPer100g: entry.kcalPer100g,
+      proteinPer100g: entry.proteinPer100g,
+      carbsPer100g: entry.carbsPer100g,
+      fatPer100g: entry.fatPer100g,
+      micronutrients: entry.micronutrients,
+    );
+    await _dataSource.add(updated, _date);
+  }
+
   @override
   void dispose() {
     _subscription.cancel();

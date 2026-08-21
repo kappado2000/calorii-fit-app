@@ -377,6 +377,7 @@
   "@addCount": {"placeholders": {"count": {"type": "int"}}},
   "calorieIndexLabel": "Índice calórico (kcal / 100g)",
   "quantityEatenLabel": "Quantidade consumida",
+  "editGramsDialogTitle": "Editar porção",
   "requiredField": "Campo obrigatório",
   "invalidValue": "Valor inválido",
   "searchFailedCheckConnection": "A busca não pôde ser concluída (verifique sua conexão).",

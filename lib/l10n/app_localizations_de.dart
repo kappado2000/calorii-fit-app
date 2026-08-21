@@ -1047,6 +1047,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get quantityEatenLabel => 'Verzehrte Menge';
 
   @override
+  String get editGramsDialogTitle => 'Menge bearbeiten';
+
+  @override
   String get requiredField => 'Pflichtfeld';
 
   @override

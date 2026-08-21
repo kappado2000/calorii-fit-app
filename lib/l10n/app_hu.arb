@@ -377,6 +377,7 @@
   "@addCount": {"placeholders": {"count": {"type": "int"}}},
   "calorieIndexLabel": "Kalóriaindex (kcal / 100g)",
   "quantityEatenLabel": "Elfogyasztott mennyiség",
+  "editGramsDialogTitle": "Adag szerkesztése",
   "requiredField": "Kötelező mező",
   "invalidValue": "Érvénytelen érték",
   "searchFailedCheckConnection": "A keresést nem sikerült befejezni (ellenőrizd a kapcsolatot).",

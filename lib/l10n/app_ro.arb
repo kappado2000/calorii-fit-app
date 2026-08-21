@@ -377,6 +377,7 @@
   "@addCount": {"placeholders": {"count": {"type": "int"}}},
   "calorieIndexLabel": "Indice caloric (kcal / 100g)",
   "quantityEatenLabel": "Cantitate consumată",
+  "editGramsDialogTitle": "Modifică gramajul",
   "requiredField": "Câmp obligatoriu",
   "invalidValue": "Valoare invalidă",
   "searchFailedCheckConnection": "Căutarea nu a putut fi realizată (verifică conexiunea).",

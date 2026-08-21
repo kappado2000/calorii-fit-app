@@ -36,6 +36,7 @@ import '../streaks/streak_badge.dart';
 import '../workout_log/add_workout_sheet.dart';
 import '../workout_log/workout_log_providers.dart';
 import 'add_food_entry_sheet.dart';
+import 'edit_grams_dialog.dart';
 import 'food_log_providers.dart';
 
 class FoodLogScreen extends ConsumerStatefulWidget {
@@ -822,6 +823,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                         .removeEntry(entry.id),
                     child: ListTile(
                       dense: true,
+                      onTap: () => _editGrams(entry),
                       leading: Container(
                         width: 36,
                         height: 36,
@@ -873,6 +875,12 @@ class _MealSectionState extends ConsumerState<_MealSection> {
     return grams == grams.roundToDouble()
         ? grams.toStringAsFixed(0)
         : grams.toString();
+  }
+
+  Future<void> _editGrams(FoodLogEntry entry) async {
+    final grams = await showEditGramsDialog(context, initialGrams: entry.grams);
+    if (grams == null || !mounted) return;
+    await ref.read(dailyLogProvider(widget.date).notifier).updateGrams(entry, grams);
   }
 }
 

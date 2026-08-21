@@ -377,6 +377,7 @@
   "@addCount": {"placeholders": {"count": {"type": "int"}}},
   "calorieIndexLabel": "Calorie-index (kcal / 100g)",
   "quantityEatenLabel": "Gegeten hoeveelheid",
+  "editGramsDialogTitle": "Portie bewerken",
   "requiredField": "Verplicht veld",
   "invalidValue": "Ongeldige waarde",
   "searchFailedCheckConnection": "De zoekopdracht kon niet worden voltooid (controleer je verbinding).",

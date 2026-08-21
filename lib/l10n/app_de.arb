@@ -377,6 +377,7 @@
   "@addCount": {"placeholders": {"count": {"type": "int"}}},
   "calorieIndexLabel": "Kalorienindex (kcal / 100 g)",
   "quantityEatenLabel": "Verzehrte Menge",
+  "editGramsDialogTitle": "Menge bearbeiten",
   "requiredField": "Pflichtfeld",
   "invalidValue": "Ungültiger Wert",
   "searchFailedCheckConnection": "Die Suche konnte nicht abgeschlossen werden (überprüfe deine Verbindung).",

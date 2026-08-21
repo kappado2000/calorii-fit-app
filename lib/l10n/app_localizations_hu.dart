@@ -1048,6 +1048,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get quantityEatenLabel => 'Elfogyasztott mennyiség';
 
   @override
+  String get editGramsDialogTitle => 'Adag szerkesztése';
+
+  @override
   String get requiredField => 'Kötelező mező';
 
   @override

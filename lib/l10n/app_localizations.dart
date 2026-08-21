@@ -1938,6 +1938,12 @@ abstract class AppLocalizations {
   /// **'Cantitate consumată'**
   String get quantityEatenLabel;
 
+  /// No description provided for @editGramsDialogTitle.
+  ///
+  /// In ro, this message translates to:
+  /// **'Modifică gramajul'**
+  String get editGramsDialogTitle;
+
   /// No description provided for @requiredField.
   ///
   /// In ro, this message translates to:

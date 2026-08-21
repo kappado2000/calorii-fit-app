@@ -377,6 +377,7 @@
   "@addCount": {"placeholders": {"count": {"type": "int"}}},
   "calorieIndexLabel": "Kaloriindeks (kcal / 100g)",
   "quantityEatenLabel": "Spist mengde",
+  "editGramsDialogTitle": "Rediger porsjon",
   "requiredField": "Obligatorisk felt",
   "invalidValue": "Ugyldig verdi",
   "searchFailedCheckConnection": "Søket kunne ikke fullføres (sjekk tilkoblingen din).",

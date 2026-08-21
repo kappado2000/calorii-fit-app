@@ -377,6 +377,7 @@
   "@addCount": {"placeholders": {"count": {"type": "int"}}},
   "calorieIndexLabel": "Kaloriindex (kcal / 100g)",
   "quantityEatenLabel": "Ätit mängd",
+  "editGramsDialogTitle": "Redigera portion",
   "requiredField": "Obligatoriskt fält",
   "invalidValue": "Ogiltigt värde",
   "searchFailedCheckConnection": "Sökningen kunde inte slutföras (kontrollera din anslutning).",

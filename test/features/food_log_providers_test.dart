@@ -150,6 +150,38 @@ void main() {
     expect(container.read(dailyLogProvider(date)), isEmpty);
   });
 
+  test('updateGrams corrects the portion of an existing entry, keeping its per-100g values', () async {
+    final container = _buildContainer();
+    addTearDown(container.dispose);
+    await pumpEventQueue();
+    final date = DateTime(2026, 1, 20);
+    final notifier = container.read(dailyLogProvider(date).notifier);
+
+    await notifier.addEntry(
+      mealType: MealType.dinner,
+      foodName: 'Piept de pui la grătar',
+      grams: 100,
+      kcalPer100g: 165,
+      proteinPer100g: 31,
+      fatPer100g: 3.6,
+    );
+    await pumpEventQueue();
+    final original = container.read(dailyLogProvider(date)).single;
+    expect(original.calories, closeTo(165, 0.001));
+
+    await notifier.updateGrams(original, 250);
+    await pumpEventQueue();
+
+    final updated = container.read(dailyLogProvider(date)).single;
+    expect(updated.id, original.id); // same entry, corrected in place, not duplicated
+    expect(container.read(dailyLogProvider(date)), hasLength(1));
+    expect(updated.grams, 250);
+    expect(updated.foodName, 'Piept de pui la grătar');
+    expect(updated.kcalPer100g, 165); // per-100g values untouched
+    expect(updated.calories, closeTo(412.5, 0.001));
+    expect(updated.protein, closeTo(77.5, 0.001));
+  });
+
   test('dailyLogProvider only returns entries for the requested date', () async {
     final container = _buildContainer();
     addTearDown(container.dispose);

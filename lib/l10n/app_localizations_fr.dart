@@ -1051,6 +1051,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get quantityEatenLabel => 'Quantité consommée';
 
   @override
+  String get editGramsDialogTitle => 'Modifier la portion';
+
+  @override
   String get requiredField => 'Champ requis';
 
   @override

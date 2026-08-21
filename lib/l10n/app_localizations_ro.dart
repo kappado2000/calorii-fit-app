@@ -1044,6 +1044,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get quantityEatenLabel => 'Cantitate consumată';
 
   @override
+  String get editGramsDialogTitle => 'Modifică gramajul';
+
+  @override
   String get requiredField => 'Câmp obligatoriu';
 
   @override

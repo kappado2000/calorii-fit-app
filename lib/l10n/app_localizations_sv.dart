@@ -1044,6 +1044,9 @@ class AppLocalizationsSv extends AppLocalizations {
   String get quantityEatenLabel => 'Ätit mängd';
 
   @override
+  String get editGramsDialogTitle => 'Redigera portion';
+
+  @override
   String get requiredField => 'Obligatoriskt fält';
 
   @override
