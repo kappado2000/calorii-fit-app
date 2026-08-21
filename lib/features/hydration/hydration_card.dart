@@ -13,16 +13,19 @@ class HydrationSection extends ConsumerWidget {
 
   final DateTime date;
 
-  static const _cardColorLight = Color(0xFFCFE8F3);
-  static const _cardColorDark = Color(0xFF17323F);
-  static const _borderColorLight = Color(0xFF1B6FA8);
-  static const _borderColorDark = Color(0xFF6BC0EE);
+  // A teal-leaning blue (rather than a plain sky blue) so this card reads
+  // as part of the same family as the app's green hero gradient instead
+  // of a completely unrelated hue.
+  static const _cardColorLight = Color(0xFFCDEAE6);
+  static const _cardColorDark = Color(0xFF15383A);
+  static const _borderColorLight = Color(0xFF128F92);
+  static const _borderColorDark = Color(0xFF4FC9BD);
   // Explicit text color rather than the theme default — this card's fill
-  // is a fixed light/dark blue, not the theme surface color, so the
+  // is a fixed light/dark teal, not the theme surface color, so the
   // default onSurface text (near-white in dark mode) went invisible
-  // against the light-blue fill still used in light mode, and vice versa.
-  static const _onCardLight = Color(0xFF0D2B38);
-  static const _onCardDark = Color(0xFFE3F3FB);
+  // against the light fill still used in light mode, and vice versa.
+  static const _onCardLight = Color(0xFF0D3330);
+  static const _onCardDark = Color(0xFFDFF5F0);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,6 +43,7 @@ class HydrationSection extends ConsumerWidget {
       statusColor: borderColor,
       outerColor: borderColor,
       innerColor: cardColor,
+      stepThickness: 0.8,
       child: Card(
         color: cardColor,
         clipBehavior: Clip.antiAlias,

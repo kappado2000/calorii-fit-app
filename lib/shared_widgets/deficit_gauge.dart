@@ -229,9 +229,9 @@ class _GaugePainter extends CustomPainter {
     // and the arrow tip stay inside the scale, instead of poking out into
     // the empty space beyond the arc.
     final pos = center + dir * (radius - strokeWidth / 2);
-    const bodyRadius = 6.0;
-    const pointLength = 13.0;
-    const pointHalfWidth = 3.5;
+    const bodyRadius = 3.5;
+    const pointLength = 8.0;
+    const pointHalfWidth = 2.0;
     final perp = Offset(-dir.dy, dir.dx);
     final baseCenter = pos + dir * bodyRadius;
     final tip = pos + dir * (bodyRadius + pointLength);
@@ -243,8 +243,8 @@ class _GaugePainter extends CustomPainter {
 
     final glowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.16)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
-    canvas.drawCircle(pos, 11, glowPaint);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+    canvas.drawCircle(pos, 6, glowPaint);
 
     final darkPaint = Paint()..color = const Color(0xFF2B2B2B);
     canvas.drawPath(point, darkPaint);
@@ -253,12 +253,12 @@ class _GaugePainter extends CustomPainter {
     final whiteStroke = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4
+      ..strokeWidth = 0.9
       ..strokeJoin = StrokeJoin.round;
     canvas.drawPath(point, whiteStroke);
     canvas.drawCircle(pos, bodyRadius, whiteStroke);
 
-    canvas.drawCircle(pos, 2.8, Paint()..color = Colors.white);
+    canvas.drawCircle(pos, 1.6, Paint()..color = Colors.white);
   }
 
   @override
