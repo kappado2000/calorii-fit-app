@@ -219,19 +219,18 @@ class _GaugePainter extends CustomPainter {
   /// A knob that slides along the band's inner border, rather than a
   /// needle reaching down to the pivot — keeps the indicator confined to
   /// the track itself so it never crosses the calorie number underneath.
-  /// Its pointed tip reaches into the colored band (not past its outer
-  /// edge). Dark-on-white (inverse of the white goal marker) so the two
-  /// can never be confused for each other on the arc.
+  /// Its pointed tip reaches exactly to the band's outer edge (the visible
+  /// edge of the scale). Dark-on-white (inverse of the white goal marker)
+  /// so the two can never be confused for each other on the arc.
   void _drawIndicator(Canvas canvas, Offset center, double radius, double strokeWidth, {required double angle}) {
     final dir = Offset(math.cos(angle), math.sin(angle));
-    // Circle rides the band's inner border, with the point reaching into
-    // the colored band itself (not past its outer edge) — both the circle
-    // and the arrow tip stay inside the scale, instead of poking out into
-    // the empty space beyond the arc.
+    // Circle rides the band's inner border; the point spans the full band
+    // width so its tip lands exactly on the band's outer edge, regardless
+    // of strokeWidth.
     final pos = center + dir * (radius - strokeWidth / 2);
-    const bodyRadius = 3.5;
-    const pointLength = 8.0;
-    const pointHalfWidth = 2.0;
+    const bodyRadius = 6.5;
+    final pointLength = strokeWidth - bodyRadius;
+    const pointHalfWidth = 4.0;
     final perp = Offset(-dir.dy, dir.dx);
     final baseCenter = pos + dir * bodyRadius;
     final tip = pos + dir * (bodyRadius + pointLength);
@@ -243,8 +242,8 @@ class _GaugePainter extends CustomPainter {
 
     final glowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.16)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
-    canvas.drawCircle(pos, 6, glowPaint);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+    canvas.drawCircle(pos, 9, glowPaint);
 
     final darkPaint = Paint()..color = const Color(0xFF2B2B2B);
     canvas.drawPath(point, darkPaint);
@@ -253,12 +252,12 @@ class _GaugePainter extends CustomPainter {
     final whiteStroke = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.9
+      ..strokeWidth = 1.6
       ..strokeJoin = StrokeJoin.round;
     canvas.drawPath(point, whiteStroke);
     canvas.drawCircle(pos, bodyRadius, whiteStroke);
 
-    canvas.drawCircle(pos, 1.6, Paint()..color = Colors.white);
+    canvas.drawCircle(pos, 3.0, Paint()..color = Colors.white);
   }
 
   @override
