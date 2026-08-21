@@ -7,11 +7,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
+import 'package:calorie_app/data/datasources/remote/cloud_functions/ai_food_lookup_api_client.dart';
 import 'package:calorie_app/data/datasources/remote/cloud_functions/search_foods_api_client.dart';
 import 'package:calorie_app/data/models/custom_food.dart';
 import 'package:calorie_app/data/models/meal_type.dart';
 import 'package:calorie_app/features/auth/auth_providers.dart';
 import 'package:calorie_app/features/food_log/food_log_providers.dart';
+
+/// An AiFoodLookupApiClient whose underlying HTTP client fails the test if
+/// actually invoked — used in every FoodSearchNotifier test that isn't
+/// specifically exercising the AI fallback, since it must never be called
+/// as a side effect of a regular search.
+AiFoodLookupApiClient _unusedAiClient() =>
+    AiFoodLookupApiClient(httpClient: MockClient((request) async => fail('should not be called')));
+
+Future<String?> _fakeIdToken() async => 'fake-id-token';
 
 ProviderContainer _buildContainer() {
   final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
@@ -258,7 +268,9 @@ void main() {
       final apiClient = SearchFoodsApiClient(httpClient: mockClient);
       addTearDown(apiClient.dispose);
       const remembered = CustomFood(id: '1', name: 'Iaurt grecesc', kcalPer100g: 120);
-      final notifier = FoodSearchNotifier(apiClient, [remembered]);
+      final aiClient = _unusedAiClient();
+      addTearDown(aiClient.dispose);
+      final notifier = FoodSearchNotifier(apiClient, [remembered], aiClient, _fakeIdToken);
       addTearDown(notifier.dispose);
 
       notifier.search('iaurt');
@@ -277,7 +289,9 @@ void main() {
         httpClient: MockClient((request) async => fail('should not be called')),
       );
       addTearDown(apiClient.dispose);
-      final notifier = FoodSearchNotifier(apiClient, const []);
+      final aiClient = _unusedAiClient();
+      addTearDown(aiClient.dispose);
+      final notifier = FoodSearchNotifier(apiClient, const [], aiClient, _fakeIdToken);
       addTearDown(notifier.dispose);
 
       notifier.search('a');
@@ -290,7 +304,9 @@ void main() {
       );
       addTearDown(apiClient.dispose);
       const remembered = CustomFood(id: '1', name: 'Orez brun', kcalPer100g: 111);
-      final notifier = FoodSearchNotifier(apiClient, [remembered]);
+      final aiClient = _unusedAiClient();
+      addTearDown(aiClient.dispose);
+      final notifier = FoodSearchNotifier(apiClient, [remembered], aiClient, _fakeIdToken);
       addTearDown(notifier.dispose);
 
       notifier.search('orez');
@@ -299,6 +315,74 @@ void main() {
       expect(notifier.state.results, hasLength(1));
       expect(notifier.state.results.first.name, 'Orez brun');
       expect(notifier.state.hadRemoteError, isTrue);
+    });
+
+    test('searchWithAi offers a Claude-identified product when the regular search finds nothing', () async {
+      final apiClient = SearchFoodsApiClient(
+        httpClient: MockClient((request) async => http.Response(jsonEncode({'result': {'products': []}}), 200)),
+      );
+      addTearDown(apiClient.dispose);
+      final aiClient = AiFoodLookupApiClient(
+        httpClient: MockClient(
+          (request) async => http.Response(
+            jsonEncode({
+              'result': {
+                'product': {
+                  'barcode': null,
+                  'name': 'Sarmale cu carne',
+                  'brand': null,
+                  'kcalPer100g': 180,
+                  'proteinPer100g': 8.0,
+                  'carbsPer100g': 12.0,
+                  'fatPer100g': 11.0,
+                  'imageUrl': null,
+                  'micronutrients': null,
+                },
+                'confidence': 0.8,
+              },
+            }),
+            200,
+          ),
+        ),
+      );
+      addTearDown(aiClient.dispose);
+      final notifier = FoodSearchNotifier(apiClient, const [], aiClient, _fakeIdToken);
+      addTearDown(notifier.dispose);
+
+      notifier.search('sarmale bunicii');
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      expect(notifier.state.results, isEmpty);
+
+      await notifier.searchWithAi();
+
+      expect(notifier.state.aiResult, isNotNull);
+      expect(notifier.state.aiResult!.name, 'Sarmale cu carne');
+      expect(notifier.state.aiResult!.isAiEstimate, isTrue);
+      expect(notifier.state.aiSearchAttempted, isTrue);
+    });
+
+    test('searchWithAi leaves aiResult null when Claude was not confident enough', () async {
+      final apiClient = SearchFoodsApiClient(
+        httpClient: MockClient((request) async => http.Response(jsonEncode({'result': {'products': []}}), 200)),
+      );
+      addTearDown(apiClient.dispose);
+      final aiClient = AiFoodLookupApiClient(
+        httpClient: MockClient(
+          (request) async =>
+              http.Response(jsonEncode({'result': {'product': null, 'confidence': 0.0}}), 200),
+        ),
+      );
+      addTearDown(aiClient.dispose);
+      final notifier = FoodSearchNotifier(apiClient, const [], aiClient, _fakeIdToken);
+      addTearDown(notifier.dispose);
+
+      notifier.search('asdkjhaskjdh');
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+
+      await notifier.searchWithAi();
+
+      expect(notifier.state.aiResult, isNull);
+      expect(notifier.state.aiSearchAttempted, isTrue);
     });
   });
 }

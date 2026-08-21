@@ -1005,6 +1005,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noProductFound => 'No se encontró ningún producto.';
 
   @override
+  String get searchWithAiButton => 'Buscar con IA';
+
+  @override
+  String get aiSearchNoResult =>
+      'La IA no encontró un producto fiable para esta búsqueda.';
+
+  @override
+  String get aiEstimateBadge => 'estimación IA';
+
+  @override
   String get quantityLabel => 'Cantidad';
 
   @override

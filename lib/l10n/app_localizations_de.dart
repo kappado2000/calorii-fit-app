@@ -1003,6 +1003,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get noProductFound => 'Kein Produkt gefunden.';
 
   @override
+  String get searchWithAiButton => 'Mit KI suchen';
+
+  @override
+  String get aiSearchNoResult =>
+      'Die KI konnte für diese Suche kein verlässliches Produkt finden.';
+
+  @override
+  String get aiEstimateBadge => 'KI-Schätzung';
+
+  @override
   String get quantityLabel => 'Menge';
 
   @override

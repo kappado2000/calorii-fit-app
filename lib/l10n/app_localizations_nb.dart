@@ -1001,6 +1001,16 @@ class AppLocalizationsNb extends AppLocalizations {
   String get noProductFound => 'Ingen produkt funnet.';
 
   @override
+  String get searchWithAiButton => 'Søk med AI';
+
+  @override
+  String get aiSearchNoResult =>
+      'AI fant ikke et sikkert produkt for dette søket.';
+
+  @override
+  String get aiEstimateBadge => 'AI-estimat';
+
+  @override
   String get quantityLabel => 'Mengde';
 
   @override

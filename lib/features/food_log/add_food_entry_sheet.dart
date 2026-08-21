@@ -324,6 +324,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
                 state: searchState,
                 onSelect: _selectProduct,
                 onManualEntry: _startManualEntry,
+                onSearchWithAi: () => ref.read(foodSearchProvider.notifier).searchWithAi(),
               ),
             ],
             if (_selectedProduct != null) ...[
@@ -474,17 +475,28 @@ class _QuickAddChecklist extends StatelessWidget {
 }
 
 class _SearchResultsList extends StatelessWidget {
-  const _SearchResultsList({required this.state, required this.onSelect, required this.onManualEntry});
+  const _SearchResultsList({
+    required this.state,
+    required this.onSelect,
+    required this.onManualEntry,
+    required this.onSearchWithAi,
+  });
 
   final FoodSearchState state;
   final ValueChanged<FoodProduct> onSelect;
   final VoidCallback onManualEntry;
+  final VoidCallback onSearchWithAi;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // The AI result (if any) always leads the list — it only exists
+    // because the regular search found nothing, so it's the most relevant
+    // thing to show, not an afterthought at the bottom.
+    final items = [if (state.aiResult != null) state.aiResult!, ...state.results];
+
     return Container(
-      constraints: const BoxConstraints(maxHeight: 260),
+      constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
@@ -497,18 +509,40 @@ class _SearchResultsList extends StatelessWidget {
               padding: EdgeInsets.all(8),
               child: LinearProgressIndicator(minHeight: 2),
             ),
-          if (state.results.isEmpty && !state.isSearchingRemote)
+          if (items.isEmpty && !state.isSearchingRemote)
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   Text(
-                    state.hadRemoteError ? l10n.searchFailedCheckConnection : l10n.noProductFound,
+                    state.hadRemoteError
+                        ? l10n.searchFailedCheckConnection
+                        : state.aiSearchAttempted
+                        ? l10n.aiSearchNoResult
+                        : l10n.noProductFound,
                     style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  TextButton(onPressed: onManualEntry, child: Text(l10n.addProductManually)),
+                  if (state.isSearchingAi)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                    )
+                  else
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        if (!state.hadRemoteError && !state.aiSearchAttempted)
+                          OutlinedButton.icon(
+                            onPressed: onSearchWithAi,
+                            icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                            label: Text(l10n.searchWithAiButton),
+                          ),
+                        TextButton(onPressed: onManualEntry, child: Text(l10n.addProductManually)),
+                      ],
+                    ),
                 ],
               ),
             )
@@ -516,13 +550,21 @@ class _SearchResultsList extends StatelessWidget {
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: state.results.length,
+                itemCount: items.length,
                 separatorBuilder: (_, _) => const Divider(height: 1),
                 itemBuilder: (context, index) {
-                  final product = state.results[index];
+                  final product = items[index];
                   return ListTile(
                     dense: true,
-                    title: Text(product.displayName),
+                    title: Row(
+                      children: [
+                        Flexible(child: Text(product.displayName)),
+                        if (product.isAiEstimate) ...[
+                          const SizedBox(width: 6),
+                          _AiEstimateBadge(label: l10n.aiEstimateBadge),
+                        ],
+                      ],
+                    ),
                     subtitle: Text(_macroSummary(l10n, product)),
                     trailing: Text('${product.kcalPer100g.round()} kcal/100g'),
                     onTap: () => onSelect(product),
@@ -541,6 +583,29 @@ class _SearchResultsList extends StatelessWidget {
     if (product.carbsPer100g != null) parts.add('${l10n.macroCarbsShort} ${product.carbsPer100g!.round()}g');
     if (product.fatPer100g != null) parts.add('${l10n.macroFatShort} ${product.fatPer100g!.round()}g');
     return parts.isEmpty ? l10n.macrosUnavailable : parts.join(' · ');
+  }
+}
+
+class _AiEstimateBadge extends StatelessWidget {
+  const _AiEstimateBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.tertiary;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.auto_awesome_rounded, size: 11, color: color),
+          const SizedBox(width: 3),
+          Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 10.5)),
+        ],
+      ),
+    );
   }
 }
 

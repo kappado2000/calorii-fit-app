@@ -14,6 +14,7 @@ class FoodProduct {
     this.fatPer100g,
     this.imageUrl,
     this.micronutrients,
+    this.isAiEstimate = false,
   });
 
   final String? barcode;
@@ -25,6 +26,12 @@ class FoodProduct {
   final double? fatPer100g;
   final String? imageUrl;
   final MicronutrientProfile? micronutrients;
+
+  /// True only for a result from the aiFoodLookup fallback (see
+  /// AiFoodLookupApiClient) — a Claude-estimated guess, not a real
+  /// database product, so the UI must disclose that distinction rather
+  /// than presenting it with the same confidence as a matched product.
+  final bool isAiEstimate;
 
   /// Name including brand, when known, for disambiguating near-identical
   /// product names in the results list (e.g. two different "Iaurt grecesc").

@@ -1860,6 +1860,24 @@ abstract class AppLocalizations {
   /// **'Niciun produs găsit.'**
   String get noProductFound;
 
+  /// No description provided for @searchWithAiButton.
+  ///
+  /// In ro, this message translates to:
+  /// **'Caută cu AI'**
+  String get searchWithAiButton;
+
+  /// No description provided for @aiSearchNoResult.
+  ///
+  /// In ro, this message translates to:
+  /// **'AI nu a găsit un produs sigur pentru această căutare.'**
+  String get aiSearchNoResult;
+
+  /// No description provided for @aiEstimateBadge.
+  ///
+  /// In ro, this message translates to:
+  /// **'estimare AI'**
+  String get aiEstimateBadge;
+
   /// No description provided for @quantityLabel.
   ///
   /// In ro, this message translates to:

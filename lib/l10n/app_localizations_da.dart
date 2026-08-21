@@ -1000,6 +1000,16 @@ class AppLocalizationsDa extends AppLocalizations {
   String get noProductFound => 'Intet produkt fundet.';
 
   @override
+  String get searchWithAiButton => 'Søg med AI';
+
+  @override
+  String get aiSearchNoResult =>
+      'AI fandt ikke et sikkert produkt til denne søgning.';
+
+  @override
+  String get aiEstimateBadge => 'AI-estimat';
+
+  @override
   String get quantityLabel => 'Mængde';
 
   @override

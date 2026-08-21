@@ -1000,6 +1000,16 @@ class AppLocalizationsSv extends AppLocalizations {
   String get noProductFound => 'Ingen produkt hittad.';
 
   @override
+  String get searchWithAiButton => 'Sök med AI';
+
+  @override
+  String get aiSearchNoResult =>
+      'AI kunde inte säkert hitta en produkt för den här sökningen.';
+
+  @override
+  String get aiEstimateBadge => 'AI-uppskattning';
+
+  @override
   String get quantityLabel => 'Mängd';
 
   @override

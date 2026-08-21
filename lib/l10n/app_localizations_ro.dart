@@ -1000,6 +1000,16 @@ class AppLocalizationsRo extends AppLocalizations {
   String get noProductFound => 'Niciun produs găsit.';
 
   @override
+  String get searchWithAiButton => 'Caută cu AI';
+
+  @override
+  String get aiSearchNoResult =>
+      'AI nu a găsit un produs sigur pentru această căutare.';
+
+  @override
+  String get aiEstimateBadge => 'estimare AI';
+
+  @override
   String get quantityLabel => 'Cantitate';
 
   @override

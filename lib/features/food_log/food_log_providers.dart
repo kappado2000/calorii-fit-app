@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/constants/micronutrient_reference.dart';
 import '../../core/firebase/firestore_provider.dart';
+import '../../data/datasources/remote/cloud_functions/ai_food_lookup_api_client.dart';
 import '../../data/datasources/remote/cloud_functions/lookup_barcode_api_client.dart';
 import '../../data/datasources/remote/cloud_functions/search_foods_api_client.dart';
 import '../../data/datasources/remote/firestore/custom_foods_firestore_datasource.dart';
@@ -13,6 +14,7 @@ import '../../data/models/custom_food.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/food_product.dart';
 import '../../data/models/meal_type.dart';
+import '../auth/auth_providers.dart';
 import '../auth/uid_provider.dart';
 
 export '../../core/firebase/firestore_provider.dart';
@@ -142,28 +144,55 @@ final customFoodsProvider = StateNotifierProvider<CustomFoodsNotifier, List<Cust
 /// lets the UI show a small "search unavailable" hint without blocking the
 /// remembered-product matches that are still perfectly usable offline.
 class FoodSearchState {
-  const FoodSearchState({this.results = const [], this.isSearchingRemote = false, this.hadRemoteError = false});
+  const FoodSearchState({
+    this.results = const [],
+    this.isSearchingRemote = false,
+    this.hadRemoteError = false,
+    this.aiResult,
+    this.isSearchingAi = false,
+    this.aiSearchAttempted = false,
+  });
 
   final List<FoodProduct> results;
   final bool isSearchingRemote;
   final bool hadRemoteError;
+
+  /// Set once an AI lookup (see AiFoodLookupApiClient) has returned a
+  /// confident match for the current query — shown as an extra item at the
+  /// top of the results list (marked distinctly) rather than auto-selected,
+  /// so the user still explicitly confirms it like any other result and it
+  /// stays visible/tappable instead of disappearing after one use.
+  final FoodProduct? aiResult;
+  final bool isSearchingAi;
+
+  /// True once an AI lookup has been tried for the current query, whether
+  /// or not it found anything — lets the UI show "AI nu a găsit nimic
+  /// sigur" instead of offering the search button again for the same query.
+  final bool aiSearchAttempted;
 }
 
 /// Debounced live search against the commercial-product database
 /// (searchFoods Cloud Function → Open Food Facts), merged with the user's
 /// own remembered products (which match instantly and are listed first,
-/// since they're what the user has actually eaten before).
+/// since they're what the user has actually eaten before). When that finds
+/// nothing, [searchWithAi] offers an explicit, user-triggered fallback to
+/// Claude (see AiFoodLookupApiClient) rather than firing on every keystroke.
 class FoodSearchNotifier extends StateNotifier<FoodSearchState> {
-  FoodSearchNotifier(this._apiClient, this._customFoods) : super(const FoodSearchState());
+  FoodSearchNotifier(this._apiClient, this._customFoods, this._aiApiClient, this._getIdToken)
+    : super(const FoodSearchState());
 
   final SearchFoodsApiClient _apiClient;
   final List<CustomFood> _customFoods;
+  final AiFoodLookupApiClient _aiApiClient;
+  final Future<String?> Function() _getIdToken;
   Timer? _debounce;
   int _requestId = 0;
+  String _lastQuery = '';
 
   void search(String query) {
     _debounce?.cancel();
     final trimmed = query.trim();
+    _lastQuery = trimmed;
     if (trimmed.length < 2) {
       state = const FoodSearchState();
       return;
@@ -203,6 +232,28 @@ class FoodSearchNotifier extends StateNotifier<FoodSearchState> {
     });
   }
 
+  Future<void> searchWithAi() async {
+    final query = _lastQuery;
+    if (query.length < 2 || state.isSearchingAi) return;
+    final requestId = ++_requestId;
+    state = FoodSearchState(results: state.results, isSearchingAi: true);
+
+    try {
+      final idToken = await _getIdToken();
+      if (idToken == null) {
+        if (requestId != _requestId) return;
+        state = FoodSearchState(results: state.results, aiSearchAttempted: true);
+        return;
+      }
+      final product = await _aiApiClient.lookup(query, idToken: idToken);
+      if (requestId != _requestId) return;
+      state = FoodSearchState(results: state.results, aiResult: product, aiSearchAttempted: true);
+    } catch (_) {
+      if (requestId != _requestId) return;
+      state = FoodSearchState(results: state.results, aiSearchAttempted: true);
+    }
+  }
+
   @override
   void dispose() {
     _debounce?.cancel();
@@ -211,7 +262,12 @@ class FoodSearchNotifier extends StateNotifier<FoodSearchState> {
 }
 
 final foodSearchProvider = StateNotifierProvider.autoDispose<FoodSearchNotifier, FoodSearchState>((ref) {
-  return FoodSearchNotifier(ref.watch(searchFoodsApiClientProvider), ref.watch(customFoodsProvider));
+  return FoodSearchNotifier(
+    ref.watch(searchFoodsApiClientProvider),
+    ref.watch(customFoodsProvider),
+    ref.watch(aiFoodLookupApiClientProvider),
+    () async => ref.read(firebaseAuthProvider).currentUser?.getIdToken(),
+  );
 });
 
 class DailyLogNotifier extends StateNotifier<List<FoodLogEntry>> {

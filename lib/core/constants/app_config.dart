@@ -12,4 +12,7 @@ class AppConfig {
 
   static const String lookupBarcodeUrl =
       'https://europe-west1-calorii-fit-app.cloudfunctions.net/lookupBarcode';
+
+  static const String aiFoodLookupUrl =
+      'https://europe-west1-calorii-fit-app.cloudfunctions.net/aiFoodLookup';
 }

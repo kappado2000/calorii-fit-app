@@ -995,6 +995,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noProductFound => 'No product found.';
 
   @override
+  String get searchWithAiButton => 'Search with AI';
+
+  @override
+  String get aiSearchNoResult =>
+      'AI couldn\'t confidently find a product for this search.';
+
+  @override
+  String get aiEstimateBadge => 'AI estimate';
+
+  @override
   String get quantityLabel => 'Quantity';
 
   @override

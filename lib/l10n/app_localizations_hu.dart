@@ -1004,6 +1004,16 @@ class AppLocalizationsHu extends AppLocalizations {
   String get noProductFound => 'Nem található termék.';
 
   @override
+  String get searchWithAiButton => 'Keresés AI-val';
+
+  @override
+  String get aiSearchNoResult =>
+      'Az AI nem talált biztos terméket erre a keresésre.';
+
+  @override
+  String get aiEstimateBadge => 'AI becslés';
+
+  @override
   String get quantityLabel => 'Mennyiség';
 
   @override
