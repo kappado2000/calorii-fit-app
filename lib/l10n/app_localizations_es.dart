@@ -1141,7 +1141,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Cuatro comidas al día — Desayuno, Almuerzo, Cena, Snack. Añade alimentos desde una foto, desde la búsqueda, escaneando un código de barras, manualmente, desde tus recetas o rápidamente desde una lista de tus alimentos habituales.';
+      'Cuatro comidas al día — Desayuno, Almuerzo, Cena, Snack. Añade alimentos desde una foto, desde la búsqueda, escaneando un código de barras, manualmente, desde tus recetas o rápidamente desde una lista de tus alimentos habituales. Toca una entrada ya registrada para editar su cantidad. Si una búsqueda no encuentra exactamente lo que buscas, toca «Buscar con IA», y en una entrada a la que le falten nutrientes, toca «Completar con IA». Puedes seleccionar varios alimentos ya registrados y guardarlos como una receta nueva.';
 
   @override
   String get guideRecipesTitle => 'Mis recetas';
@@ -1162,7 +1162,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Gráficos de 7 días, 30 días o todo el programa: evolución del peso (suavizada), GET adaptativo calculado a partir de tu propio balance energético, balance de macronutrientes y cobertura de micronutrientes. Se sincroniza con Apple Salud / Health Connect y una báscula Bluetooth.';
+      'Gráficos de 7 días, 30 días o todo el programa: evolución del peso (suavizada), GET adaptativo calculado a partir de tu propio balance energético, balance de macronutrientes y cobertura de micronutrientes. Se sincroniza con Apple Salud / Health Connect y una báscula Bluetooth. Si a varias entradas les faltan nutrientes, «Completar con IA» las completa todas a la vez (premium o prueba). El icono de la barra superior abre «Fuentes de nutrientes»: los alimentos que más contribuyen, por separado para macro y micronutrientes.';
 
   @override
   String get guideHydrationTitle => 'Hidratación';
@@ -1210,16 +1210,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get guidePremiumTitle => 'Premium y suscripciones';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Borrador, sin finalizar — el plan siguiente aún no está activo en la app. Actualmente no hay pago dentro de la app ni limitación de funciones.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Gratis, para siempre: diario alimentario completo, 20 análisis de fotos al día, recetas propias ilimitadas, gráficos de progreso básicos y sincronización con Apple Salud / Health Connect.';
+      'Gratis, para siempre: diario alimentario completo, un análisis de foto al día, búsqueda ilimitada, recetas propias ilimitadas, gráficos de progreso básicos y sincronización con Apple Salud / Health Connect.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (precio orientativo, sin confirmar): análisis de fotos ilimitados, GET adaptativo y micronutrientes detallados, más soporte prioritario.';
+      'Premium (activado con un código): 20 análisis de fotos al día y 20 búsquedas con IA al día para completar automáticamente los nutrientes, además de GET adaptativo y micronutrientes detallados.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      '¿Cuenta nueva? Tienes una prueba de 14 días: 3 análisis de fotos al día y hasta 10 búsquedas con IA incluidas, sin código.';
+
+  @override
+  String get guidePremiumRedeemButton => 'Tengo un código premium';
 
   @override
   String get themeDialogTitle => 'Tema';

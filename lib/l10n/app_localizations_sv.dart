@@ -1136,7 +1136,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Fyra måltider om dagen — Frukost, Lunch, Middag, Mellanmål. Lägg till mat via foto, sökning, streckkodsskanning, manuellt, från dina recept eller snabbt från en checklista med dina vanliga livsmedel.';
+      'Fyra måltider om dagen — Frukost, Lunch, Middag, Mellanmål. Lägg till mat via foto, sökning, streckkodsskanning, manuellt, från dina recept eller snabbt från en checklista med dina vanliga livsmedel. Tryck på en registrerad post för att ändra mängden. Om en sökning inte hittar exakt det du letar efter, tryck på \"Sök med AI\", och för en post som saknar näringsämnen, tryck på \"Komplettera med AI\". Du kan välja flera redan registrerade livsmedel och spara dem som ett nytt recept.';
 
   @override
   String get guideRecipesTitle => 'Mina recept';
@@ -1157,7 +1157,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Diagram över 7 dagar, 30 dagar eller hela programmet: viktutveckling (utjämnad), adaptivt TDEE beräknat från din egen energibalans, makronäringsbalans och täckning av mikronäringsämnen. Synkroniserar med Apple Hälsa / Health Connect och en Bluetooth-våg.';
+      'Diagram över 7 dagar, 30 dagar eller hela programmet: viktutveckling (utjämnad), adaptivt TDEE beräknat från din egen energibalans, makronäringsbalans och täckning av mikronäringsämnen. Synkroniserar med Apple Hälsa / Health Connect och en Bluetooth-våg. Om flera poster saknar näringsämnen fyller \"Komplettera med AI\" i dem alla på en gång (premium eller provperiod). Ikonen i det övre fältet öppnar \"Näringskällor\": vilka livsmedel som bidrar mest, separat för makro- och mikronäringsämnen.';
 
   @override
   String get guideHydrationTitle => 'Vätskeintag';
@@ -1205,16 +1205,19 @@ class AppLocalizationsSv extends AppLocalizations {
   String get guidePremiumTitle => 'Premium och prenumerationer';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Utkast, ej färdigställt — planen nedan är ännu inte aktiv i appen. Det finns för närvarande ingen betalning i appen eller funktionsbegränsning.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Gratis, för alltid: fullständig matdagbok, 20 fotoanalyser om dagen, obegränsat med egna recept, grundläggande framstegsdiagram och synkronisering med Apple Hälsa / Health Connect.';
+      'Gratis, för alltid: fullständig matdagbok, en fotoanalys om dagen, obegränsad sökning, obegränsat med egna recept, grundläggande framstegsdiagram och synkronisering med Apple Hälsa / Health Connect.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (vägledande pris, obekräftat): obegränsade fotoanalyser, adaptivt TDEE och detaljerade mikronäringsämnen, samt prioriterad support.';
+      'Premium (aktiverat med en kod): 20 fotoanalyser om dagen och 20 AI-sökningar om dagen för automatisk komplettering av näringsämnen, samt adaptivt TDEE och detaljerade mikronäringsämnen.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'Nytt konto? Du får en 14-dagars provperiod: 3 fotoanalyser om dagen och upp till 10 AI-sökningar inkluderade, utan kod.';
+
+  @override
+  String get guidePremiumRedeemButton => 'Jag har en premiumkod';
 
   @override
   String get themeDialogTitle => 'Tema';

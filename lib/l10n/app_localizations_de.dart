@@ -1139,7 +1139,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Vier Mahlzeiten pro Tag — Frühstück, Mittagessen, Abendessen, Snack. Füge Lebensmittel per Foto, Suche, Barcode-Scan, manuell, aus deinen Rezepten oder schnell über eine Checkliste deiner üblichen Lebensmittel hinzu.';
+      'Vier Mahlzeiten pro Tag — Frühstück, Mittagessen, Abendessen, Snack. Füge Lebensmittel per Foto, Suche, Barcode-Scan, manuell, aus deinen Rezepten oder schnell über eine Checkliste deiner üblichen Lebensmittel hinzu. Tippe auf einen erfassten Eintrag, um seine Menge zu bearbeiten. Wenn eine Suche nicht genau das findet, was du suchst, tippe auf „Mit KI suchen“, und bei einem Eintrag mit fehlenden Nährstoffen auf „Mit KI ergänzen“. Du kannst mehrere bereits erfasste Lebensmittel auswählen und sie als neues Rezept speichern.';
 
   @override
   String get guideRecipesTitle => 'Meine Rezepte';
@@ -1160,7 +1160,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Diagramme über 7 Tage, 30 Tage oder das gesamte Programm: Gewichtsverlauf (geglättet), adaptiver Gesamtenergieumsatz aus deiner eigenen Energiebilanz, Makronährstoffbalance und Mikronährstoffabdeckung. Synchronisation mit Apple Health / Health Connect und einer Bluetooth-Waage.';
+      'Diagramme über 7 Tage, 30 Tage oder das gesamte Programm: Gewichtsverlauf (geglättet), adaptiver Gesamtenergieumsatz aus deiner eigenen Energiebilanz, Makronährstoffbalance und Mikronährstoffabdeckung. Synchronisation mit Apple Health / Health Connect und einer Bluetooth-Waage. Fehlen mehreren Einträgen Nährstoffe, füllt „Mit KI ergänzen“ sie alle auf einmal auf (Premium oder Testphase). Das Symbol in der Kopfzeile öffnet „Nährstoffquellen“: welche Lebensmittel am meisten beitragen, getrennt nach Makro- und Mikronährstoffen.';
 
   @override
   String get guideHydrationTitle => 'Flüssigkeitszufuhr';
@@ -1208,16 +1208,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get guidePremiumTitle => 'Premium und Abonnements';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Entwurf, nicht abgeschlossen — der folgende Plan ist in der App noch nicht aktiv. Derzeit gibt es keine In-App-Zahlung oder Funktionseinschränkung.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Kostenlos, dauerhaft: vollständiges Ernährungstagebuch, 20 Foto-Analysen pro Tag, unbegrenzte eigene Rezepte, grundlegende Fortschrittsdiagramme und Apple Health / Health Connect-Synchronisierung.';
+      'Kostenlos, dauerhaft: vollständiges Ernährungstagebuch, eine Foto-Analyse pro Tag, unbegrenzte Suche, unbegrenzte eigene Rezepte, grundlegende Fortschrittsdiagramme und Apple Health / Health Connect-Synchronisierung.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (Richtpreis, unbestätigt): unbegrenzte Foto-Analysen, adaptiver Gesamtenergieumsatz und detaillierte Mikronährstoffe, plus bevorzugter Support.';
+      'Premium (mit einem Code aktiviert): 20 Foto-Analysen pro Tag und 20 KI-Suchen pro Tag zur automatischen Nährstoffergänzung, plus adaptiver Gesamtenergieumsatz und detaillierte Mikronährstoffe.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'Neues Konto? Du bekommst eine 14-tägige Testphase: 3 Foto-Analysen pro Tag und bis zu 10 KI-Suchen inklusive, ohne Code.';
+
+  @override
+  String get guidePremiumRedeemButton => 'Ich habe einen Premium-Code';
 
   @override
   String get themeDialogTitle => 'Design';

@@ -1139,7 +1139,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Vier maaltijden per dag — Ontbijt, Lunch, Avondeten, Snack. Voeg gerechten toe via foto, zoeken, het scannen van een barcode, handmatig, vanuit je recepten of snel via een afvinklijst met je gebruikelijke gerechten.';
+      'Vier maaltijden per dag — Ontbijt, Lunch, Avondeten, Snack. Voeg gerechten toe via foto, zoeken, het scannen van een barcode, handmatig, vanuit je recepten of snel via een afvinklijst met je gebruikelijke gerechten. Tik op een geregistreerde vermelding om de hoeveelheid te bewerken. Als een zoekopdracht niet precies vindt wat je zoekt, tik dan op \"Zoeken met AI\", en bij een vermelding waar voedingsstoffen ontbreken, tik op \"Aanvullen met AI\". Je kunt meerdere al geregistreerde gerechten selecteren en ze opslaan als nieuw recept.';
 
   @override
   String get guideRecipesTitle => 'Mijn recepten';
@@ -1160,7 +1160,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Grafieken over 7 dagen, 30 dagen of het hele programma: gewichtsverloop (afgevlakt), adaptief TDEE berekend uit je eigen energiebalans, macronutriëntenbalans en dekking van micronutriënten. Synchroniseert met Apple Gezondheid / Health Connect en een Bluetooth-weegschaal.';
+      'Grafieken over 7 dagen, 30 dagen of het hele programma: gewichtsverloop (afgevlakt), adaptief TDEE berekend uit je eigen energiebalans, macronutriëntenbalans en dekking van micronutriënten. Synchroniseert met Apple Gezondheid / Health Connect en een Bluetooth-weegschaal. Ontbreken er bij meerdere vermeldingen voedingsstoffen, dan vult \"Aanvullen met AI\" ze in één keer allemaal aan (premium of proefperiode). Het icoon in de bovenbalk opent \"Voedingsstofbronnen\": welke gerechten het meest bijdragen, apart voor macro- en micronutriënten.';
 
   @override
   String get guideHydrationTitle => 'Hydratatie';
@@ -1208,16 +1208,19 @@ class AppLocalizationsNl extends AppLocalizations {
   String get guidePremiumTitle => 'Premium en abonnementen';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Concept, niet definitief — het onderstaande plan is nog niet actief in de app. Er is momenteel geen in-app-betaling of functiebeperking.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Gratis, voor altijd: volledig voedingsdagboek, 20 fotoanalyses per dag, onbeperkt eigen recepten, basisvoortgangsgrafieken en synchronisatie met Apple Gezondheid / Health Connect.';
+      'Gratis, voor altijd: volledig voedingsdagboek, één fotoanalyse per dag, onbeperkt zoeken, onbeperkt eigen recepten, basisvoortgangsgrafieken en synchronisatie met Apple Gezondheid / Health Connect.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (indicatieve prijs, onbevestigd): onbeperkte fotoanalyses, adaptief TDEE en gedetailleerde micronutriënten, plus prioritaire ondersteuning.';
+      'Premium (geactiveerd met een code): 20 fotoanalyses per dag en 20 AI-zoekopdrachten per dag voor automatische aanvulling van voedingsstoffen, plus adaptief TDEE en gedetailleerde micronutriënten.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'Nieuw account? Je krijgt een proefperiode van 14 dagen: 3 fotoanalyses per dag en tot 10 AI-zoekopdrachten inbegrepen, zonder code.';
+
+  @override
+  String get guidePremiumRedeemButton => 'Ik heb een premium-code';
 
   @override
   String get themeDialogTitle => 'Thema';

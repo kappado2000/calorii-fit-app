@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../admin/access_code_screen.dart';
 
 /// In-app mirror of the functionality guide artifact — kept short per
 /// section (mobile reading, not the full web document) and updated here
@@ -79,9 +80,11 @@ class _GuideCard extends StatelessWidget {
   }
 }
 
-/// Distinct from the other cards on purpose — this describes a plan, not a
-/// shipped feature, so the draft note must stay visible for as long as
-/// there's no real in-app purchase/paywall wired up.
+/// Premium here means a code-activated grant (see redeemPremiumCode.ts),
+/// not an in-app purchase — the free tier's trial window is the part most
+/// likely to confuse someone reading this without an explanation, so it
+/// gets the same highlighted-box treatment the (now-outdated) "this is
+/// still a draft" note used to have.
 class _PremiumCard extends StatelessWidget {
   const _PremiumCard({required this.l10n});
 
@@ -117,6 +120,10 @@ class _PremiumCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
+            Text(l10n.guidePremiumFreeBody, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            Text(l10n.guidePremiumPaidBody, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
@@ -126,11 +133,11 @@ class _PremiumCard extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline_rounded, size: 16, color: colorScheme.onSurfaceVariant),
+                  Icon(Icons.auto_awesome_rounded, size: 16, color: colorScheme.onSurfaceVariant),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      l10n.guidePremiumDraftNote,
+                      l10n.guidePremiumTrialNote,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                     ),
                   ),
@@ -138,9 +145,12 @@ class _PremiumCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            Text(l10n.guidePremiumFreeBody, style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(height: 8),
-            Text(l10n.guidePremiumPaidBody, style: Theme.of(context).textTheme.bodyMedium),
+            OutlinedButton.icon(
+              onPressed: () =>
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AccessCodeScreen())),
+              icon: const Icon(Icons.key_outlined, size: 16),
+              label: Text(l10n.guidePremiumRedeemButton),
+            ),
           ],
         ),
       ),

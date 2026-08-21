@@ -2109,7 +2109,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideLogBody.
   ///
   /// In ro, this message translates to:
-  /// **'Patru mese pe zi — Dimineață, Prânz, Seară, Gustare. Adaugi alimente din fotografie, din căutare, prin scanarea codului de bare, manual, din rețetele tale sau rapid dintr-o listă de bifat cu alimentele obișnuite.'**
+  /// **'Patru mese pe zi — Dimineață, Prânz, Seară, Gustare. Adaugi alimente din fotografie, din căutare, prin scanarea codului de bare, manual, din rețetele tale sau rapid dintr-o listă de bifat cu alimentele obișnuite. Atingi o intrare logată ca să-i editezi cantitatea. Dacă o căutare nu găsește exact ce cauți, apasă „Caută cu AI”, iar la o intrare căreia îi lipsesc nutrienți, apasă „Completează cu AI”. Poți selecta mai multe alimente deja logate și le salvezi ca rețetă nouă.'**
   String get guideLogBody;
 
   /// No description provided for @guideRecipesTitle.
@@ -2145,7 +2145,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideProgressBody.
   ///
   /// In ro, this message translates to:
-  /// **'Grafice pe 7 zile, 30 de zile sau tot programul: evoluția greutății (netezită), TDEE adaptiv calculat din propriul tău echilibru energetic, balanța macro-urilor și acoperirea micronutrienților. Se sincronizează cu Apple Health / Health Connect și cu un cântar Bluetooth.'**
+  /// **'Grafice pe 7 zile, 30 de zile sau tot programul: evoluția greutății (netezită), TDEE adaptiv calculat din propriul tău echilibru energetic, balanța macro-urilor și acoperirea micronutrienților. Se sincronizează cu Apple Health / Health Connect și cu un cântar Bluetooth. Dacă mai multor intrări le lipsesc nutrienți, „Completează cu AI” le umple pe toate dintr-o dată (premium sau perioadă de probă). Iconița din antet deschide „Surse de nutrienți”: alimentele care contribuie cel mai mult, separat pentru macro și micronutrienți.'**
   String get guideProgressBody;
 
   /// No description provided for @guideHydrationTitle.
@@ -2226,23 +2226,29 @@ abstract class AppLocalizations {
   /// **'Premium și abonamente'**
   String get guidePremiumTitle;
 
-  /// No description provided for @guidePremiumDraftNote.
-  ///
-  /// In ro, this message translates to:
-  /// **'Ciornă, nefinalizată — planul de mai jos nu e încă activ în aplicație. Nu există plată în-app sau blocare de funcții momentan.'**
-  String get guidePremiumDraftNote;
-
   /// No description provided for @guidePremiumFreeBody.
   ///
   /// In ro, this message translates to:
-  /// **'Gratuit, permanent: jurnal alimentar complet, 20 de analize foto pe zi, rețete proprii nelimitate, grafice de progres de bază și sincronizare cu Apple Health / Health Connect.'**
+  /// **'Gratuit, permanent: jurnal alimentar complet, o analiză foto pe zi, căutare nelimitată, rețete proprii nelimitate, grafice de progres de bază și sincronizare cu Apple Health / Health Connect.'**
   String get guidePremiumFreeBody;
 
   /// No description provided for @guidePremiumPaidBody.
   ///
   /// In ro, this message translates to:
-  /// **'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, plus suport prioritar.'**
+  /// **'Premium (activat cu un cod primit): 20 de analize foto pe zi și 20 de căutări AI pe zi pentru completarea automată a nutrienților, plus TDEE adaptiv și micronutrienți detaliați.'**
   String get guidePremiumPaidBody;
+
+  /// No description provided for @guidePremiumTrialNote.
+  ///
+  /// In ro, this message translates to:
+  /// **'Cont nou creat? Ai o perioadă de probă de 14 zile: 3 analize foto pe zi și până la 10 căutări AI incluse, fără cod.'**
+  String get guidePremiumTrialNote;
+
+  /// No description provided for @guidePremiumRedeemButton.
+  ///
+  /// In ro, this message translates to:
+  /// **'Am un cod premium'**
+  String get guidePremiumRedeemButton;
 
   /// No description provided for @themeDialogTitle.
   ///

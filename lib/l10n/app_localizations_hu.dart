@@ -1140,7 +1140,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Napi négy étkezés — Reggeli, Ebéd, Vacsora, Nassolás. Adj hozzá ételeket fotóból, keresésből, vonalkód beolvasásával, kézzel, a receptjeidből, vagy gyorsan a megszokott ételeid pipálható listájából.';
+      'Napi négy étkezés — Reggeli, Ebéd, Vacsora, Nassolás. Adj hozzá ételeket fotóból, keresésből, vonalkód beolvasásával, kézzel, a receptjeidből, vagy gyorsan a megszokott ételeid pipálható listájából. Koppints egy már rögzített tételre a mennyiség szerkesztéséhez. Ha a keresés nem találja pontosan azt, amit keresel, koppints a \"Keresés AI-val\" gombra, egy hiányos tápanyagú tételnél pedig a \"Kiegészítés AI-val\" gombra. Kiválaszthatsz több már rögzített ételt, és elmentheted őket új receptként.';
 
   @override
   String get guideRecipesTitle => 'Receptjeim';
@@ -1161,7 +1161,7 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Grafikonok 7 napra, 30 napra vagy a teljes programra: testsúly-alakulás (simított), a saját energiaegyensúlyodból számított adaptív TDEE, makrotápanyag-egyensúly és mikrotápanyag-lefedettség. Szinkronizál az Apple Health / Health Connect szolgáltatással és egy Bluetooth mérleggel.';
+      'Grafikonok 7 napra, 30 napra vagy a teljes programra: testsúly-alakulás (simított), a saját energiaegyensúlyodból számított adaptív TDEE, makrotápanyag-egyensúly és mikrotápanyag-lefedettség. Szinkronizál az Apple Health / Health Connect szolgáltatással és egy Bluetooth mérleggel. Ha több tételből is hiányoznak a tápanyagok, a \"Kiegészítés AI-val\" egyszerre tölti ki mindet (prémium vagy próbaidőszak). A felső sávban lévő ikon megnyitja a \"Tápanyagforrások\" képernyőt: mely ételek járulnak hozzá a legtöbbel, külön a makro- és mikrotápanyagokhoz.';
 
   @override
   String get guideHydrationTitle => 'Folyadékbevitel';
@@ -1209,16 +1209,19 @@ class AppLocalizationsHu extends AppLocalizations {
   String get guidePremiumTitle => 'Prémium és előfizetések';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Piszkozat, nem véglegesített — az alábbi terv még nem aktív az alkalmazásban. Jelenleg nincs alkalmazáson belüli fizetés vagy funkciókorlátozás.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Ingyenes, örökre: teljes étkezési napló, napi 20 fotóelemzés, korlátlan saját recept, alap előrehaladási grafikonok és Apple Health / Health Connect szinkronizálás.';
+      'Ingyenes, örökre: teljes étkezési napló, napi egy fotóelemzés, korlátlan keresés, korlátlan saját recept, alap előrehaladási grafikonok és Apple Health / Health Connect szinkronizálás.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Prémium (tájékoztató jellegű, nem megerősített ár): korlátlan fotóelemzés, adaptív TDEE és részletes mikrotápanyagok, valamint elsőbbségi támogatás.';
+      'Prémium (kóddal aktiválva): napi 20 fotóelemzés és napi 20 AI-keresés a tápanyagok automatikus kiegészítéséhez, valamint adaptív TDEE és részletes mikrotápanyagok.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'Új fiók? 14 napos próbaidőszakot kapsz: napi 3 fotóelemzés és legfeljebb 10 AI-keresés, kód nélkül.';
+
+  @override
+  String get guidePremiumRedeemButton => 'Van egy prémium kódom';
 
   @override
   String get themeDialogTitle => 'Téma';

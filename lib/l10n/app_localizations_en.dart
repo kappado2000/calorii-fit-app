@@ -1131,7 +1131,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Four meals a day — Breakfast, Lunch, Dinner, Snack. Add foods from a photo, from search, by scanning a barcode, manually, from your recipes, or quickly from a checklist of your usual foods.';
+      'Four meals a day — Breakfast, Lunch, Dinner, Snack. Add foods from a photo, from search, by scanning a barcode, manually, from your recipes, or quickly from a checklist of your usual foods. Tap a logged entry to edit its quantity. If a search doesn\'t find exactly what you\'re after, tap \"Search with AI\", and for an entry missing nutrients, tap \"Complete with AI\". You can select several already-logged foods and save them as a new recipe.';
 
   @override
   String get guideRecipesTitle => 'My recipes';
@@ -1152,7 +1152,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Charts over 7 days, 30 days, or the whole program: weight evolution (smoothed), adaptive TDEE calculated from your own energy balance, macronutrient balance, and micronutrient coverage. Syncs with Apple Health / Health Connect and a Bluetooth scale.';
+      'Charts over 7 days, 30 days, or the whole program: weight evolution (smoothed), adaptive TDEE calculated from your own energy balance, macronutrient balance, and micronutrient coverage. Syncs with Apple Health / Health Connect and a Bluetooth scale. If several entries are missing nutrients, \"Complete with AI\" fills them all in at once (premium or trial). The icon in the app bar opens \"Nutrient sources\": which foods contribute the most, for macros and micronutrients separately.';
 
   @override
   String get guideHydrationTitle => 'Hydration';
@@ -1200,16 +1200,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get guidePremiumTitle => 'Premium & subscriptions';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Draft, not finalized — the plan below isn\'t active in the app yet. There\'s no in-app payment or feature gating at this time.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Free, forever: full food diary, 20 photo analyses a day, unlimited saved recipes, basic progress charts, and Apple Health / Health Connect sync.';
+      'Free, forever: full food diary, one photo analysis a day, unlimited search, unlimited saved recipes, basic progress charts, and Apple Health / Health Connect sync.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (indicative price, unconfirmed): unlimited photo analyses, adaptive TDEE and detailed micronutrients, plus priority support.';
+      'Premium (activated with a code): 20 photo analyses a day and 20 AI searches a day for automatic nutrient completion, plus adaptive TDEE and detailed micronutrients.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'New account? You get a 14-day trial: 3 photo analyses a day and up to 10 AI searches included, no code needed.';
+
+  @override
+  String get guidePremiumRedeemButton => 'I have a premium code';
 
   @override
   String get themeDialogTitle => 'Theme';

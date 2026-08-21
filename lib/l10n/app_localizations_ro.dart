@@ -1136,7 +1136,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Patru mese pe zi — Dimineață, Prânz, Seară, Gustare. Adaugi alimente din fotografie, din căutare, prin scanarea codului de bare, manual, din rețetele tale sau rapid dintr-o listă de bifat cu alimentele obișnuite.';
+      'Patru mese pe zi — Dimineață, Prânz, Seară, Gustare. Adaugi alimente din fotografie, din căutare, prin scanarea codului de bare, manual, din rețetele tale sau rapid dintr-o listă de bifat cu alimentele obișnuite. Atingi o intrare logată ca să-i editezi cantitatea. Dacă o căutare nu găsește exact ce cauți, apasă „Caută cu AI”, iar la o intrare căreia îi lipsesc nutrienți, apasă „Completează cu AI”. Poți selecta mai multe alimente deja logate și le salvezi ca rețetă nouă.';
 
   @override
   String get guideRecipesTitle => 'Rețetele mele';
@@ -1157,7 +1157,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Grafice pe 7 zile, 30 de zile sau tot programul: evoluția greutății (netezită), TDEE adaptiv calculat din propriul tău echilibru energetic, balanța macro-urilor și acoperirea micronutrienților. Se sincronizează cu Apple Health / Health Connect și cu un cântar Bluetooth.';
+      'Grafice pe 7 zile, 30 de zile sau tot programul: evoluția greutății (netezită), TDEE adaptiv calculat din propriul tău echilibru energetic, balanța macro-urilor și acoperirea micronutrienților. Se sincronizează cu Apple Health / Health Connect și cu un cântar Bluetooth. Dacă mai multor intrări le lipsesc nutrienți, „Completează cu AI” le umple pe toate dintr-o dată (premium sau perioadă de probă). Iconița din antet deschide „Surse de nutrienți”: alimentele care contribuie cel mai mult, separat pentru macro și micronutrienți.';
 
   @override
   String get guideHydrationTitle => 'Hidratare';
@@ -1205,16 +1205,19 @@ class AppLocalizationsRo extends AppLocalizations {
   String get guidePremiumTitle => 'Premium și abonamente';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Ciornă, nefinalizată — planul de mai jos nu e încă activ în aplicație. Nu există plată în-app sau blocare de funcții momentan.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Gratuit, permanent: jurnal alimentar complet, 20 de analize foto pe zi, rețete proprii nelimitate, grafice de progres de bază și sincronizare cu Apple Health / Health Connect.';
+      'Gratuit, permanent: jurnal alimentar complet, o analiză foto pe zi, căutare nelimitată, rețete proprii nelimitate, grafice de progres de bază și sincronizare cu Apple Health / Health Connect.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (preț orientativ, neconfirmat): analize foto nelimitate, TDEE adaptiv și micronutrienți detaliați, plus suport prioritar.';
+      'Premium (activat cu un cod primit): 20 de analize foto pe zi și 20 de căutări AI pe zi pentru completarea automată a nutrienților, plus TDEE adaptiv și micronutrienți detaliați.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'Cont nou creat? Ai o perioadă de probă de 14 zile: 3 analize foto pe zi și până la 10 căutări AI incluse, fără cod.';
+
+  @override
+  String get guidePremiumRedeemButton => 'Am un cod premium';
 
   @override
   String get themeDialogTitle => 'Temă';

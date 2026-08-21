@@ -1138,7 +1138,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Cztery posiłki dziennie — Śniadanie, Obiad, Kolacja, Przekąska. Dodawaj potrawy ze zdjęcia, wyszukiwania, skanowania kodu kreskowego, ręcznie, z Twoich przepisów lub szybko z listy zwykle spożywanych potraw.';
+      'Cztery posiłki dziennie — Śniadanie, Obiad, Kolacja, Przekąska. Dodawaj potrawy ze zdjęcia, wyszukiwania, skanowania kodu kreskowego, ręcznie, z Twoich przepisów lub szybko z listy zwykle spożywanych potraw. Dotknij zarejestrowanej pozycji, aby zmienić jej ilość. Jeśli wyszukiwanie nie znajdzie dokładnie tego, czego szukasz, dotknij „Szukaj z AI”, a przy pozycji, której brakuje składników odżywczych, dotknij „Uzupełnij z AI”. Możesz zaznaczyć kilka już zarejestrowanych potraw i zapisać je jako nowy przepis.';
 
   @override
   String get guideRecipesTitle => 'Moje przepisy';
@@ -1159,7 +1159,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Wykresy za 7 dni, 30 dni lub cały program: zmiana wagi (wygładzona), adaptacyjne TDEE obliczone na podstawie Twojego własnego bilansu energetycznego, bilans makroskładników i pokrycie mikroskładników. Synchronizacja z Apple Zdrowie / Health Connect oraz wagą Bluetooth.';
+      'Wykresy za 7 dni, 30 dni lub cały program: zmiana wagi (wygładzona), adaptacyjne TDEE obliczone na podstawie Twojego własnego bilansu energetycznego, bilans makroskładników i pokrycie mikroskładników. Synchronizacja z Apple Zdrowie / Health Connect oraz wagą Bluetooth. Jeśli kilku pozycjom brakuje składników odżywczych, „Uzupełnij z AI” uzupełnia je wszystkie naraz (premium lub okres próbny). Ikona na górnym pasku otwiera „Źródła składników odżywczych”: które potrawy mają największy udział, osobno dla makro- i mikroskładników.';
 
   @override
   String get guideHydrationTitle => 'Nawodnienie';
@@ -1207,16 +1207,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String get guidePremiumTitle => 'Premium i subskrypcje';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Wersja robocza, niedokończona — poniższy plan nie jest jeszcze aktywny w aplikacji. Obecnie nie ma płatności w aplikacji ani ograniczeń funkcji.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Bezpłatnie, na zawsze: pełny dziennik żywienia, 20 analiz zdjęć dziennie, nieograniczona liczba własnych przepisów, podstawowe wykresy postępu i synchronizacja z Apple Zdrowie / Health Connect.';
+      'Bezpłatnie, na zawsze: pełny dziennik żywienia, jedna analiza zdjęcia dziennie, nieograniczone wyszukiwanie, nieograniczona liczba własnych przepisów, podstawowe wykresy postępu i synchronizacja z Apple Zdrowie / Health Connect.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (cena orientacyjna, niepotwierdzona): nieograniczone analizy zdjęć, adaptacyjne TDEE i szczegółowe mikroskładniki, a także priorytetowe wsparcie.';
+      'Premium (aktywowane kodem): 20 analiz zdjęć dziennie i 20 wyszukiwań AI dziennie do automatycznego uzupełniania składników odżywczych, a także adaptacyjne TDEE i szczegółowe mikroskładniki.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'Nowe konto? Masz 14-dniowy okres próbny: 3 analizy zdjęć dziennie i do 10 wyszukiwań AI w cenie, bez kodu.';
+
+  @override
+  String get guidePremiumRedeemButton => 'Mam kod premium';
 
   @override
   String get themeDialogTitle => 'Motyw';

@@ -1144,7 +1144,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get guideLogBody =>
-      'Quatre repas par jour — Petit-déjeuner, Déjeuner, Dîner, Collation. Ajoutez des aliments par photo, par recherche, en scannant un code-barres, manuellement, depuis vos recettes, ou rapidement depuis une liste à cocher de vos aliments habituels.';
+      'Quatre repas par jour — Petit-déjeuner, Déjeuner, Dîner, Collation. Ajoutez des aliments par photo, par recherche, en scannant un code-barres, manuellement, depuis vos recettes, ou rapidement depuis une liste à cocher de vos aliments habituels. Touchez une entrée déjà enregistrée pour modifier sa quantité. Si une recherche ne trouve pas exactement ce que vous cherchez, appuyez sur « Rechercher avec l\'IA », et pour une entrée à qui il manque des nutriments, appuyez sur « Compléter avec l\'IA ». Vous pouvez sélectionner plusieurs aliments déjà enregistrés et les enregistrer comme une nouvelle recette.';
 
   @override
   String get guideRecipesTitle => 'Mes recettes';
@@ -1165,7 +1165,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get guideProgressBody =>
-      'Graphiques sur 7 jours, 30 jours ou tout le programme : évolution du poids (lissée), DEJ adaptatif calculé à partir de votre propre bilan énergétique, équilibre des macronutriments et couverture des micronutriments. Synchronisation avec Apple Santé / Health Connect et une balance Bluetooth.';
+      'Graphiques sur 7 jours, 30 jours ou tout le programme : évolution du poids (lissée), DEJ adaptatif calculé à partir de votre propre bilan énergétique, équilibre des macronutriments et couverture des micronutriments. Synchronisation avec Apple Santé / Health Connect et une balance Bluetooth. Si plusieurs entrées manquent de nutriments, « Compléter avec l\'IA » les complète toutes en une fois (premium ou essai). L\'icône dans la barre d\'en-tête ouvre « Sources de nutriments » : les aliments qui contribuent le plus, séparément pour les macro- et micronutriments.';
 
   @override
   String get guideHydrationTitle => 'Hydratation';
@@ -1213,16 +1213,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get guidePremiumTitle => 'Premium et abonnements';
 
   @override
-  String get guidePremiumDraftNote =>
-      'Brouillon, non finalisé — le plan ci-dessous n\'est pas encore actif dans l\'application. Il n\'y a actuellement aucun paiement intégré ni limitation de fonctionnalités.';
-
-  @override
   String get guidePremiumFreeBody =>
-      'Gratuit, pour toujours : journal alimentaire complet, 20 analyses photo par jour, recettes personnelles illimitées, graphiques de progression de base et synchronisation Apple Santé / Health Connect.';
+      'Gratuit, pour toujours : journal alimentaire complet, une analyse photo par jour, recherche illimitée, recettes personnelles illimitées, graphiques de progression de base et synchronisation Apple Santé / Health Connect.';
 
   @override
   String get guidePremiumPaidBody =>
-      'Premium (prix indicatif, non confirmé) : analyses photo illimitées, DEJ adaptatif et micronutriments détaillés, plus un support prioritaire.';
+      'Premium (activé avec un code) : 20 analyses photo par jour et 20 recherches IA par jour pour compléter automatiquement les nutriments, plus un DEJ adaptatif et des micronutriments détaillés.';
+
+  @override
+  String get guidePremiumTrialNote =>
+      'Nouveau compte ? Vous bénéficiez d\'un essai de 14 jours : 3 analyses photo par jour et jusqu\'à 10 recherches IA incluses, sans code.';
+
+  @override
+  String get guidePremiumRedeemButton => 'J\'ai un code premium';
 
   @override
   String get themeDialogTitle => 'Thème';
