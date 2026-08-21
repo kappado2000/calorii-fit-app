@@ -12,6 +12,7 @@ import '../../core/utils/deficit_color.dart';
 import '../../core/utils/number_format.dart';
 import '../../data/models/food_log_entry.dart';
 import '../../data/models/meal_type.dart';
+import '../../data/models/recipe.dart';
 import '../../data/models/user_profile.dart';
 import '../../data/models/workout_entry.dart';
 import '../../domain/usecases/met_calorie_estimator.dart';
@@ -28,7 +29,10 @@ import '../guide/app_guide_screen.dart';
 import '../hydration/hydration_card.dart';
 import '../profile/profile_providers.dart';
 import '../progress/progress_screen.dart';
+import '../recipes/recipe_icon.dart';
+import '../recipes/recipes_providers.dart';
 import '../recipes/recipes_screen.dart';
+import '../recipes/save_as_recipe_dialog.dart';
 import '../reminders/reminder_settings_dialog.dart';
 import '../settings/language_picker_dialog.dart';
 import '../settings/theme_picker_dialog.dart';
@@ -690,6 +694,60 @@ class _MealSection extends ConsumerStatefulWidget {
 
 class _MealSectionState extends ConsumerState<_MealSection> {
   bool _expanded = true;
+  bool _selectionMode = false;
+  final Set<String> _selectedEntryIds = {};
+
+  void _toggleSelectionMode() {
+    setState(() {
+      _selectionMode = !_selectionMode;
+      _selectedEntryIds.clear();
+    });
+  }
+
+  void _toggleEntrySelected(String id) {
+    setState(() {
+      if (!_selectedEntryIds.remove(id)) _selectedEntryIds.add(id);
+    });
+  }
+
+  /// Bundles the checked already-logged entries into a new [Recipe] — lets
+  /// a combination that turned out well get reused later without having to
+  /// re-enter each food and its portion from scratch.
+  Future<void> _saveSelectedAsRecipe() async {
+    final selected = widget.entries.where((entry) => _selectedEntryIds.contains(entry.id)).toList();
+    if (selected.isEmpty) return;
+
+    final byCalories = [...selected]..sort((a, b) => b.calories.compareTo(a.calories));
+    final suggested = suggestRecipeIcon(byCalories.map((entry) => entry.foodName));
+
+    final result = await showSaveAsRecipeDialog(context, suggestedIcon: suggested);
+    if (result == null) return;
+
+    final ingredients = selected
+        .map(
+          (entry) => RecipeIngredient(
+            name: entry.foodName,
+            grams: entry.grams,
+            kcalPer100g: entry.kcalPer100g,
+            proteinPer100g: entry.proteinPer100g,
+            carbsPer100g: entry.carbsPer100g,
+            fatPer100g: entry.fatPer100g,
+          ),
+        )
+        .toList();
+
+    await ref
+        .read(recipesProvider.notifier)
+        .saveRecipe(name: result.name, servings: 1, ingredients: ingredients, icon: result.icon);
+
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.recipeSavedConfirmation(result.name))));
+    setState(() {
+      _selectionMode = false;
+      _selectedEntryIds.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -808,7 +866,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                 for (final entry in widget.entries)
                   Dismissible(
                     key: ValueKey(entry.id),
-                    direction: DismissDirection.endToStart,
+                    direction: _selectionMode ? DismissDirection.none : DismissDirection.endToStart,
                     background: Container(
                       color: colorScheme.errorContainer,
                       alignment: Alignment.centerRight,
@@ -823,21 +881,26 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                         .removeEntry(entry.id),
                     child: ListTile(
                       dense: true,
-                      onTap: () => _editGrams(entry),
-                      leading: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.restaurant_rounded,
-                          size: 16,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
+                      onTap: _selectionMode ? () => _toggleEntrySelected(entry.id) : () => _editGrams(entry),
+                      leading: _selectionMode
+                          ? Checkbox(
+                              value: _selectedEntryIds.contains(entry.id),
+                              onChanged: (_) => _toggleEntrySelected(entry.id),
+                            )
+                          : Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHigh,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.restaurant_rounded,
+                                size: 16,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                       title: Text(entry.foodName),
                       subtitle: Text('${_formatGrams(entry.grams)} g'),
                       trailing: Text(
@@ -852,14 +915,34 @@ class _MealSectionState extends ConsumerState<_MealSection> {
                     horizontal: 8,
                     vertical: 4,
                   ),
-                  child: TextButton.icon(
-                    onPressed: () => AddFoodEntrySheet.show(
-                      context,
-                      mealType: widget.mealType,
-                      date: widget.date,
-                    ),
-                    icon: const Icon(Icons.add_rounded),
-                    label: Text(l10n.addFood),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextButton.icon(
+                          onPressed: _selectionMode
+                              ? null
+                              : () => AddFoodEntrySheet.show(
+                                  context,
+                                  mealType: widget.mealType,
+                                  date: widget.date,
+                                ),
+                          icon: const Icon(Icons.add_rounded),
+                          label: Text(l10n.addFood),
+                        ),
+                      ),
+                      if (widget.entries.isNotEmpty) ...[
+                        if (_selectionMode)
+                          TextButton(onPressed: _toggleSelectionMode, child: Text(l10n.cancel)),
+                        const SizedBox(width: 4),
+                        IconButton.filledTonal(
+                          tooltip: l10n.saveAsRecipeTooltip,
+                          icon: const Icon(Icons.bookmark_add_outlined),
+                          onPressed: _selectionMode
+                              ? (_selectedEntryIds.isEmpty ? null : _saveSelectedAsRecipe)
+                              : _toggleSelectionMode,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],
