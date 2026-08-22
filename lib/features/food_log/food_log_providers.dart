@@ -349,11 +349,20 @@ final dailyLogProvider =
 /// for a whole period's worth of entries spanning many dates (Progress
 /// screen's bulk "Completează cu AI", premium-gated — see admin_providers.dart).
 class FoodNutritionCompletionController {
-  FoodNutritionCompletionController(this._dataSource, this._aiApiClient, this._getIdToken);
+  FoodNutritionCompletionController(this._dataSource, this._aiApiClient, this._getIdToken, this._rememberProduct);
 
   final FoodLogFirestoreDataSource _dataSource;
   final AiFoodLookupApiClient _aiApiClient;
   final Future<String?> Function() _getIdToken;
+  final Future<void> Function({
+    required String name,
+    required double kcalPer100g,
+    double? proteinPer100g,
+    double? carbsPer100g,
+    double? fatPer100g,
+    MicronutrientProfile? micronutrients,
+  })
+  _rememberProduct;
 
   /// Returns false (leaving the entry unchanged) when Claude itself wasn't
   /// confident enough to offer anything, same "never guess" discipline as
@@ -366,6 +375,13 @@ class FoodNutritionCompletionController {
   /// micronutrients must keep those macros exactly as they are, not have
   /// them replaced by a fresh (and likely less accurate) AI guess just
   /// because the AI call also happens to return its own macro estimate.
+  ///
+  /// Also remembers the merged result under [entry.foodName] (see
+  /// CustomFoodsNotifier.rememberProduct) — without this, the completion
+  /// only ever patched the one already-logged entry, so re-adding the same
+  /// food later (search, "frequently logged" quick-add, a recipe) started
+  /// from the original sparse product data again and needed completing a
+  /// second time, forever.
   Future<bool> complete(FoodLogEntry entry) async {
     final idToken = await _getIdToken();
     if (idToken == null) return false;
@@ -373,12 +389,25 @@ class FoodNutritionCompletionController {
     final match = await _aiApiClient.lookup(entry.foodName, idToken: idToken);
     if (match == null) return false;
 
+    final proteinPer100g = entry.proteinPer100g ?? match.proteinPer100g;
+    final carbsPer100g = entry.carbsPer100g ?? match.carbsPer100g;
+    final fatPer100g = entry.fatPer100g ?? match.fatPer100g;
+    final micronutrients = entry.micronutrients ?? match.micronutrients;
+
     await _dataSource.updateNutrition(
       entry.id,
-      proteinPer100g: entry.proteinPer100g ?? match.proteinPer100g,
-      carbsPer100g: entry.carbsPer100g ?? match.carbsPer100g,
-      fatPer100g: entry.fatPer100g ?? match.fatPer100g,
-      micronutrients: entry.micronutrients ?? match.micronutrients,
+      proteinPer100g: proteinPer100g,
+      carbsPer100g: carbsPer100g,
+      fatPer100g: fatPer100g,
+      micronutrients: micronutrients,
+    );
+    await _rememberProduct(
+      name: entry.foodName,
+      kcalPer100g: entry.kcalPer100g,
+      proteinPer100g: proteinPer100g,
+      carbsPer100g: carbsPer100g,
+      fatPer100g: fatPer100g,
+      micronutrients: micronutrients,
     );
     return true;
   }
@@ -390,5 +419,14 @@ final foodNutritionCompletionControllerProvider = Provider<FoodNutritionCompleti
     FoodLogFirestoreDataSource(ref.watch(firestoreProvider), uid),
     ref.watch(aiFoodLookupApiClientProvider),
     () async => ref.read(firebaseAuthProvider).currentUser?.getIdToken(),
+    ({required name, required kcalPer100g, proteinPer100g, carbsPer100g, fatPer100g, micronutrients}) =>
+        ref.read(customFoodsProvider.notifier).rememberProduct(
+          name: name,
+          kcalPer100g: kcalPer100g,
+          proteinPer100g: proteinPer100g,
+          carbsPer100g: carbsPer100g,
+          fatPer100g: fatPer100g,
+          micronutrients: micronutrients,
+        ),
   );
 });

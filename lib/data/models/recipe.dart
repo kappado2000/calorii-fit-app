@@ -1,3 +1,5 @@
+import '../../core/constants/micronutrient_reference.dart';
+
 /// One ingredient within a saved [Recipe] — a nutrition snapshot (same
 /// per-100g shape as FoodLogEntry/CustomFood), not a live reference, so a
 /// recipe's macros stay stable even if the source product's data changes
@@ -10,6 +12,7 @@ class RecipeIngredient {
     this.proteinPer100g,
     this.carbsPer100g,
     this.fatPer100g,
+    this.micronutrients,
   });
 
   final String name;
@@ -18,6 +21,7 @@ class RecipeIngredient {
   final double? proteinPer100g;
   final double? carbsPer100g;
   final double? fatPer100g;
+  final MicronutrientProfile? micronutrients;
 
   double get calories => grams / 100 * kcalPer100g;
 
@@ -28,16 +32,21 @@ class RecipeIngredient {
     'proteinPer100g': proteinPer100g,
     'carbsPer100g': carbsPer100g,
     'fatPer100g': fatPer100g,
+    'micronutrients': micronutrients?.toJson(),
   };
 
-  factory RecipeIngredient.fromJson(Map<String, dynamic> json) => RecipeIngredient(
-    name: json['name'] as String,
-    grams: (json['grams'] as num).toDouble(),
-    kcalPer100g: (json['kcalPer100g'] as num).toDouble(),
-    proteinPer100g: (json['proteinPer100g'] as num?)?.toDouble(),
-    carbsPer100g: (json['carbsPer100g'] as num?)?.toDouble(),
-    fatPer100g: (json['fatPer100g'] as num?)?.toDouble(),
-  );
+  factory RecipeIngredient.fromJson(Map<String, dynamic> json) {
+    final micronutrientsJson = json['micronutrients'] as Map<String, dynamic>?;
+    return RecipeIngredient(
+      name: json['name'] as String,
+      grams: (json['grams'] as num).toDouble(),
+      kcalPer100g: (json['kcalPer100g'] as num).toDouble(),
+      proteinPer100g: (json['proteinPer100g'] as num?)?.toDouble(),
+      carbsPer100g: (json['carbsPer100g'] as num?)?.toDouble(),
+      fatPer100g: (json['fatPer100g'] as num?)?.toDouble(),
+      micronutrients: micronutrientsJson == null ? null : MicronutrientProfile.fromJson(micronutrientsJson),
+    );
+  }
 }
 
 /// A saved combination of ingredients the user cooks/eats together
@@ -75,6 +84,30 @@ class Recipe {
   double? get proteinPer100g => _densityOrNull((i) => i.proteinPer100g);
   double? get carbsPer100g => _densityOrNull((i) => i.carbsPer100g);
   double? get fatPer100g => _densityOrNull((i) => i.fatPer100g);
+
+  /// Combined micronutrient density — each of the six nutrients is null
+  /// unless every ingredient carries a value for that specific nutrient
+  /// (same all-or-nothing rule as the macro densities above), so a recipe
+  /// with e.g. one ingredient missing vitamin C data simply omits vitamin C
+  /// rather than understating it. Ingredients can each have a different
+  /// subset of nutrients known, so this is computed per nutrient rather
+  /// than requiring a fully-populated MicronutrientProfile on every one.
+  MicronutrientProfile? get micronutrients {
+    final values = <Micronutrient, double>{};
+    for (final nutrient in Micronutrient.values) {
+      final value = _densityOrNull((i) => i.micronutrients?.valueFor(nutrient));
+      if (value != null) values[nutrient] = value;
+    }
+    if (values.isEmpty) return null;
+    return MicronutrientProfile(
+      vitaminCMg: values[Micronutrient.vitaminC],
+      vitaminDMcg: values[Micronutrient.vitaminD],
+      calciumMg: values[Micronutrient.calcium],
+      ironMg: values[Micronutrient.iron],
+      magnesiumMg: values[Micronutrient.magnesium],
+      potassiumMg: values[Micronutrient.potassium],
+    );
+  }
 
   /// Null (rather than an understated partial sum) unless every ingredient
   /// has this macro known — a recipe missing one ingredient's protein

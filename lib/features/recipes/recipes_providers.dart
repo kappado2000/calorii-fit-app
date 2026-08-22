@@ -53,6 +53,7 @@ class RecipesNotifier extends StateNotifier<List<Recipe>> {
           proteinPer100g: recipe.proteinPer100g,
           carbsPer100g: recipe.carbsPer100g,
           fatPer100g: recipe.fatPer100g,
+          micronutrients: recipe.micronutrients,
         );
   }
 

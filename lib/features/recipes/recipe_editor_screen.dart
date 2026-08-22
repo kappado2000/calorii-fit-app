@@ -74,6 +74,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
         proteinPer100g: ingredient.proteinPer100g,
         carbsPer100g: ingredient.carbsPer100g,
         fatPer100g: ingredient.fatPer100g,
+        micronutrients: ingredient.micronutrients,
       );
     });
   }
@@ -355,6 +356,7 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                           proteinPer100g: _selected!.proteinPer100g,
                           carbsPer100g: _selected!.carbsPer100g,
                           fatPer100g: _selected!.fatPer100g,
+                          micronutrients: _selected!.micronutrients,
                         ),
                       ),
               child: Text(l10n.addIngredientButton),

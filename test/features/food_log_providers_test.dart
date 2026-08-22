@@ -359,6 +359,93 @@ void main() {
     expect(updated.needsNutritionCompletion, isFalse);
   });
 
+  test(
+    'completeNutritionWithAi remembers the merged result as a CustomFood, so re-adding the food later starts complete',
+    () async {
+      final aiClient = AiFoodLookupApiClient(
+        httpClient: MockClient(
+          (request) async => http.Response(
+            jsonEncode({
+              'result': {
+                'product': {
+                  'barcode': null,
+                  'name': 'Iaurt grecesc',
+                  'brand': null,
+                  'kcalPer100g': 120,
+                  'proteinPer100g': 10.0,
+                  'carbsPer100g': 4.0,
+                  'fatPer100g': 5.0,
+                  'imageUrl': null,
+                  'micronutrients': {
+                    'vitaminCMg': null,
+                    'vitaminDMcg': null,
+                    'calciumMg': 150.0,
+                    'ironMg': null,
+                    'magnesiumMg': null,
+                    'potassiumMg': null,
+                  },
+                },
+                'confidence': 0.9,
+              },
+            }),
+            200,
+          ),
+        ),
+      );
+      addTearDown(aiClient.dispose);
+      final mockUser = MockUser(uid: 'test-uid', email: 'test@example.com');
+      final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: true);
+      final fakeFirestore = FakeFirebaseFirestore();
+      final container = ProviderContainer(
+        overrides: [
+          firebaseAuthProvider.overrideWithValue(mockAuth),
+          firestoreProvider.overrideWithValue(fakeFirestore),
+          aiFoodLookupApiClientProvider.overrideWithValue(aiClient),
+        ],
+      );
+      addTearDown(container.dispose);
+      await pumpEventQueue();
+      final date = DateTime(2026, 1, 28);
+      final notifier = container.read(dailyLogProvider(date).notifier);
+
+      // First log: a sparse match (no macros/micronutrients known yet) — the
+      // exact "database match too sparse to carry macros" case the AI
+      // completion exists to fill in.
+      await notifier.addEntry(mealType: MealType.breakfast, foodName: 'Iaurt grecesc', grams: 150, kcalPer100g: 120);
+      await pumpEventQueue();
+      final original = container.read(dailyLogProvider(date)).single;
+
+      final completed = await container.read(foodNutritionCompletionControllerProvider).complete(original);
+      await pumpEventQueue();
+      expect(completed, isTrue);
+
+      // The remembered CustomFood (the source the search/quick-add paths
+      // read from) must carry the same completed data, not just the one
+      // diary entry — otherwise re-adding this food starts sparse again.
+      final remembered = container.read(customFoodsProvider).firstWhere((f) => f.name == 'Iaurt grecesc');
+      expect(remembered.proteinPer100g, 10.0);
+      expect(remembered.carbsPer100g, 4.0);
+      expect(remembered.fatPer100g, 5.0);
+      expect(remembered.micronutrients?.calciumMg, 150.0);
+
+      // Simulates the quick-add path (_saveQuickAdd), which builds a new
+      // entry straight from the remembered CustomFood's fields.
+      await notifier.addEntry(
+        mealType: MealType.dinner,
+        foodName: remembered.name,
+        grams: 150,
+        kcalPer100g: remembered.kcalPer100g,
+        proteinPer100g: remembered.proteinPer100g,
+        carbsPer100g: remembered.carbsPer100g,
+        fatPer100g: remembered.fatPer100g,
+        micronutrients: remembered.micronutrients,
+      );
+      await pumpEventQueue();
+      final reAdded = container.read(dailyLogProvider(date)).firstWhere((e) => e.mealType == MealType.dinner);
+      expect(reAdded.needsNutritionCompletion, isFalse);
+    },
+  );
+
   test('dailyLogProvider only returns entries for the requested date', () async {
     final container = _buildContainer();
     addTearDown(container.dispose);

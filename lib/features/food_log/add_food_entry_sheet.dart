@@ -139,6 +139,7 @@ class _AddFoodEntrySheetState extends ConsumerState<AddFoodEntrySheet> {
             proteinPer100g: food.proteinPer100g,
             carbsPer100g: food.carbsPer100g,
             fatPer100g: food.fatPer100g,
+            micronutrients: food.micronutrients,
           ),
         )
         .toList();

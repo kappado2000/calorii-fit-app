@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:calorie_app/core/constants/micronutrient_reference.dart';
 import 'package:calorie_app/data/models/recipe.dart';
 
 void main() {
@@ -46,5 +47,37 @@ void main() {
     const empty = Recipe(id: 'r3', name: 'Gol', servings: 1, ingredients: []);
     expect(empty.kcalPer100g, 0);
     expect(empty.perServingGrams, 0);
+  });
+
+  test('micronutrients combines a density per nutrient when every ingredient has a value for it', () {
+    final withMicros = Recipe(
+      id: 'r4',
+      name: 'Salată cu portocale',
+      servings: 1,
+      ingredients: const [
+        RecipeIngredient(
+          name: 'Piept de pui',
+          grams: 200,
+          kcalPer100g: 165,
+          micronutrients: MicronutrientProfile(ironMg: 1.0, potassiumMg: 256),
+        ),
+        RecipeIngredient(
+          name: 'Portocală',
+          grams: 100,
+          kcalPer100g: 47,
+          micronutrients: MicronutrientProfile(vitaminCMg: 53.2, ironMg: 0.1, potassiumMg: 181),
+        ),
+      ],
+    );
+
+    // vitaminC: only the orange has a value -> not every ingredient knows it -> null.
+    expect(withMicros.micronutrients!.vitaminCMg, isNull);
+    // iron: both ingredients have a value -> combined density (weighted by grams) is reported.
+    expect(withMicros.micronutrients!.ironMg, closeTo((1.0 * 200 + 0.1 * 100) / 300, 0.01));
+    expect(withMicros.micronutrients!.potassiumMg, closeTo((256 * 200 + 181 * 100) / 300, 0.01));
+  });
+
+  test('micronutrients is null when no ingredient carries any micronutrient data', () {
+    expect(recipe.micronutrients, isNull);
   });
 }

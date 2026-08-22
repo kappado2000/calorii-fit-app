@@ -776,6 +776,7 @@ class _MealSectionState extends ConsumerState<_MealSection> {
             proteinPer100g: entry.proteinPer100g,
             carbsPer100g: entry.carbsPer100g,
             fatPer100g: entry.fatPer100g,
+            micronutrients: entry.micronutrients,
           ),
         )
         .toList();

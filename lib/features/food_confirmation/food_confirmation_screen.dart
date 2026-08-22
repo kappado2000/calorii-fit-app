@@ -83,6 +83,7 @@ class _FoodConfirmationScreenState extends ConsumerState<FoodConfirmationScreen>
             proteinPer100g: estimate.proteinG == null ? null : estimate.proteinG! * factor,
             carbsPer100g: estimate.carbsG == null ? null : estimate.carbsG! * factor,
             fatPer100g: estimate.fatG == null ? null : estimate.fatG! * factor,
+            micronutrients: estimate.micronutrients,
           );
         })
         .toList();
